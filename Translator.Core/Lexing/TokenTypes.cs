@@ -7,6 +7,13 @@
         Number,
         
         LineSeparator,
-        Space
+        Space,
+        
+        Plus,
+        Minus,
+        Star,
+        Slash,
+        OpenParenthesis,
+        CloseParenthesis
     }
 }

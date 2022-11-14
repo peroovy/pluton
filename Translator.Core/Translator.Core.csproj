@@ -48,6 +48,13 @@
         <Compile Include="Lexing\SyntaxToken.cs" />
         <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />
         <Compile Include="Lexing\TokenParsers\NumberParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Single\CloseParenthesisParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Single\MinusParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Single\OpenParenthesisParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Single\PlusParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Single\SingleTerminalParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Single\SlashParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Single\StarParser.cs" />
         <Compile Include="Lexing\TokenParsers\WhitespaceParser.cs" />
         <Compile Include="Lexing\TokenTypes.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
