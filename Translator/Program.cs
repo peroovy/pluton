@@ -13,7 +13,7 @@ namespace Translator
             var container = ConfigureContainer();
             var lexer = container.Get<Lexer>();
 
-            var code = "2 + 2 *.3";
+            var code = Console.ReadLine();
             var tokens = lexer.Tokenize(code);
 
             foreach (var token in tokens)
@@ -26,7 +26,7 @@ namespace Translator
 
             container.Bind<Lexer>().ToSelf();
             container.Bind(conf => conf
-                .FromAssembliesMatching("Translator.Core")
+                .From("Translator.Core")
                 .SelectAllClasses()
                 .InheritedFrom<ITokenParser>()
                 .BindAllInterfaces());

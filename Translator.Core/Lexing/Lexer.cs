@@ -15,14 +15,8 @@ namespace Translator.Core.Lexing
 
         public IEnumerable<SyntaxToken> Tokenize(string code)
         {
-            var tokens = new List<SyntaxToken>();
-            
-            foreach (var token in ParseTokens(code))
-            {
-                tokens.Add(token);
-            }
-
-            return tokens;
+            return ParseTokens(code)
+                .Where(token => token.Type != TokenTypes.Space && token.Type != TokenTypes.LineSeparator);
         }
 
         private IEnumerable<SyntaxToken> ParseTokens(string code)

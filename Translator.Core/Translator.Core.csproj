@@ -48,8 +48,10 @@
         <Compile Include="Lexing\SyntaxToken.cs" />
         <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />
         <Compile Include="Lexing\TokenParsers\NumberParser.cs" />
+        <Compile Include="Lexing\TokenParsers\WhitespaceParser.cs" />
         <Compile Include="Lexing\TokenTypes.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="StringExtensions.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

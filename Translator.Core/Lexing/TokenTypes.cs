@@ -2,7 +2,11 @@
 {
     public enum TokenTypes
     {
-        Number,
         Unknown,
+        
+        Number,
+        
+        LineSeparator,
+        Space
     }
 }
