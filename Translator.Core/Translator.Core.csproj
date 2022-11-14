@@ -4,11 +4,11 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{1266DA46-6D97-45CA-AE87-C5D825097B41}</ProjectGuid>
-        <OutputType>Exe</OutputType>
+        <ProjectGuid>{F38B8541-48C9-4389-A44E-5CE3ABEDCA93}</ProjectGuid>
+        <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>Translator</RootNamespace>
-        <AssemblyName>Translator</AssemblyName>
+        <RootNamespace>Translator.Core</RootNamespace>
+        <AssemblyName>Translator.Core</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -37,15 +37,6 @@
         <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
           <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
         </Reference>
-        <Reference Include="Ninject, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-          <HintPath>..\packages\Ninject.3.3.3\lib\net45\Ninject.dll</HintPath>
-        </Reference>
-        <Reference Include="Ninject.Extensions.Conventions, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-          <HintPath>..\packages\Ninject.Extensions.Conventions.3.3.0\lib\net45\Ninject.Extensions.Conventions.dll</HintPath>
-        </Reference>
-        <Reference Include="Ninject.Extensions.Factory, Version=3.3.2.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-          <HintPath>..\packages\Ninject.Extensions.Factory.3.3.2\lib\net45\Ninject.Extensions.Factory.dll</HintPath>
-        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Configuration" />
         <Reference Include="System.Core" />
@@ -53,17 +44,12 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Program.cs" />
+        <Compile Include="Lexing\Lexer.cs" />
+        <Compile Include="Lexing\SyntaxToken.cs" />
+        <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />
+        <Compile Include="Lexing\TokenParsers\NumberParser.cs" />
+        <Compile Include="Lexing\TokenTypes.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="packages.config" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Translator.Core\Translator.Core.csproj">
-        <Project>{f38b8541-48c9-4389-a44e-5ce3abedca93}</Project>
-        <Name>Translator.Core</Name>
-      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
