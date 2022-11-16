@@ -83,6 +83,8 @@
         <Compile Include="Lexing\TokenParsers\Single\SlashParser.cs" />
         <Compile Include="Lexing\TokenParsers\Single\StarParser.cs" />
         <Compile Include="Lexing\TokenParsers\WhitespaceParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Words\Keywords.cs" />
+        <Compile Include="Lexing\TokenParsers\Words\WordParser.cs" />
         <Compile Include="Lexing\TokenTypes.cs" />
         <Compile Include="Logging\ILogger.cs" />
         <Compile Include="Logging\Level.cs" />

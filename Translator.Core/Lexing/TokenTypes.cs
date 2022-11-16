@@ -5,7 +5,11 @@
         Unknown,
         
         Number,
+        Identifier,
         
+        TrueKeyword,
+        FalseKeyword,
+
         LineSeparator,
         Space,
         
