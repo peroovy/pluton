@@ -1,9 +1,11 @@
-﻿namespace Translator.Core.Lexing.TokenParsers
+﻿using Translator.Core.Text;
+
+namespace Translator.Core.Lexing.TokenParsers
 {
     public interface ITokenParser
     {
-        bool IsStartingFrom(string code, int position);
+        bool CanParseFrom(Line line, int position);
 
-        SyntaxToken Parse(string code, int position);
+        SyntaxToken Parse(Line line, int position);
     }
 }

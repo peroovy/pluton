@@ -1,6 +1,7 @@
-﻿using Translator.Core.Lexing;
+﻿using System;
+using Translator.Core.Lexing;
 
-namespace Translator.Core.Evaluation
+namespace Translator.Core.Evaluation.BinaryOperations
 {
     public interface IBinaryOperation
     {

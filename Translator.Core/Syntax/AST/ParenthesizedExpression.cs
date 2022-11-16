@@ -18,6 +18,6 @@ namespace Translator.Core.Syntax.AST
         
         public SyntaxToken CloseParenthesis { get; }
         
-        public override T Accept<T>(IVisitor<T> visitor) => visitor.Visit(this);
+        public override object Accept(IEvaluator evaluator) => evaluator.Evaluate(this);
     }
 }

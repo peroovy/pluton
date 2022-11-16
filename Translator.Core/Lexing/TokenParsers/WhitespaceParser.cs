@@ -1,19 +1,24 @@
-﻿namespace Translator.Core.Lexing.TokenParsers
+﻿using Translator.Core.Logging;
+using Translator.Core.Text;
+
+namespace Translator.Core.Lexing.TokenParsers
 {
     public class WhitespaceParser : ITokenParser
     {
-        public bool IsStartingFrom(string code, int position) => char.IsWhiteSpace(code[position]);
+        public bool CanParseFrom(Line line, int position) => char.IsWhiteSpace(line.Value[position]);
 
-        public SyntaxToken Parse(string code, int position)
+        public SyntaxToken Parse(Line line, int position)
         {
-            if (code[position] == '\n')
-                return new SyntaxToken(TokenTypes.LineSeparator, "\n");
+            var location = new TextLocation(line, position);
+            
+            if (line.Value[position] == '\n')
+                return new SyntaxToken(TokenTypes.LineSeparator,"\n", location);
 
             var value = string.Concat(
-                code.TakeWhileFrom(sym => char.IsWhiteSpace(sym) && sym != '\n', position)
+                line.Value.TakeWhileFrom(sym => char.IsWhiteSpace(sym) && sym != '\n', position)
             );
 
-            return new SyntaxToken(TokenTypes.Space, value);
+            return new SyntaxToken(TokenTypes.Space, value, location);
         }
     }
 }

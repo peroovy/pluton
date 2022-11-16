@@ -1,4 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using Translator.Core.Logging;
+using Translator.Core.Text;
 
 namespace Translator.Core.Lexing.TokenParsers
 {
@@ -6,23 +8,23 @@ namespace Translator.Core.Lexing.TokenParsers
     {
         private readonly Regex regex = new Regex(@"([0-9]*[.])?[0-9]+");
         
-        public bool IsStartingFrom(string code, int position)
+        public bool CanParseFrom(Line line, int position)
         {
-            var current = code[position];
-            var next = position + 1 < code.Length 
-                ? code[position + 1]
+            var current = line.Value[position];
+            var next = position + 1 < line.Length 
+                ? line.Value[position + 1]
                 : '\0';
 
             return char.IsDigit(current) || current == '.' && char.IsDigit(next);
         }
 
-        public SyntaxToken Parse(string code, int position)
+        public SyntaxToken Parse(Line line, int position)
         {
             var value = regex
-                .Match(code, position)
+                .Match(line.Value, position)
                 .ToString();
 
-            return new SyntaxToken(TokenTypes.Number, value);
+            return new SyntaxToken(TokenTypes.Number, value, new TextLocation(line, position));
         }
     }
 }

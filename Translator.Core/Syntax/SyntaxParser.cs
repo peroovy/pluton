@@ -1,19 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Translator.Core.Lexing;
+using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
 
 namespace Translator.Core.Syntax
 {
-    public class SyntaxParser
+    public class SyntaxParser : ISyntaxParser
     {
         private IReadOnlyList<SyntaxToken> tokens;
         private int position;
 
+        private readonly ILogger logger;
+
         private SyntaxToken Current => Peek(0);
         
-        public SyntaxNode Parse(IReadOnlyList<SyntaxToken> tokens)
+        public SyntaxParser(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
+        public SyntaxNode Parse(ImmutableArray<SyntaxToken> tokens)
         {
             this.tokens = tokens;
             position = 0;
@@ -42,7 +50,9 @@ namespace Translator.Core.Syntax
             if (Current.Type == expected)
                 return NextToken();
 
-            return new SyntaxToken(expected, null);
+            logger.Error(Current.Location, Current.Length, $"Expected '{expected}' but was '{Current.Type}'");
+            
+            return new SyntaxToken(expected, null, Current.Location);
         }
 
         private Expression ParseExpression()

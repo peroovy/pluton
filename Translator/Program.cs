@@ -3,9 +3,13 @@ using System.Globalization;
 using Ninject;
 using Ninject.Extensions.Conventions;
 using Translator.Core.Evaluation;
+using Translator.Core.Evaluation.BinaryOperations;
 using Translator.Core.Lexing;
 using Translator.Core.Lexing.TokenParsers;
+using Translator.Core.Logging;
+using Translator.Core.Logging.Handlers;
 using Translator.Core.Syntax;
+using Translator.Core.Text;
 
 namespace Translator
 {
@@ -18,16 +22,28 @@ namespace Translator
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             
             var container = ConfigureContainer();
-            var lexer = container.Get<Lexer>();
-            var syntaxParser = container.Get<SyntaxParser>();
-            var evaluator = container.Get<Evaluator>();
+            
+            var logger = container.Get<ILogger>();
+            var handler = container.Get<ILogHandler>();
+
+            var textParser = container.Get<ITextParser>();
+            var lexer = container.Get<ILexer>();
+            var syntaxParser = container.Get<ISyntaxParser>();
+            var evaluator = container.Get<IEvaluator>();
 
             while (true)
             {
-                var code = Console.ReadLine();
-                var tokens = lexer.Tokenize(code);
+                var lines = textParser.ParseLines(Console.ReadLine());
+                var tokens = lexer.Tokenize(lines);
                 var syntaxNode = syntaxParser.Parse(tokens);
-            
+
+                if (!logger.IsEmpty)
+                {
+                    handler.Handle(logger);
+                    logger.Reset();
+                    continue;
+                }
+                
                 var value = syntaxNode.Accept(evaluator);
                 Console.WriteLine(value);
             }
@@ -37,9 +53,14 @@ namespace Translator
         {
             var container = new StandardKernel();
 
-            container.Bind<Lexer>().ToSelf();
-            container.Bind<SyntaxParser>().ToSelf();
-            container.Bind<Evaluator>().ToSelf();
+            container.Bind<ILogger>().To<Logger>().InSingletonScope();
+            container.Bind<ILogHandler>().To<ConsoleHandler>().InSingletonScope();
+
+            container.Bind<ITextParser>().To<TextParser>().InSingletonScope();
+            container.Bind<ILexer>().To<Lexer>().InSingletonScope();
+            container.Bind<ISyntaxParser>().To<SyntaxParser>().InSingletonScope();
+            container.Bind<IEvaluator>().To<Evaluator>().InSingletonScope();
+            
             container.Bind(conf => conf
                 .From(CoreAssembly)
                 .SelectAllClasses()

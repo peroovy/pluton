@@ -14,6 +14,8 @@
         Star,
         Slash,
         OpenParenthesis,
-        CloseParenthesis
+        CloseParenthesis,
+        
+        EOF
     }
 }
