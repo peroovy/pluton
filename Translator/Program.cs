@@ -36,6 +36,7 @@ namespace Translator
                 var lines = textParser.ParseLines(Console.ReadLine());
                 var tokens = lexer.Tokenize(lines);
                 var syntaxNode = syntaxParser.Parse(tokens);
+                var value = syntaxNode.Accept(evaluator);
 
                 if (!logger.IsEmpty)
                 {
@@ -44,7 +45,6 @@ namespace Translator
                     continue;
                 }
                 
-                var value = syntaxNode.Accept(evaluator);
                 Console.WriteLine(value);
             }
         }

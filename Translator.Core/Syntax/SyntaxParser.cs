@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Translator.Core.Lexing;
@@ -86,6 +87,10 @@ namespace Translator.Core.Syntax
                 case TokenTypes.OpenParenthesis:
                     return ParseParenthesizedExpression();
                 
+                case TokenTypes.TrueKeyword:
+                case TokenTypes.FalseKeyword:
+                    return ParseBooleanExpression();
+
                 default:
                     return ParseNumberExpression();
             }
@@ -102,9 +107,18 @@ namespace Translator.Core.Syntax
 
         private NumberExpression ParseNumberExpression()
         {
-            var number = MatchToken(TokenTypes.Number);
+            var numberToken = MatchToken(TokenTypes.Number);
+            var value = Convert.ToDouble(numberToken.Value);
             
-            return new NumberExpression(number);
+            return new NumberExpression(value);
+        }
+
+        private BooleanExpression ParseBooleanExpression()
+        {
+            var value = Current.Type == TokenTypes.TrueKeyword;
+            var token = value ? MatchToken(TokenTypes.TrueKeyword) : MatchToken(TokenTypes.FalseKeyword);
+
+            return new BooleanExpression(value);
         }
     }
 }

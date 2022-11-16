@@ -9,5 +9,7 @@ namespace Translator.Core.Evaluation
         object Evaluate(BinaryExpression binary);
 
         object Evaluate(NumberExpression number);
+
+        object Evaluate(BooleanExpression boolean);
     }
 }

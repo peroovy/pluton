@@ -2,15 +2,15 @@
 
 namespace Translator.Core.Syntax.AST
 {
-    public class NumberExpression : Expression
+    public class BooleanExpression : Expression
     {
-        public NumberExpression(double value)
+        public BooleanExpression(bool value)
         {
             Value = value;
         }
         
-        public double Value { get; }
-
+        public bool Value { get; }
+        
         public override object Accept(IEvaluator evaluator) => evaluator.Evaluate(this);
     }
 }

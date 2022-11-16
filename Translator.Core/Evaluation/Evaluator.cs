@@ -24,21 +24,23 @@ namespace Translator.Core.Evaluation
             
             var left = binary.Left.Accept(this);
             var right = binary.Right.Accept(this);
-            var operation = binaryOperations.FirstOrDefault(binaryOperation =>
-                binaryOperation.CanEvaluateForOperands(left, binary.OperatorToken.Type, right)
+            var binaryOperation = binaryOperations.FirstOrDefault(operation =>
+                operation.CanEvaluateForOperands(left, binary.OperatorToken.Type, right)
             );
 
-            if (operation is null)
-            {
-                logger.Error(op.Location, op.Length,
-                    $"The binary operation '{op.Value} is not defined for types '{binary.Left.GetType()}' and '{binary.Right.GetType()}'");
+            if (binaryOperation != null) 
+                return binaryOperation.Evaluate(left, right);
+            
+            var leftName = binary.Left.GetType().Name;
+            var rightName = binary.Right.GetType().Name;
+            logger.Error(op.Location, op.Length,
+                $"The binary operator '{op.Value}' is not defined for '{leftName}' and '{rightName}'");
 
-                return right;
-            }
-
-            return operation.Evaluate(left, right);
+            return left;
         }
 
         public object Evaluate(NumberExpression number) => number.Value;
+
+        public object Evaluate(BooleanExpression boolean) => boolean.Value;
     }
 }
