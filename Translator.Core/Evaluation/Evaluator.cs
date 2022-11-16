@@ -5,11 +5,11 @@ namespace Translator.Core.Evaluation
 {
     public class Evaluator : IVisitor<object>
     {
-        private readonly IBinaryOperation[] operations;
+        private readonly IBinaryOperation[] binaryOperations;
 
-        public Evaluator(IBinaryOperation[] operations)
+        public Evaluator(IBinaryOperation[] binaryOperations)
         {
-            this.operations = operations;
+            this.binaryOperations = binaryOperations;
         }
 
         public object Visit(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
@@ -18,7 +18,7 @@ namespace Translator.Core.Evaluation
         {
             var left = binary.Left.Accept(this);
             var right = binary.Right.Accept(this);
-            var op = operations.First(op =>
+            var op = binaryOperations.First(op =>
                 op.CanEvaluateForOperands(left, binary.OperatorToken.Type, right)
             );
 

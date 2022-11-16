@@ -50,7 +50,7 @@
         <Compile Include="Evaluation\BinaryOperations\MultiplicationNumbersOperation.cs" />
         <Compile Include="Evaluation\BinaryOperations\SubtractionNumbersOperation.cs" />
         <Compile Include="Evaluation\Evaluator.cs" />
-        <Compile Include="IVisitor.cs" />
+        <Compile Include="Evaluation\IVisitor.cs" />
         <Compile Include="Lexing\Lexer.cs" />
         <Compile Include="Lexing\SyntaxToken.cs" />
         <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />

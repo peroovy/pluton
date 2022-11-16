@@ -1,6 +1,6 @@
 ﻿using Translator.Core.Syntax.AST;
 
-namespace Translator.Core
+namespace Translator.Core.Evaluation
 {
     public interface IVisitor<out T>
     {
