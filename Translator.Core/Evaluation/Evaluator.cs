@@ -30,11 +30,9 @@ namespace Translator.Core.Evaluation
 
             if (binaryOperation != null) 
                 return binaryOperation.Evaluate(left, right);
-            
-            var leftName = binary.Left.GetType().Name;
-            var rightName = binary.Right.GetType().Name;
+
             logger.Error(op.Location, op.Length,
-                $"The binary operator '{op.Value}' is not defined for '{leftName}' and '{rightName}'");
+                $"The binary operator '{op.Value}' is not defined for '{left.GetType().Name}' and '{right.GetType().Name}' types");
 
             return left;
         }

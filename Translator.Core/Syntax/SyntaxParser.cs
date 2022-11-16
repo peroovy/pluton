@@ -90,9 +90,12 @@ namespace Translator.Core.Syntax
                 case TokenTypes.TrueKeyword:
                 case TokenTypes.FalseKeyword:
                     return ParseBooleanExpression();
+                
+                case TokenTypes.Number:
+                    return ParseNumberExpression();
 
                 default:
-                    return ParseNumberExpression();
+                    throw new InvalidOperationException($"Unparsed token {Current.Type}");
             }
         }
 

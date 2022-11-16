@@ -19,7 +19,9 @@
         Slash,
         OpenParenthesis,
         CloseParenthesis,
-        
+        DoubleAmpersand,
+        DoublePipe,
+
         EOF
     }
 }

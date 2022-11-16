@@ -8,13 +8,19 @@ namespace Translator.Core.Syntax
         {
             switch (type)
             {
-                case TokenTypes.Plus:
-                case TokenTypes.Minus:
-                    return 1;
-
                 case TokenTypes.Star:
                 case TokenTypes.Slash:
-                    return 2;
+                    return 100;
+
+                case TokenTypes.Plus:
+                case TokenTypes.Minus:
+                    return 50;
+                
+                case TokenTypes.DoubleAmpersand:
+                    return 10;
+
+                case TokenTypes.DoublePipe:
+                    return 5;
 
                 default:
                     return null;

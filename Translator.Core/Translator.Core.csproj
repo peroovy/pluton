@@ -64,6 +64,8 @@
         <Compile Include="Evaluation\BinaryOperations\AdditiveNumbersOperation.cs" />
         <Compile Include="Evaluation\BinaryOperations\DivisionNumbersOperation.cs" />
         <Compile Include="Evaluation\BinaryOperations\IBinaryOperation.cs" />
+        <Compile Include="Evaluation\BinaryOperations\Logical\LogicalAndOperation.cs" />
+        <Compile Include="Evaluation\BinaryOperations\Logical\LogicalOrOperation.cs" />
         <Compile Include="Evaluation\BinaryOperations\MultiplicationNumbersOperation.cs" />
         <Compile Include="Evaluation\BinaryOperations\SubtractionNumbersOperation.cs" />
         <Compile Include="Evaluation\Evaluator.cs" />
@@ -72,6 +74,9 @@
         <Compile Include="Lexing\Lexer.cs" />
         <Compile Include="Lexing\TextLocation.cs" />
         <Compile Include="Lexing\SyntaxToken.cs" />
+        <Compile Include="Lexing\TokenParsers\Double\DoubleTerminalParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Double\LogicalAndParser.cs" />
+        <Compile Include="Lexing\TokenParsers\Double\LogicalOrParser.cs" />
         <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />
         <Compile Include="Lexing\TokenParsers\NumberParser.cs" />
         <Compile Include="Lexing\TokenParsers\Single\CloseParenthesisParser.cs" />
