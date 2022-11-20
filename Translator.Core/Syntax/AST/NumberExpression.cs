@@ -11,6 +11,6 @@ namespace Translator.Core.Syntax.AST
         
         public double Value { get; }
 
-        public override object Accept(IExecutor executor) => executor.Execute(this);
+        public override Object Accept(IExecutor executor) => executor.Execute(this);
     }
 }

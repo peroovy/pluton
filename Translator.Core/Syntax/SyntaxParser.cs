@@ -58,7 +58,19 @@ namespace Translator.Core.Syntax
 
         private Expression ParseExpression()
         {
+            if (Current.Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.Equals)
+                return ParseAssignmentExpression();
+            
             return ParseBinaryExpression();
+        }
+
+        private AssignmentExpression ParseAssignmentExpression()
+        {
+            var variable = MatchToken(TokenTypes.Identifier);
+            var equals = MatchToken(TokenTypes.Equals);
+            var expression = ParseExpression();
+
+            return new AssignmentExpression(variable, equals, expression);
         }
 
         private Expression ParseBinaryExpression(int parentPrecedence = 0)
@@ -93,9 +105,9 @@ namespace Translator.Core.Syntax
                 
                 case TokenTypes.Number:
                     return ParseNumberExpression();
-
+                
                 default:
-                    throw new InvalidOperationException($"Unparsed token {Current.Type}");
+                    return ParseVariableExpression();
             }
         }
 
@@ -122,6 +134,13 @@ namespace Translator.Core.Syntax
             var token = value ? MatchToken(TokenTypes.TrueKeyword) : MatchToken(TokenTypes.FalseKeyword);
 
             return new BooleanExpression(value);
+        }
+
+        private VariableExpression ParseVariableExpression()
+        {
+            var name = MatchToken(TokenTypes.Identifier);
+
+            return new VariableExpression(name);
         }
     }
 }

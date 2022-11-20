@@ -21,6 +21,7 @@
         CloseParenthesis,
         DoubleAmpersand,
         DoublePipe,
+        Equals,
 
         EOF
     }

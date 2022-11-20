@@ -4,11 +4,11 @@ namespace Translator.Core.Execution.BinaryOperations.Logical
 {
     public class LogicalOrOperation : IBinaryOperation
     {
-        public bool CanEvaluateForOperands(object left, TokenTypes operatorType, object right)
+        public bool IsEvaluatedFor(Object left, TokenTypes operatorType, Object right)
         {
-            return left is bool && operatorType == TokenTypes.DoublePipe && right is bool;
+            return left.Type == typeof(bool) && operatorType == TokenTypes.DoublePipe && right.Type == typeof(bool);
         }
 
-        public object Evaluate(object left, object right) => (bool)left || (bool)right;
+        public Object Evaluate(Object left, Object right) => new Object((bool)left.Value && (bool)right.Value);
     }
 }

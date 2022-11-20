@@ -4,11 +4,11 @@ namespace Translator.Core.Execution.BinaryOperations
 {
     public class SubtractionNumbersOperation : IBinaryOperation
     {
-        public bool CanEvaluateForOperands(object left, TokenTypes operatorType, object right)
+        public bool IsEvaluatedFor(Object left, TokenTypes operatorType, Object right)
         {
-            return left is double && operatorType == TokenTypes.Minus && right is double;
+            return left.Type == typeof(double) && operatorType == TokenTypes.Minus && right.Type == typeof(double);
         }
 
-        public object Evaluate(object left, object right) => (double)left - (double)right;
+        public Object Evaluate(Object left, Object right) => new Object((double)left.Value - (double)right.Value);
     }
 }

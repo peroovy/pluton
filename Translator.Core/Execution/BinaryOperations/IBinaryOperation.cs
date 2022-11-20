@@ -4,8 +4,8 @@ namespace Translator.Core.Execution.BinaryOperations
 {
     public interface IBinaryOperation
     {
-        bool CanEvaluateForOperands(object left, TokenTypes operatorType, object right);
+        bool IsEvaluatedFor(Object left, TokenTypes operatorType, Object right);
         
-        object Evaluate(object left, object right);
+        Object Evaluate(Object left, Object right);
     }
 }

@@ -4,6 +4,6 @@ namespace Translator.Core.Syntax.AST
 {
     public abstract class SyntaxNode
     {
-        public abstract object Accept(IExecutor executor);
+        public abstract Object Accept(IExecutor executor);
     }
 }

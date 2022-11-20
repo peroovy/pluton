@@ -1,16 +1,17 @@
 ﻿using Translator.Core.Execution;
+using Translator.Core.Lexing;
 
 namespace Translator.Core.Syntax.AST
 {
-    public class BooleanExpression : Expression
+    public class VariableExpression : Expression
     {
-        public BooleanExpression(bool value)
+        public VariableExpression(SyntaxToken name)
         {
-            Value = value;
+            Name = name;
         }
         
-        public bool Value { get; }
-        
+        public SyntaxToken Name { get; }
+
         public override Object Accept(IExecutor executor) => executor.Execute(this);
     }
 }

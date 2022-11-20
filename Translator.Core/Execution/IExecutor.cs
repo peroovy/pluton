@@ -4,12 +4,16 @@ namespace Translator.Core.Execution
 {
     public interface IExecutor
     {
-        object Execute(ParenthesizedExpression expression);
+        Object Execute(AssignmentExpression assignment);
+            
+        Object Execute(ParenthesizedExpression expression);
         
-        object Execute(BinaryExpression binary);
+        Object Execute(BinaryExpression binary);
 
-        object Execute(NumberExpression number);
+        Object Execute(NumberExpression number);
 
-        object Execute(BooleanExpression boolean);
+        Object Execute(BooleanExpression boolean);
+
+        Object Execute(VariableExpression variable);
     }
 }

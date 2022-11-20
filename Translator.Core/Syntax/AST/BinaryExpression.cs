@@ -18,6 +18,6 @@ namespace Translator.Core.Syntax.AST
         
         public Expression Right { get; }
 
-        public override object Accept(IExecutor executor) => executor.Execute(this);
+        public override Object Accept(IExecutor executor) => executor.Execute(this);
     }
 }

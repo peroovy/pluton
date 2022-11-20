@@ -36,16 +36,16 @@ namespace Translator
                 var lines = textParser.ParseLines(Console.ReadLine());
                 var tokens = lexer.Tokenize(lines);
                 var syntaxNode = syntaxParser.Parse(tokens);
-                var value = syntaxNode.Accept(evaluator);
 
-                if (!logger.IsEmpty)
+                if (logger.IsEmpty)
                 {
-                    handler.Handle(logger);
-                    logger.Reset();
-                    continue;
+                    var value = syntaxNode.Accept(evaluator);
+                    
+                    Console.WriteLine(value);
                 }
                 
-                Console.WriteLine(value);
+                handler.Handle(logger);
+                logger.Reset();
             }
         }
 
