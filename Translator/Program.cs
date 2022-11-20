@@ -33,6 +33,7 @@ namespace Translator
 
             while (true)
             {
+                Console.Write(">> ");
                 var lines = textParser.ParseLines(Console.ReadLine());
                 var tokens = lexer.Tokenize(lines);
                 var syntaxNode = syntaxParser.Parse(tokens);
@@ -40,8 +41,10 @@ namespace Translator
                 if (logger.IsEmpty)
                 {
                     var value = syntaxNode.Accept(evaluator);
-                    
+
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine(value);
+                    Console.ResetColor();
                 }
                 
                 handler.Handle(logger);
