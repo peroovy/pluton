@@ -1,4 +1,4 @@
-﻿using Translator.Core.Evaluation;
+﻿using Translator.Core.Execution;
 
 namespace Translator.Core.Syntax.AST
 {
@@ -11,6 +11,6 @@ namespace Translator.Core.Syntax.AST
         
         public bool Value { get; }
         
-        public override object Accept(IEvaluator evaluator) => evaluator.Evaluate(this);
+        public override object Accept(IExecutor executor) => executor.Execute(this);
     }
 }

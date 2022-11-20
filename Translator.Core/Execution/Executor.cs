@@ -1,24 +1,24 @@
 ﻿using System.Linq;
-using Translator.Core.Evaluation.BinaryOperations;
+using Translator.Core.Execution.BinaryOperations;
 using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
 
-namespace Translator.Core.Evaluation
+namespace Translator.Core.Execution
 {
-    public class Evaluator : IEvaluator
+    public class Executor : IExecutor
     {
         private readonly IBinaryOperation[] binaryOperations;
         private readonly ILogger logger;
 
-        public Evaluator(IBinaryOperation[] binaryOperations, ILogger logger)
+        public Executor(IBinaryOperation[] binaryOperations, ILogger logger)
         {
             this.binaryOperations = binaryOperations;
             this.logger = logger;
         }
 
-        public object Evaluate(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
+        public object Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
 
-        public object Evaluate(BinaryExpression binary)
+        public object Execute(BinaryExpression binary)
         {
             var op = binary.OperatorToken;
             
@@ -37,8 +37,8 @@ namespace Translator.Core.Evaluation
             return left;
         }
 
-        public object Evaluate(NumberExpression number) => number.Value;
+        public object Execute(NumberExpression number) => number.Value;
 
-        public object Evaluate(BooleanExpression boolean) => boolean.Value;
+        public object Execute(BooleanExpression boolean) => boolean.Value;
     }
 }

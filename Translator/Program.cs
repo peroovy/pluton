@@ -2,8 +2,8 @@
 using System.Globalization;
 using Ninject;
 using Ninject.Extensions.Conventions;
-using Translator.Core.Evaluation;
-using Translator.Core.Evaluation.BinaryOperations;
+using Translator.Core.Execution;
+using Translator.Core.Execution.BinaryOperations;
 using Translator.Core.Lexing;
 using Translator.Core.Lexing.TokenParsers;
 using Translator.Core.Logging;
@@ -29,7 +29,7 @@ namespace Translator
             var textParser = container.Get<ITextParser>();
             var lexer = container.Get<ILexer>();
             var syntaxParser = container.Get<ISyntaxParser>();
-            var evaluator = container.Get<IEvaluator>();
+            var evaluator = container.Get<IExecutor>();
 
             while (true)
             {
@@ -59,7 +59,7 @@ namespace Translator
             container.Bind<ITextParser>().To<TextParser>().InSingletonScope();
             container.Bind<ILexer>().To<Lexer>().InSingletonScope();
             container.Bind<ISyntaxParser>().To<SyntaxParser>().InSingletonScope();
-            container.Bind<IEvaluator>().To<Evaluator>().InSingletonScope();
+            container.Bind<IExecutor>().To<Executor>().InSingletonScope();
             
             container.Bind(conf => conf
                 .From(CoreAssembly)

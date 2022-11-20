@@ -61,15 +61,15 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Evaluation\BinaryOperations\AdditiveNumbersOperation.cs" />
-        <Compile Include="Evaluation\BinaryOperations\DivisionNumbersOperation.cs" />
-        <Compile Include="Evaluation\BinaryOperations\IBinaryOperation.cs" />
-        <Compile Include="Evaluation\BinaryOperations\Logical\LogicalAndOperation.cs" />
-        <Compile Include="Evaluation\BinaryOperations\Logical\LogicalOrOperation.cs" />
-        <Compile Include="Evaluation\BinaryOperations\MultiplicationNumbersOperation.cs" />
-        <Compile Include="Evaluation\BinaryOperations\SubtractionNumbersOperation.cs" />
-        <Compile Include="Evaluation\Evaluator.cs" />
-        <Compile Include="Evaluation\IEvaluator.cs" />
+        <Compile Include="Execution\BinaryOperations\AdditiveNumbersOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\DivisionNumbersOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\IBinaryOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\Logical\LogicalAndOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\Logical\LogicalOrOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\MultiplicationNumbersOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\SubtractionNumbersOperation.cs" />
+        <Compile Include="Execution\Executor.cs" />
+        <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Lexing\ILexer.cs" />
         <Compile Include="Lexing\Lexer.cs" />
         <Compile Include="Lexing\TextLocation.cs" />

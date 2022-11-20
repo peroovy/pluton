@@ -1,6 +1,6 @@
 ﻿using Translator.Core.Lexing;
 
-namespace Translator.Core.Evaluation.BinaryOperations
+namespace Translator.Core.Execution.BinaryOperations
 {
     public class AdditiveNumbersOperation : IBinaryOperation
     {

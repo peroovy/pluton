@@ -1,4 +1,4 @@
-﻿using Translator.Core.Evaluation;
+﻿using Translator.Core.Execution;
 using Translator.Core.Lexing;
 
 namespace Translator.Core.Syntax.AST
@@ -18,6 +18,6 @@ namespace Translator.Core.Syntax.AST
         
         public Expression Right { get; }
 
-        public override object Accept(IEvaluator evaluator) => evaluator.Evaluate(this);
+        public override object Accept(IExecutor executor) => executor.Execute(this);
     }
 }
