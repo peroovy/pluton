@@ -53,7 +53,7 @@ namespace Translator.Core.Lexing
                 new TextLocation(line, position)
             );
                         
-            logger.Error(unknown.Location, unknown.Length, $"Unknown token: '{unknown.Value}'");
+            logger.Error(unknown.Location, unknown.Length, $"Unknown token: '{unknown.Text}'");
 
             return unknown;
         }

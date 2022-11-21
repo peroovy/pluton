@@ -137,7 +137,7 @@ namespace Translator.Core.Syntax
         private NumberExpression ParseNumberExpression()
         {
             var numberToken = MatchToken(TokenTypes.Number);
-            var value = Convert.ToDouble(numberToken.Value);
+            var value = Convert.ToDouble(numberToken.Text);
             
             return new NumberExpression(value);
         }

@@ -29,7 +29,7 @@ namespace Translator.Core.Execution
             if (value is Undefined)
                 return value;
 
-            return variables[assignment.Variable.Value] = value;
+            return variables[assignment.Variable.Text] = value;
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
@@ -47,7 +47,7 @@ namespace Translator.Core.Execution
             if (operation is null)
             {
                 logger.Error(opToken.Location, opToken.Length,
-                    $"The binary operator '{opToken.Value}' is not defined for '{left.Type}' and '{right.Type}' types");
+                    $"The binary operator '{opToken.Text}' is not defined for '{left.Type}' and '{right.Type}' types");
 
             }
             
@@ -60,11 +60,11 @@ namespace Translator.Core.Execution
         
         public Obj Execute(VariableExpression variable)
         {
-            if (variables.TryGetValue(variable.Name.Value, out var value))
+            if (variables.TryGetValue(variable.Name.Text, out var value))
                 return value;
 
             var nameToken = variable.Name;
-            logger.Error(nameToken.Location, nameToken.Length,$"Undeclared variable '{nameToken.Value}'");
+            logger.Error(nameToken.Location, nameToken.Length,$"Undeclared variable '{nameToken.Text}'");
 
             return new Undefined();
         }

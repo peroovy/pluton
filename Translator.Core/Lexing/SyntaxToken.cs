@@ -2,21 +2,21 @@
 {
     public class SyntaxToken
     {
-        public SyntaxToken(TokenTypes type, string value, TextLocation location)
+        public SyntaxToken(TokenTypes type, string text, TextLocation location)
         {
             Type = type;
-            Value = value;
+            Text = text;
             Location = location;
         }
         
         public TokenTypes Type { get; }
         
-        public string Value { get; }
+        public string Text { get; }
         
         public TextLocation Location { get; }
 
-        public int Length => Value.Length;
+        public int Length => Text.Length;
 
-        public override string ToString() => $"{Type}: {Value}";
+        public override string ToString() => $"{Type}: {Text}";
     }
 }
