@@ -1,9 +1,10 @@
 ﻿using Translator.Core.Execution;
+using Translator.Core.Execution.Objects;
 
 namespace Translator.Core.Syntax.AST
 {
     public abstract class SyntaxNode
     {
-        public abstract Object Accept(IExecutor executor);
+        public abstract Obj Accept(IExecutor executor);
     }
 }

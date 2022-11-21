@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Translator.Core.Logging.Handlers
+﻿namespace Translator.Core.Logging.Handlers
 {
     public interface ILogHandler
     {

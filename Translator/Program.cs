@@ -73,8 +73,8 @@ namespace Translator
             container.Bind(conf => conf
                 .From(CoreAssembly)
                 .SelectAllClasses()
-                .InheritedFrom<IBinaryOperation>()
-                .BindAllInterfaces());
+                .InheritedFrom<BinaryOperation>()
+                .BindBase());
 
             return container;
         }        

@@ -1,4 +1,5 @@
 ﻿using Translator.Core.Execution;
+using Translator.Core.Execution.Objects;
 using Translator.Core.Lexing;
 using Translator.Core.Syntax.AST.Expressions;
 
@@ -17,6 +18,6 @@ namespace Translator.Core.Syntax.AST
         
         public SyntaxToken ClosingToken { get; }
 
-        public override Object Accept(IExecutor executor) => executor.Execute(this);
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

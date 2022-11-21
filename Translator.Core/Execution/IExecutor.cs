@@ -1,22 +1,23 @@
-﻿using Translator.Core.Syntax.AST;
+﻿using Translator.Core.Execution.Objects;
+using Translator.Core.Syntax.AST;
 using Translator.Core.Syntax.AST.Expressions;
 
 namespace Translator.Core.Execution
 {
     public interface IExecutor
     {
-        Object Execute(ExpressionStatement statement);
+        Obj Execute(ExpressionStatement statement);
         
-        Object Execute(AssignmentExpression assignment);
+        Obj Execute(AssignmentExpression assignment);
             
-        Object Execute(ParenthesizedExpression expression);
+        Obj Execute(ParenthesizedExpression expression);
         
-        Object Execute(BinaryExpression binary);
+        Obj Execute(BinaryExpression binary);
 
-        Object Execute(NumberExpression number);
+        Obj Execute(NumberExpression number);
 
-        Object Execute(BooleanExpression boolean);
+        Obj Execute(BooleanExpression boolean);
 
-        Object Execute(VariableExpression variable);
+        Obj Execute(VariableExpression variable);
     }
 }

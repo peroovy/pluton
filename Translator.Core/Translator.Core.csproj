@@ -12,7 +12,7 @@
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-        <LangVersion>8</LangVersion>
+        <LangVersion>9</LangVersion>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -61,16 +61,20 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Execution\BinaryOperations\AdditiveNumbersOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\DivisionNumbersOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\IBinaryOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\Logical\LogicalAndOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\Logical\LogicalOrOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\MultiplicationNumbersOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\SubtractionNumbersOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\AdditiveOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\DivisionOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\BinaryOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\LogicalAndOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\LogicalOrOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\MultiplicationOperation.cs" />
+        <Compile Include="Execution\BinaryOperations\SubtractionOperation.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
-        <Compile Include="Execution\Object.cs" />
+        <Compile Include="Execution\Objects\Boolean.cs" />
+        <Compile Include="Execution\Objects\Number.cs" />
+        <Compile Include="Execution\Objects\Obj.cs" />
+        <Compile Include="Execution\Objects\ObjectTypes.cs" />
+        <Compile Include="Execution\Objects\Undefined.cs" />
         <Compile Include="Lexing\ILexer.cs" />
         <Compile Include="Lexing\Lexer.cs" />
         <Compile Include="Lexing\TextLocation.cs" />
