@@ -24,7 +24,12 @@ namespace Translator.Core.Execution
 
         public Obj Execute(AssignmentExpression assignment)
         {
-            return variables[assignment.Variable.Value] = assignment.Expression.Accept(this);
+            var value = assignment.Expression.Accept(this);
+
+            if (value is Undefined)
+                return value;
+
+            return variables[assignment.Variable.Value] = value;
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
