@@ -1,12 +1,11 @@
 ﻿using System.Text.RegularExpressions;
-using Translator.Core.Logging;
 using Translator.Core.Text;
 
 namespace Translator.Core.Lexing.TokenParsers.Words
 {
     public class WordParser : ITokenParser
     {
-        private readonly Regex regex = new Regex(@"_*([A-z]|[А-я]|[0-9])*");
+        private readonly Regex regex = new(@"_*([A-z]|[А-я]|[0-9])*");
         
         public bool CanParseFrom(Line line, int position)
         {

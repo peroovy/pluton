@@ -1,6 +1,6 @@
 ﻿using Translator.Core.Text;
 
-namespace Translator.Core.Logging
+namespace Translator.Core.Lexing
 {
     public struct TextLocation
     {

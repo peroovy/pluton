@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
-using Translator.Core.Logging;
 using Translator.Core.Text;
 
 namespace Translator.Core.Lexing.TokenParsers
 {
     public class DoubleTerminalsParser : ITokenParser
     {
-        private readonly Dictionary<string, TokenTypes> terminalsTypes =
-            new Dictionary<string, TokenTypes>
-            {
-                ["&&"] = TokenTypes.DoubleAmpersand,
-                ["||"] = TokenTypes.DoublePipe
-            };
+        private readonly Dictionary<string, TokenTypes> terminalsTypes = new()
+        {
+            ["&&"] = TokenTypes.DoubleAmpersand,
+            ["||"] = TokenTypes.DoublePipe
+        };
 
         public bool CanParseFrom(Line line, int position)
         {

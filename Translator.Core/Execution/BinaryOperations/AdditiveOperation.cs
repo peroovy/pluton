@@ -1,6 +1,4 @@
-﻿using System;
-using Translator.Core.Execution.Objects;
-using Translator.Core.Lexing;
+﻿using Translator.Core.Lexing;
 
 namespace Translator.Core.Execution.BinaryOperations
 {

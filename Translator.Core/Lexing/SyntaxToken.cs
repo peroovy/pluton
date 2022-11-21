@@ -1,7 +1,4 @@
-﻿using Translator.Core.Logging;
-using Translator.Core.Text;
-
-namespace Translator.Core.Lexing
+﻿namespace Translator.Core.Lexing
 {
     public class SyntaxToken
     {
@@ -14,8 +11,6 @@ namespace Translator.Core.Lexing
         
         public TokenTypes Type { get; }
         
-        public Line Line { get; }
-
         public string Value { get; }
         
         public TextLocation Location { get; }

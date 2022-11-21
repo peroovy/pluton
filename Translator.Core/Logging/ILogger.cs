@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using Translator.Core.Lexing;
 
 namespace Translator.Core.Logging
 {
     public interface ILogger
     {
-        IEnumerable<Log> Bucket { get; }
+        ImmutableArray<Log> Bucket { get; }
         
         bool IsEmpty { get; }
         

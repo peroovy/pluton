@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using Translator.Core.Logging;
 using Translator.Core.Text;
 
 namespace Translator.Core.Lexing.TokenParsers
 {
     public class SingleTerminalsParser : ITokenParser
     {
-        private readonly Dictionary<char, TokenTypes> terminalsTypes = new Dictionary<char, TokenTypes>
+        private readonly Dictionary<char, TokenTypes> terminalsTypes = new()
         {
             ['+'] = TokenTypes.Plus,
             ['-'] = TokenTypes.Minus,

@@ -23,9 +23,9 @@ namespace Translator.Core.Syntax
             this.logger = logger;
         }
 
-        public SyntaxNode Parse(ImmutableArray<SyntaxToken> tokens)
+        public SyntaxNode Parse(ImmutableArray<SyntaxToken> syntaxTokens)
         {
-            this.tokens = tokens;
+            tokens = syntaxTokens;
             position = 0;
 
             return ParseStatement();
@@ -145,7 +145,7 @@ namespace Translator.Core.Syntax
         private BooleanExpression ParseBooleanExpression()
         {
             var value = Current.Type == TokenTypes.TrueKeyword;
-            var token = value ? MatchToken(TokenTypes.TrueKeyword) : MatchToken(TokenTypes.FalseKeyword);
+            _ = value ? MatchToken(TokenTypes.TrueKeyword) : MatchToken(TokenTypes.FalseKeyword);
 
             return new BooleanExpression(value);
         }

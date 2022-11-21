@@ -1,5 +1,4 @@
-﻿using Translator.Core.Logging;
-using Translator.Core.Text;
+﻿using Translator.Core.Text;
 
 namespace Translator.Core.Lexing.TokenParsers
 {

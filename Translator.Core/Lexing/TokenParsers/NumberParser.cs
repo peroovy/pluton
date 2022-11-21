@@ -1,12 +1,11 @@
 ﻿using System.Text.RegularExpressions;
-using Translator.Core.Logging;
 using Translator.Core.Text;
 
 namespace Translator.Core.Lexing.TokenParsers
 {
     public class NumberParser : ITokenParser
     {
-        private readonly Regex regex = new Regex(@"([0-9]*[.])?[0-9]+");
+        private readonly Regex regex = new(@"([0-9]*[.])?[0-9]+");
         
         public bool CanParseFrom(Line line, int position)
         {

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Text;
+using System.Collections.Immutable;
+using Translator.Core.Lexing;
 
 namespace Translator.Core.Logging
 {
     public class Logger : ILogger
     {
-        private readonly List<Log> bucket = new List<Log>();
+        private readonly List<Log> bucket = new();
 
-        public IEnumerable<Log> Bucket => bucket.AsReadOnly();
+        public ImmutableArray<Log> Bucket => bucket.ToImmutableArray();
 
         public bool IsEmpty => bucket.Count == 0;
 

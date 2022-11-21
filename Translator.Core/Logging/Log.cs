@@ -1,4 +1,6 @@
-﻿namespace Translator.Core.Logging
+﻿using Translator.Core.Lexing;
+
+namespace Translator.Core.Logging
 {
     public class Log
     {
