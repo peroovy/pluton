@@ -61,13 +61,6 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Execution\BinaryOperations\AdditiveOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\DivisionOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\BinaryOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\LogicalAndOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\LogicalOrOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\MultiplicationOperation.cs" />
-        <Compile Include="Execution\BinaryOperations\SubtractionOperation.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Execution\Objects\Boolean.cs" />
@@ -75,6 +68,14 @@
         <Compile Include="Execution\Objects\Obj.cs" />
         <Compile Include="Execution\Objects\ObjectTypes.cs" />
         <Compile Include="Execution\Objects\Undefined.cs" />
+        <Compile Include="Execution\Operation\Binary\AdditiveOperation.cs" />
+        <Compile Include="Execution\Operation\Binary\BinaryOperation.cs" />
+        <Compile Include="Execution\Operation\Binary\DivisionOperation.cs" />
+        <Compile Include="Execution\Operation\Binary\LogicalAndOperation.cs" />
+        <Compile Include="Execution\Operation\Binary\LogicalOrOperation.cs" />
+        <Compile Include="Execution\Operation\Binary\MultiplicationOperation.cs" />
+        <Compile Include="Execution\Operation\Binary\SubtractionOperation.cs" />
+        <Compile Include="Execution\Operation\OperationMethod.cs" />
         <Compile Include="Lexing\ILexer.cs" />
         <Compile Include="Lexing\Lexer.cs" />
         <Compile Include="Lexing\TextLocation.cs" />

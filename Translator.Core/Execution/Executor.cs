@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Translator.Core.Execution.BinaryOperations;
 using Translator.Core.Execution.Objects;
+using Translator.Core.Execution.Operation.Binary;
 using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
 using Translator.Core.Syntax.AST.Expressions;
@@ -40,18 +40,18 @@ namespace Translator.Core.Execution
             
             var left = binary.Left.Accept(this);
             var right = binary.Right.Accept(this);
-            var operation = binaryOperations
+            var method = binaryOperations
                 .First(op => op.IsOperator(opToken.Type))
                 .GetMethod(left, right);
 
-            if (operation is null)
+            if (method.IsUnknown)
             {
                 logger.Error(opToken.Location, opToken.Length,
                     $"The binary operator '{opToken.Text}' is not defined for '{left.Type}' and '{right.Type}' types");
 
             }
             
-            return BinaryOperation.Evaluate(operation, left, right);
+            return method.Invoke(left, right);
         }
 
         public Obj Execute(NumberExpression number) => new Number(number.Value);
