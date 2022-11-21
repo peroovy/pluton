@@ -12,7 +12,8 @@
 
         LineSeparator,
         Space,
-        
+        Semicolon,
+
         Plus,
         Minus,
         Star,
@@ -23,6 +24,6 @@
         DoublePipe,
         Equals,
 
-        EOF
+        Eof
     }
 }

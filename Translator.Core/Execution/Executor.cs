@@ -3,6 +3,7 @@ using System.Linq;
 using Translator.Core.Execution.BinaryOperations;
 using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
+using Translator.Core.Syntax.AST.Expressions;
 
 namespace Translator.Core.Execution
 {
@@ -17,6 +18,8 @@ namespace Translator.Core.Execution
             this.binaryOperations = binaryOperations;
             this.logger = logger;
         }
+
+        public Object Execute(ExpressionStatement statement) => statement.Expression.Accept(this);
 
         public Object Execute(AssignmentExpression assignment)
         {

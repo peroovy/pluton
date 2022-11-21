@@ -2,7 +2,7 @@
 {
     public class EofParser : SingleTerminalParser
     {
-        public EofParser() : base(TokenTypes.EOF, '\0')
+        public EofParser() : base(TokenTypes.Eof, '\0')
         {
         }
     }

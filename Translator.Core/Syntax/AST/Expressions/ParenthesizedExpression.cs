@@ -1,7 +1,7 @@
 ﻿using Translator.Core.Execution;
 using Translator.Core.Lexing;
 
-namespace Translator.Core.Syntax.AST
+namespace Translator.Core.Syntax.AST.Expressions
 {
     public class ParenthesizedExpression : Expression
     {

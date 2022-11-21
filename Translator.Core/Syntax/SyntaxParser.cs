@@ -5,6 +5,7 @@ using System.Linq;
 using Translator.Core.Lexing;
 using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
+using Translator.Core.Syntax.AST.Expressions;
 
 namespace Translator.Core.Syntax
 {
@@ -27,7 +28,7 @@ namespace Translator.Core.Syntax
             this.tokens = tokens;
             position = 0;
 
-            return ParseExpression();
+            return ParseStatement();
         }
         
         private SyntaxToken Peek(int offset)
@@ -54,6 +55,19 @@ namespace Translator.Core.Syntax
             logger.Error(Current.Location, Current.Length, $"Expected '{expected}' but was '{Current.Type}'");
             
             return new SyntaxToken(expected, null, Current.Location);
+        }
+
+        private Statement ParseStatement()
+        {
+            return ParseExpressionStatement();
+        }
+
+        private ExpressionStatement ParseExpressionStatement()
+        {
+            var expression = ParseExpression();
+            var semicolon = MatchToken(TokenTypes.Semicolon);
+
+            return new ExpressionStatement(expression, semicolon);
         }
 
         private Expression ParseExpression()
