@@ -12,7 +12,7 @@ namespace Translator.Core.Execution
     {
         private readonly BinaryOperation[] binaryOperations;
         private readonly ILogger logger;
-        private readonly Dictionary<string, Obj> variables = new();
+        private readonly Scope scope = new(null);
 
         public Executor(BinaryOperation[] binaryOperations, ILogger logger)
         {
@@ -24,12 +24,23 @@ namespace Translator.Core.Execution
 
         public Obj Execute(AssignmentExpression assignment)
         {
+            var name = assignment.Variable.Text;
             var value = assignment.Expression.Accept(this);
 
             if (value is Undefined)
                 return value;
 
-            return variables[assignment.Variable.Text] = value;
+            var currentScope = scope;
+            do
+            {
+                if (currentScope.Contains(name))
+                    return currentScope.Assign(name, value);
+
+                currentScope = currentScope.Parent;
+            } 
+            while (currentScope is not null);
+
+            return scope.Assign(name, value);
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
@@ -60,11 +71,11 @@ namespace Translator.Core.Execution
         
         public Obj Execute(VariableExpression variable)
         {
-            if (variables.TryGetValue(variable.Name.Text, out var value))
+            if (scope.TryLookup(variable.Name.Text, out var value))
                 return value;
 
             var nameToken = variable.Name;
-            logger.Error(nameToken.Location, nameToken.Length,$"Undeclared variable '{nameToken.Text}'");
+            logger.Error(nameToken.Location, nameToken.Length,$"Variable '{nameToken.Text}' does not exist");
 
             return new Undefined();
         }
