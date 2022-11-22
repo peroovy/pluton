@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Translator.Core.Execution.Objects;
 using Translator.Core.Execution.Operation.Binary;
 using Translator.Core.Logging;
@@ -12,7 +11,8 @@ namespace Translator.Core.Execution
     {
         private readonly BinaryOperation[] binaryOperations;
         private readonly ILogger logger;
-        private readonly Scope scope = new(null);
+        
+        private Scope currentScope = new(null);
 
         public Executor(BinaryOperation[] binaryOperations, ILogger logger)
         {
@@ -20,7 +20,25 @@ namespace Translator.Core.Execution
             this.logger = logger;
         }
 
-        public Obj Execute(ExpressionStatement statement) => statement.Expression.Accept(this);
+        public Obj Execute(BlockStatement block)
+        {
+            var parentScope = currentScope;
+            currentScope = new Scope(parentScope);
+            
+            foreach (var statement in block.Statements)
+                statement.Accept(this);
+
+            currentScope = parentScope;
+
+            return null;
+        }
+
+        public Obj Execute(ExpressionStatement statement)
+        {
+            // return null;
+            // TODO: temp
+            return statement.Expression.Accept(this);
+        }
 
         public Obj Execute(AssignmentExpression assignment)
         {
@@ -30,17 +48,17 @@ namespace Translator.Core.Execution
             if (value is Undefined)
                 return value;
 
-            var currentScope = scope;
+            var current = currentScope;
             do
             {
-                if (currentScope.Contains(name))
-                    return currentScope.Assign(name, value);
+                if (current.Contains(name))
+                    return current.Assign(name, value);
 
-                currentScope = currentScope.Parent;
+                current = current.Parent;
             } 
-            while (currentScope is not null);
+            while (current is not null);
 
-            return scope.Assign(name, value);
+            return this.currentScope.Assign(name, value);
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
@@ -71,7 +89,7 @@ namespace Translator.Core.Execution
         
         public Obj Execute(VariableExpression variable)
         {
-            if (scope.TryLookup(variable.Name.Text, out var value))
+            if (currentScope.TryLookup(variable.Name.Text, out var value))
                 return value;
 
             var nameToken = variable.Name;

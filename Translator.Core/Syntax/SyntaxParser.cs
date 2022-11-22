@@ -59,7 +59,31 @@ namespace Translator.Core.Syntax
 
         private Statement ParseStatement()
         {
-            return ParseExpressionStatement();
+            switch (Current.Type)
+            {
+                case TokenTypes.OpenBrace:
+                    return ParseBlockStatement();
+                
+                default:
+                    return ParseExpressionStatement();
+            }
+        }
+
+        private BlockStatement ParseBlockStatement()
+        {
+            var openBrace = MatchToken(TokenTypes.OpenBrace);
+
+            var statements = ImmutableArray.CreateBuilder<Statement>();
+            while (Current.Type != TokenTypes.CloseBrace && Current.Type != TokenTypes.Eof)
+            {
+                var statement = ParseStatement();
+                
+                statements.Add(statement);
+            }
+
+            var closeBrace = MatchToken(TokenTypes.CloseBrace);
+
+            return new BlockStatement(openBrace, statements.ToImmutable(), closeBrace);
         }
 
         private ExpressionStatement ParseExpressionStatement()

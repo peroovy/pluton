@@ -6,6 +6,8 @@ namespace Translator.Core.Execution
 {
     public interface IExecutor
     {
+        Obj Execute(BlockStatement block);
+        
         Obj Execute(ExpressionStatement statement);
         
         Obj Execute(AssignmentExpression assignment);

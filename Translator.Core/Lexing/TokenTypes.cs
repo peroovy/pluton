@@ -24,6 +24,8 @@
         DoublePipe,
         Equals,
 
-        Eof
+        Eof,
+        OpenBrace,
+        CloseBrace
     }
 }
