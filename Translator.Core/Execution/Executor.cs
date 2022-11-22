@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using Translator.Core.Execution.Objects;
-using Translator.Core.Execution.Operation.Binary;
+using Translator.Core.Execution.Operations.Binary;
+using Translator.Core.Lexing;
 using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
 using Translator.Core.Syntax.AST.Expressions;
+using Boolean = Translator.Core.Execution.Objects.Boolean;
 
 namespace Translator.Core.Execution
 {
@@ -18,6 +20,38 @@ namespace Translator.Core.Execution
         {
             this.binaryOperations = binaryOperations;
             this.logger = logger;
+        }
+
+        public Obj Execute(IfStatement statement)
+        {
+            if (statement.Condition.Accept(this) is not Boolean condition)
+            {
+                var open = statement.OpenParenthesis;
+                var close = statement.CloseParenthesis;
+                var location = new TextLocation(open.Location.Line, open.Location.Position + 1);
+                logger.Error(location, close.Location.Position - open.Location.Position - 1,
+                    $"Type of the condition is not '{ObjectTypes.Boolean}'");
+
+                return null;
+            }
+
+            if (condition.IsTrue)
+            {
+                statement.Statement.Accept(this);
+            }
+            else
+            {
+                statement.ElseClause?.Accept(this);
+            }
+
+            return null;
+        }
+
+        public Obj Execute(ElseClause clause)
+        {
+            clause.Statement.Accept(this);
+            
+            return null;
         }
 
         public Obj Execute(BlockStatement block)

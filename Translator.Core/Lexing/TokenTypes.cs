@@ -9,6 +9,8 @@
         
         TrueKeyword,
         FalseKeyword,
+        IfKeyword,
+        ElseKeyword,
 
         LineSeparator,
         Space,
@@ -20,12 +22,12 @@
         Slash,
         OpenParenthesis,
         CloseParenthesis,
+        OpenBrace,
+        CloseBrace,
         DoubleAmpersand,
         DoublePipe,
         Equals,
 
-        Eof,
-        OpenBrace,
-        CloseBrace
+        Eof
     }
 }

@@ -3,7 +3,7 @@ using System.Reflection;
 using Translator.Core.Execution.Objects;
 using Translator.Core.Lexing;
 
-namespace Translator.Core.Execution.Operation.Binary
+namespace Translator.Core.Execution.Operations.Binary
 {
     public abstract class BinaryOperation
     {
@@ -13,7 +13,7 @@ namespace Translator.Core.Execution.Operation.Binary
 
         public bool IsOperator(TokenTypes operatorType) => operatorType == Operator;
         
-        public OperationMethod GetMethod(Obj left, Obj right)
+        public BinaryOperationMethod GetMethod(Obj left, Obj right)
         {
             var leftType = left.GetType();
             var method = leftType.GetMethod(OperatorMethodName,
@@ -23,7 +23,7 @@ namespace Translator.Core.Execution.Operation.Binary
                 Array.Empty<ParameterModifier>()
             );
             
-            return new OperationMethod(method);
+            return new BinaryOperationMethod(method);
         }
     }
 }

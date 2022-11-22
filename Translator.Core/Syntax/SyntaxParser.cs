@@ -61,12 +61,38 @@ namespace Translator.Core.Syntax
         {
             switch (Current.Type)
             {
+                case TokenTypes.IfKeyword:
+                    return ParseIfStatement();
+                
                 case TokenTypes.OpenBrace:
                     return ParseBlockStatement();
                 
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private IfStatement ParseIfStatement()
+        {
+            var keyword = MatchToken(TokenTypes.IfKeyword);
+            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
+            var condition = ParseExpression();
+            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+            var statement = ParseStatement();
+            var elseClause = ParseElseClause();
+
+            return new IfStatement(keyword, openParenthesis, condition, closeParenthesis, statement, elseClause);
+        }
+
+        private ElseClause ParseElseClause()
+        {
+            if (Current.Type != TokenTypes.ElseKeyword)
+                return null;
+
+            var keyword = MatchToken(TokenTypes.ElseKeyword);
+            var statement = ParseStatement();
+
+            return new ElseClause(keyword, statement);
         }
 
         private BlockStatement ParseBlockStatement()

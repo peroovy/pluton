@@ -6,6 +6,10 @@ namespace Translator.Core.Execution
 {
     public interface IExecutor
     {
+        Obj Execute(IfStatement statement);
+
+        Obj Execute(ElseClause clause);
+        
         Obj Execute(BlockStatement block);
         
         Obj Execute(ExpressionStatement statement);

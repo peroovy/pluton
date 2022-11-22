@@ -1,6 +1,6 @@
 ﻿using Translator.Core.Lexing;
 
-namespace Translator.Core.Execution.Operation.Binary
+namespace Translator.Core.Execution.Operations.Binary
 {
     public class DivisionOperation : BinaryOperation
     {

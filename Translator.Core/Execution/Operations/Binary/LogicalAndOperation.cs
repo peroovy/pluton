@@ -1,4 +1,5 @@
-﻿using Translator.Core.Lexing;
+﻿using Translator.Core.Execution.Operations.Binary;
+using Translator.Core.Lexing;
 
 namespace Translator.Core.Execution.Operation.Binary
 {

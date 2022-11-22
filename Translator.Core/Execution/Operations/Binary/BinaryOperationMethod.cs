@@ -1,15 +1,15 @@
 ﻿using System.Reflection;
 using Translator.Core.Execution.Objects;
 
-namespace Translator.Core.Execution.Operation
+namespace Translator.Core.Execution.Operations.Binary
 {
-    public class OperationMethod
+    public class BinaryOperationMethod
     {
         private readonly MethodInfo method;
 
         public bool IsUnknown => method is null;
 
-        public OperationMethod(MethodInfo method)
+        public BinaryOperationMethod(MethodInfo method)
         {
             this.method = method;
         }

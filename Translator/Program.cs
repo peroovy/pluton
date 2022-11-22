@@ -4,6 +4,7 @@ using Ninject;
 using Ninject.Extensions.Conventions;
 using Translator.Core.Execution;
 using Translator.Core.Execution.Operation.Binary;
+using Translator.Core.Execution.Operations.Binary;
 using Translator.Core.Lexing;
 using Translator.Core.Lexing.TokenParsers;
 using Translator.Core.Logging;

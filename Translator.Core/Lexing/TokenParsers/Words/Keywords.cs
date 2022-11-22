@@ -7,7 +7,9 @@ namespace Translator.Core.Lexing.TokenParsers.Words
         private static readonly Dictionary<string, TokenTypes> Keywords = new()
         {
             ["true"] = TokenTypes.TrueKeyword,
-            ["false"] = TokenTypes.FalseKeyword
+            ["false"] = TokenTypes.FalseKeyword,
+            ["if"] = TokenTypes.IfKeyword,
+            ["else"] = TokenTypes.ElseKeyword
         };
 
         public static TokenTypes? TryGetKeywordType(this string word) =>

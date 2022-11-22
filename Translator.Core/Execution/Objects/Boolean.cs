@@ -8,9 +8,11 @@ namespace Translator.Core.Execution.Objects
         }
 
         public override ObjectTypes Type => ObjectTypes.Boolean;
+
+        public bool IsTrue => (bool)Value;
         
         public override string ToString() => Value.ToString();
-
+        
         public static Boolean operator &(Boolean left, Boolean right) =>
             new((bool)left.Value && (bool)right.Value);
         

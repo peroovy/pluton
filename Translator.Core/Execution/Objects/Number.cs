@@ -1,4 +1,6 @@
-﻿namespace Translator.Core.Execution.Objects
+﻿using System;
+
+namespace Translator.Core.Execution.Objects
 {
     public class Number : Obj
     {
@@ -9,7 +11,7 @@
         public override ObjectTypes Type => ObjectTypes.Number;
 
         public override string ToString() => Value.ToString();
-
+        
         public static Number operator +(Number left, Number right) => new((double)left.Value + (double)right.Value);
         
         public static Number operator -(Number left, Number right) => new((double)left.Value - (double)right.Value);
