@@ -6,7 +6,9 @@ namespace Translator.Core.Lexing.TokenParsers
     public class NumberParser : ITokenParser
     {
         private readonly Regex regex = new(@"([0-9]*[.])?[0-9]+");
-        
+
+        public int Priority => 100;
+
         public bool CanParseFrom(Line line, int position)
         {
             var current = line.Value[position];

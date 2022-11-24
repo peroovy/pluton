@@ -8,8 +8,14 @@ namespace Translator.Core.Lexing.TokenParsers
         private readonly Dictionary<string, TokenTypes> terminalsTypes = new()
         {
             ["&&"] = TokenTypes.DoubleAmpersand,
-            ["||"] = TokenTypes.DoublePipe
+            ["||"] = TokenTypes.DoublePipe,
+            ["<="] = TokenTypes.LeftArrowEquals,
+            [">="] = TokenTypes.RightArrowEquals,
+            ["=="] = TokenTypes.DoubleEquals,
+            ["!="] = TokenTypes.ExclamationMarkEquals
         };
+
+        public int Priority => 0;
 
         public bool CanParseFrom(Line line, int position)
         {

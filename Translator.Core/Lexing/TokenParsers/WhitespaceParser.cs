@@ -4,6 +4,8 @@ namespace Translator.Core.Lexing.TokenParsers
 {
     public class WhitespaceParser : ITokenParser
     {
+        public int Priority => 3;
+        
         public bool CanParseFrom(Line line, int position) => char.IsWhiteSpace(line.Value[position]);
 
         public SyntaxToken Parse(Line line, int position)

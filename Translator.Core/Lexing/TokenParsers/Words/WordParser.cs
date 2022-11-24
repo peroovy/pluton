@@ -6,7 +6,9 @@ namespace Translator.Core.Lexing.TokenParsers.Words
     public class WordParser : ITokenParser
     {
         private readonly Regex regex = new(@"_*([A-z]|[А-я]|[0-9])*");
-        
+
+        public int Priority => 1000;
+
         public bool CanParseFrom(Line line, int position)
         {
             var current = line.Value[position];

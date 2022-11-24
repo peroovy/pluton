@@ -14,7 +14,9 @@ namespace Translator.Core.Lexing
 
         public Lexer(ITokenParser[] tokenParsers, ILogger logger)
         {
-            this.tokenParsers = tokenParsers;
+            this.tokenParsers = tokenParsers
+                .OrderBy(parser => parser.Priority)
+                .ToArray();
             this.logger = logger;
         }
 
@@ -34,7 +36,7 @@ namespace Translator.Core.Lexing
                 while (position < line.Length)
                 {
                     var token = tokenParsers
-                        .SingleOrDefault(p => p.CanParseFrom(line, position))
+                        .FirstOrDefault(p => p.CanParseFrom(line, position))
                         ?.Parse(line, position);
 
                     token ??= ParseUnknownToken(line, position);

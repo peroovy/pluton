@@ -18,6 +18,7 @@
         Space,
         Semicolon,
         Comma,
+        ExclamationMark,
 
         Plus,
         Minus,
@@ -32,6 +33,11 @@
         Equals,
         LeftArrow,
         RightArrow,
+        LeftArrowEquals,
+        RightArrowEquals,
+        DoubleEquals,
+        ExclamationMarkEquals,
+        Percent,
 
         Eof
     }

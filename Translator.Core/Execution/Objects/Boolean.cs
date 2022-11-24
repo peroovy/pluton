@@ -15,10 +15,10 @@ namespace Translator.Core.Execution.Objects
         
         public override Boolean ToBoolean() => new(Value);
 
-        public static Boolean operator &(Boolean left, Boolean right) =>
-            new((bool)left.Value && (bool)right.Value);
+        public static Boolean operator !(Boolean operand) => new(!(bool)operand.Value);
+
+        public static Boolean operator &(Boolean left, Boolean right) => new((bool)left.Value && (bool)right.Value);
         
-        public static Boolean operator |(Boolean left, Boolean right) =>
-            new((bool)left.Value && (bool)right.Value);
+        public static Boolean operator |(Boolean left, Boolean right) => new((bool)left.Value && (bool)right.Value);
     }
 }

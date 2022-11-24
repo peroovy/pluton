@@ -194,13 +194,14 @@ namespace Translator.Core.Syntax
 
         private Expression ParseBinaryExpression(int parentPrecedence = 0)
         {
-            var left = Current.Type.IsUnaryOperator() 
-                ? ParseUnaryExpression(parentPrecedence) 
+            var unaryPrecedence = Current.Type.TryGetUnaryPrecedence();
+            var left = unaryPrecedence >= parentPrecedence
+                ? ParseUnaryExpression(unaryPrecedence.Value) 
                 : ParsePrimaryExpression();
 
             while (true)
             {
-                var precedence = Current.Type.GetBinaryOperatorPrecedence();
+                var precedence = Current.Type.TryGetBinaryOperatorPrecedence();
                 if (precedence is null || precedence <= parentPrecedence)
                     break;
 
@@ -213,10 +214,10 @@ namespace Translator.Core.Syntax
             return left;
         }
 
-        private UnaryExpression ParseUnaryExpression(int parentPrecedence)
+        private UnaryExpression ParseUnaryExpression(int unaryPrecedence)
         {
             var op = NextToken();
-            var expression = ParseBinaryExpression(parentPrecedence + 1);
+            var expression = ParseBinaryExpression(unaryPrecedence);
 
             return new UnaryExpression(op, expression);
         }

@@ -3,20 +3,22 @@ using Translator.Core.Lexing;
 
 namespace Translator.Core.Syntax
 {
-    public static class SyntaxOperators
+    public static class SyntaxOperatorsExtensions
     {
         private static readonly HashSet<TokenTypes> UnaryOperators = new()
         {
             TokenTypes.Plus,
-            TokenTypes.Minus
+            TokenTypes.Minus,
+            TokenTypes.ExclamationMark
         };
             
-        public static int? GetBinaryOperatorPrecedence(this TokenTypes type)
+        public static int? TryGetBinaryOperatorPrecedence(this TokenTypes type)
         {
             switch (type)
             {
                 case TokenTypes.Star:
                 case TokenTypes.Slash:
+                case TokenTypes.Percent:
                     return 100;
 
                 case TokenTypes.Plus:
@@ -25,6 +27,10 @@ namespace Translator.Core.Syntax
                 
                 case TokenTypes.LeftArrow:
                 case TokenTypes.RightArrow:
+                case TokenTypes.LeftArrowEquals:
+                case TokenTypes.RightArrowEquals:
+                case TokenTypes.DoubleEquals:
+                case TokenTypes.ExclamationMarkEquals:
                     return 20;
                 
                 case TokenTypes.DoubleAmpersand:
@@ -38,6 +44,6 @@ namespace Translator.Core.Syntax
             }
         }
 
-        public static bool IsUnaryOperator(this TokenTypes type) => UnaryOperators.Contains(type);
+        public static int? TryGetUnaryPrecedence(this TokenTypes type) => UnaryOperators.Contains(type) ? 10000 : null;
     }
 }

@@ -20,9 +20,13 @@ namespace Translator.Core.Lexing.TokenParsers
             ['<'] = TokenTypes.LeftArrow,
             ['>'] = TokenTypes.RightArrow,
             [','] = TokenTypes.Comma,
+            ['!'] = TokenTypes.ExclamationMark,
+            ['%'] = TokenTypes.Percent,
             ['\0'] = TokenTypes.Eof
         };
 
+        public int Priority => 1;
+        
         public bool CanParseFrom(Line line, int position) => terminalsTypes.ContainsKey(line.Value[position]);
 
         public SyntaxToken Parse(Line line, int position)
