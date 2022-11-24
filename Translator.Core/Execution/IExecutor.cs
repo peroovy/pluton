@@ -24,6 +24,8 @@ namespace Translator.Core.Execution
         
         Obj Execute(BinaryExpression binary);
 
+        Obj Execute(UnaryExpression unary);
+
         Obj Execute(NumberExpression number);
 
         Obj Execute(BooleanExpression boolean);

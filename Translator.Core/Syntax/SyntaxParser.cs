@@ -52,7 +52,7 @@ namespace Translator.Core.Syntax
             if (Current.Type == expected)
                 return NextToken();
 
-            logger.Error(Current.Location, Current.Length, $"Expected '{expected}' but was '{Current.Type}'");
+            logger.Error(Current.Location, Current.Length, $"Expected '{expected}' but was parsed '{Current.Type}'");
             
             return new SyntaxToken(expected, null, Current.Location);
         }
@@ -194,7 +194,9 @@ namespace Translator.Core.Syntax
 
         private Expression ParseBinaryExpression(int parentPrecedence = 0)
         {
-            var left = ParsePrimaryExpression();
+            var left = Current.Type.IsUnaryOperator() 
+                ? ParseUnaryExpression(parentPrecedence) 
+                : ParsePrimaryExpression();
 
             while (true)
             {
@@ -209,6 +211,14 @@ namespace Translator.Core.Syntax
             }
 
             return left;
+        }
+
+        private UnaryExpression ParseUnaryExpression(int parentPrecedence)
+        {
+            var op = NextToken();
+            var expression = ParseBinaryExpression(parentPrecedence + 1);
+
+            return new UnaryExpression(op, expression);
         }
 
         private Expression ParsePrimaryExpression()

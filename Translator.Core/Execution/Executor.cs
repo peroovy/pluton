@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Translator.Core.Execution.Objects;
 using Translator.Core.Execution.Operations.Binary;
+using Translator.Core.Execution.Operations.Unary;
 using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
 using Translator.Core.Syntax.AST.Expressions;
@@ -11,13 +12,15 @@ namespace Translator.Core.Execution
     public class Executor : IExecutor
     {
         private readonly BinaryOperation[] binaryOperations;
+        private readonly UnaryOperation[] unaryOperations;
         private readonly ILogger logger;
         
         private Scope currentScope = new(null);
 
-        public Executor(BinaryOperation[] binaryOperations, ILogger logger)
+        public Executor(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations, ILogger logger)
         {
             this.binaryOperations = binaryOperations;
+            this.unaryOperations = unaryOperations;
             this.logger = logger;
         }
 
@@ -131,6 +134,23 @@ namespace Translator.Core.Execution
             }
             
             return method.Invoke(left, right);
+        }
+
+        public Obj Execute(UnaryExpression unary)
+        {
+            var opToken = unary.OperatorToken;
+            var operand = unary.Operand.Accept(this);
+            var method = unaryOperations
+                .Single(op => op.IsOperator(opToken.Type))
+                .GetMethod(operand);
+            
+            if (method.IsUnknown)
+            {
+                logger.Error(opToken.Location, opToken.Length,
+                    $"The unary operator '{opToken.Text}' is not defined for '{operand.Type}' type");
+            }
+
+            return method.Invoke(operand);
         }
 
         public Obj Execute(NumberExpression number) => new Number(number.Value);

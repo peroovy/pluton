@@ -1,9 +1,16 @@
-﻿using Translator.Core.Lexing;
+﻿using System.Collections.Generic;
+using Translator.Core.Lexing;
 
 namespace Translator.Core.Syntax
 {
-    public static class TokenTypesExtensions
+    public static class SyntaxOperators
     {
+        private static readonly HashSet<TokenTypes> UnaryOperators = new()
+        {
+            TokenTypes.Plus,
+            TokenTypes.Minus
+        };
+            
         public static int? GetBinaryOperatorPrecedence(this TokenTypes type)
         {
             switch (type)
@@ -30,5 +37,7 @@ namespace Translator.Core.Syntax
                     return null;
             }
         }
+
+        public static bool IsUnaryOperator(this TokenTypes type) => UnaryOperators.Contains(type);
     }
 }

@@ -16,6 +16,5 @@ namespace Translator.Core.Execution.Operations.Binary
 
         public Obj Invoke(Obj left, Obj right)
             => (Obj)method?.Invoke(null, new object[] {left, right}) ?? new Undefined();
-        
     }
 }

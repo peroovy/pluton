@@ -78,6 +78,10 @@
         <Compile Include="Execution\Operations\Binary\MultiplicationOperation.cs" />
         <Compile Include="Execution\Operations\Binary\BinaryOperationMethod.cs" />
         <Compile Include="Execution\Operations\Binary\SubtractionOperation.cs" />
+        <Compile Include="Execution\Operations\Unary\UnaryMinusOperation.cs" />
+        <Compile Include="Execution\Operations\Unary\UnaryOperationMethod.cs" />
+        <Compile Include="Execution\Operations\Unary\UnaryOperation.cs" />
+        <Compile Include="Execution\Operations\Unary\UnaryPlusOperation.cs" />
         <Compile Include="Execution\Scope.cs" />
         <Compile Include="Lexing\ILexer.cs" />
         <Compile Include="Lexing\Lexer.cs" />
@@ -108,6 +112,7 @@
         <Compile Include="Syntax\AST\Expressions\Expression.cs" />
         <Compile Include="Syntax\AST\Expressions\NumberExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\ParenthesizedExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\UnaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\VariableExpression.cs" />
         <Compile Include="Syntax\AST\ForStatement.cs" />
         <Compile Include="Syntax\AST\IfStatement.cs" />
@@ -116,7 +121,7 @@
         <Compile Include="Syntax\AST\WhileStatement.cs" />
         <Compile Include="Syntax\ISyntaxParser.cs" />
         <Compile Include="Syntax\SyntaxParser.cs" />
-        <Compile Include="Syntax\TokenTypesExtensions.cs" />
+        <Compile Include="Syntax\SyntaxOperators.cs" />
         <Compile Include="Text\ITextParser.cs" />
         <Compile Include="Text\TextParser.cs" />
         <Compile Include="Text\Line.cs" />
