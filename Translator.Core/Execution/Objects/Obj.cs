@@ -12,5 +12,7 @@
         public abstract ObjectTypes Type { get; }
 
         public abstract override string ToString();
+
+        public abstract Boolean ToBoolean();
     }
 }

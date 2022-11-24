@@ -61,24 +61,69 @@ namespace Translator.Core.Syntax
         {
             switch (Current.Type)
             {
-                case TokenTypes.IfKeyword:
-                    return ParseIfStatement();
-                
                 case TokenTypes.OpenBrace:
                     return ParseBlockStatement();
                 
+                case TokenTypes.IfKeyword:
+                    return ParseIfStatement();
+
                 case TokenTypes.WhileKeyword:
                     return ParseWhileStatement();
+                
+                case TokenTypes.ForKeyword:
+                    return ParseForStatement();
                 
                 default:
                     return ParseExpressionStatement();
             }
         }
 
+        private ForStatement ParseForStatement()
+        {
+            var keyword = MatchToken(TokenTypes.ForKeyword);
+            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
+            var initializers = ParseForStatementParameters(TokenTypes.Semicolon);
+            var firstSemicolon = MatchToken(TokenTypes.Semicolon);
+            var condition = ParseExpression();
+            var secondSemicolon = MatchToken(TokenTypes.Semicolon);
+            var iterators = ParseForStatementParameters(TokenTypes.CloseParenthesis);
+            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+            var body = ParseStatement();
+
+            return new ForStatement(
+                keyword, 
+                openParenthesis, 
+                initializers, 
+                firstSemicolon, 
+                condition, 
+                secondSemicolon,
+                iterators, 
+                closeParenthesis,
+                body
+            );
+        }
+
+        private ImmutableArray<Expression> ParseForStatementParameters(TokenTypes endToken)
+        {
+            var parameters = ImmutableArray.CreateBuilder<Expression>();
+            while (Current.Type != endToken && Current.Type != TokenTypes.Eof)
+            {
+                var parameter = ParseExpression();
+                parameters.Add(parameter);
+                
+                if (Current.Type != TokenTypes.Comma)
+                    break;
+
+                MatchToken(TokenTypes.Comma);
+            }
+
+            return parameters.ToImmutable();
+        }
+
         private WhileStatement ParseWhileStatement()
         {
             var keyword = MatchToken(TokenTypes.WhileKeyword);
-            var condition = ParseCondition();
+            var condition = ParseExpression();
             var body = ParseStatement();
 
             return new WhileStatement(keyword, condition, body);
@@ -87,7 +132,7 @@ namespace Translator.Core.Syntax
         private IfStatement ParseIfStatement()
         {
             var keyword = MatchToken(TokenTypes.IfKeyword);
-            var condition = ParseCondition();
+            var condition = ParseExpression();
             var statement = ParseStatement();
             var elseClause = ParseElseClause();
 
@@ -103,15 +148,6 @@ namespace Translator.Core.Syntax
             var statement = ParseStatement();
 
             return new ElseClause(keyword, statement);
-        }
-
-        private Condition ParseCondition()
-        {
-            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
-            var expression = ParseExpression();
-            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
-
-            return new Condition(openParenthesis, expression, closeParenthesis);
         }
 
         private BlockStatement ParseBlockStatement()

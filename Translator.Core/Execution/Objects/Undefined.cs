@@ -9,5 +9,7 @@
         public override ObjectTypes Type => ObjectTypes.Undefined;
 
         public override string ToString() => "undefined";
+
+        public override Boolean ToBoolean() => new(false);
     }
 }

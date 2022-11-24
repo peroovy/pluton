@@ -10,7 +10,8 @@ namespace Translator.Core.Lexing.TokenParsers.Words
             ["false"] = TokenTypes.FalseKeyword,
             ["if"] = TokenTypes.IfKeyword,
             ["else"] = TokenTypes.ElseKeyword,
-            ["while"] = TokenTypes.WhileKeyword
+            ["while"] = TokenTypes.WhileKeyword,
+            ["for"] = TokenTypes.ForKeyword
         };
 
         public static TokenTypes? TryGetKeywordType(this string word) =>

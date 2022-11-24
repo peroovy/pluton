@@ -11,7 +11,9 @@ namespace Translator.Core.Execution.Objects
         public override ObjectTypes Type => ObjectTypes.Number;
 
         public override string ToString() => Value.ToString();
-        
+
+        public override Boolean ToBoolean() => new(Convert.ToBoolean((double)Value));
+
         public static Number operator +(Number left, Number right) => new((double)left.Value + (double)right.Value);
         
         public static Number operator -(Number left, Number right) => new((double)left.Value - (double)right.Value);

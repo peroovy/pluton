@@ -12,10 +12,12 @@
         IfKeyword,
         ElseKeyword,
         WhileKeyword,
+        ForKeyword,
 
         LineSeparator,
         Space,
         Semicolon,
+        Comma,
 
         Plus,
         Minus,

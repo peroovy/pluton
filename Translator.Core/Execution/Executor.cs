@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Translator.Core.Execution.Objects;
 using Translator.Core.Execution.Operations.Binary;
-using Translator.Core.Lexing;
 using Translator.Core.Logging;
 using Translator.Core.Syntax.AST;
 using Translator.Core.Syntax.AST.Expressions;
@@ -22,9 +21,30 @@ namespace Translator.Core.Execution
             this.logger = logger;
         }
 
+        public Obj Execute(ForStatement statement)
+        {
+            var previousScope = currentScope;
+            currentScope = new Scope(previousScope);
+            
+            foreach (var initializer in statement.Initializers)
+                initializer.Accept(this);
+
+            while (statement.Condition.Accept(this).ToBoolean().IsTrue)
+            {
+                statement.Body.Accept(this);
+
+                foreach (var iterator in statement.Iterators)
+                    iterator.Accept(this);
+            }
+
+            currentScope = previousScope;
+
+            return null;
+        }
+
         public Obj Execute(WhileStatement statement)
         {
-            while ((statement.Condition.Accept(this) as Boolean)?.IsTrue ?? false)
+            while (statement.Condition.Accept(this).ToBoolean().IsTrue)
                 statement.Body.Accept(this);
 
             return null;
@@ -32,10 +52,7 @@ namespace Translator.Core.Execution
 
         public Obj Execute(IfStatement statement)
         {
-            if (statement.Condition.Accept(this) is not Boolean boolean) 
-                return null;
-            
-            if (boolean.IsTrue)
+            if (statement.Condition.Accept(this).ToBoolean().IsTrue)
             {
                 statement.Statement.Accept(this);
             }
@@ -51,20 +68,6 @@ namespace Translator.Core.Execution
         {
             clause.Statement.Accept(this);
             
-            return null;
-        }
-
-        public Obj Execute(Condition condition)
-        {
-            if (condition.Expression.Accept(this) is Boolean value) 
-                return value;
-            
-            var open = condition.OpenParenthesis;
-            var close = condition.CloseParenthesis;
-            var location = new TextLocation(open.Location.Line, open.Location.Position + 1);
-            logger.Error(location, close.Location.Position - open.Location.Position - 1,
-                $"Type of the condition is not '{ObjectTypes.Boolean}'");
-
             return null;
         }
 
@@ -106,7 +109,7 @@ namespace Translator.Core.Execution
             } 
             while (current is not null);
 
-            return this.currentScope.Assign(name, value);
+            return currentScope.Assign(name, value);
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);

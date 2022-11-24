@@ -7,7 +7,7 @@ namespace Translator.Core.Syntax.AST
 {
     public class IfStatement : Statement
     {
-        public IfStatement(SyntaxToken keyword, Condition condition, Statement statement, ElseClause elseClause)
+        public IfStatement(SyntaxToken keyword, Expression condition, Statement statement, ElseClause elseClause)
         {
             Keyword = keyword;
             Condition = condition;
@@ -17,7 +17,7 @@ namespace Translator.Core.Syntax.AST
         
         public SyntaxToken Keyword { get; }
         
-        public Condition Condition { get; }
+        public Expression Condition { get; }
         
         public Statement Statement { get; }
         

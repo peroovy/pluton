@@ -13,6 +13,8 @@ namespace Translator.Core.Execution.Objects
         
         public override string ToString() => Value.ToString();
         
+        public override Boolean ToBoolean() => new(Value);
+
         public static Boolean operator &(Boolean left, Boolean right) =>
             new((bool)left.Value && (bool)right.Value);
         

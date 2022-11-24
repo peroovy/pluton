@@ -7,7 +7,7 @@ namespace Translator.Core.Syntax.AST
 {
     public class WhileStatement : Statement
     {
-        public WhileStatement(SyntaxToken keyword, Condition condition, Statement body)
+        public WhileStatement(SyntaxToken keyword, Expression condition, Statement body)
         {
             Keyword = keyword;
             Condition = condition;
@@ -16,7 +16,7 @@ namespace Translator.Core.Syntax.AST
         
         public SyntaxToken Keyword { get; }
         
-        public Condition Condition { get; }
+        public Expression Condition { get; }
         
         public Statement Body { get; }
 
