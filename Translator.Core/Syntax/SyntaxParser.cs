@@ -67,21 +67,31 @@ namespace Translator.Core.Syntax
                 case TokenTypes.OpenBrace:
                     return ParseBlockStatement();
                 
+                case TokenTypes.WhileKeyword:
+                    return ParseWhileStatement();
+                
                 default:
                     return ParseExpressionStatement();
             }
         }
 
+        private WhileStatement ParseWhileStatement()
+        {
+            var keyword = MatchToken(TokenTypes.WhileKeyword);
+            var condition = ParseCondition();
+            var body = ParseStatement();
+
+            return new WhileStatement(keyword, condition, body);
+        }
+        
         private IfStatement ParseIfStatement()
         {
             var keyword = MatchToken(TokenTypes.IfKeyword);
-            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
-            var condition = ParseExpression();
-            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+            var condition = ParseCondition();
             var statement = ParseStatement();
             var elseClause = ParseElseClause();
 
-            return new IfStatement(keyword, openParenthesis, condition, closeParenthesis, statement, elseClause);
+            return new IfStatement(keyword, condition, statement, elseClause);
         }
 
         private ElseClause ParseElseClause()
@@ -93,6 +103,15 @@ namespace Translator.Core.Syntax
             var statement = ParseStatement();
 
             return new ElseClause(keyword, statement);
+        }
+
+        private Condition ParseCondition()
+        {
+            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
+            var expression = ParseExpression();
+            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+
+            return new Condition(openParenthesis, expression, closeParenthesis);
         }
 
         private BlockStatement ParseBlockStatement()

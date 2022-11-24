@@ -22,20 +22,20 @@ namespace Translator.Core.Execution
             this.logger = logger;
         }
 
+        public Obj Execute(WhileStatement statement)
+        {
+            while ((statement.Condition.Accept(this) as Boolean)?.IsTrue ?? false)
+                statement.Body.Accept(this);
+
+            return null;
+        }
+
         public Obj Execute(IfStatement statement)
         {
-            if (statement.Condition.Accept(this) is not Boolean condition)
-            {
-                var open = statement.OpenParenthesis;
-                var close = statement.CloseParenthesis;
-                var location = new TextLocation(open.Location.Line, open.Location.Position + 1);
-                logger.Error(location, close.Location.Position - open.Location.Position - 1,
-                    $"Type of the condition is not '{ObjectTypes.Boolean}'");
-
+            if (statement.Condition.Accept(this) is not Boolean boolean) 
                 return null;
-            }
-
-            if (condition.IsTrue)
+            
+            if (boolean.IsTrue)
             {
                 statement.Statement.Accept(this);
             }
@@ -51,6 +51,20 @@ namespace Translator.Core.Execution
         {
             clause.Statement.Accept(this);
             
+            return null;
+        }
+
+        public Obj Execute(Condition condition)
+        {
+            if (condition.Expression.Accept(this) is Boolean value) 
+                return value;
+            
+            var open = condition.OpenParenthesis;
+            var close = condition.CloseParenthesis;
+            var location = new TextLocation(open.Location.Line, open.Location.Position + 1);
+            logger.Error(location, close.Location.Position - open.Location.Position - 1,
+                $"Type of the condition is not '{ObjectTypes.Boolean}'");
+
             return null;
         }
 
@@ -111,7 +125,6 @@ namespace Translator.Core.Execution
             {
                 logger.Error(opToken.Location, opToken.Length,
                     $"The binary operator '{opToken.Text}' is not defined for '{left.Type}' and '{right.Type}' types");
-
             }
             
             return method.Invoke(left, right);

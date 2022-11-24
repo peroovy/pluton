@@ -24,5 +24,9 @@ namespace Translator.Core.Execution.Objects
 
             return new Number(rightValue == 0 ? double.NaN : (double)left.Value / rightValue);
         }
+
+        public static Boolean operator <(Number left, Number right) => new((double)left.Value < (double)right.Value);
+
+        public static Boolean operator >(Number left, Number right) => new((double)left.Value > (double)right.Value);
     }
 }

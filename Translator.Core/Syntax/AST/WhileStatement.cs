@@ -5,23 +5,20 @@ using Translator.Core.Syntax.AST.Expressions;
 
 namespace Translator.Core.Syntax.AST
 {
-    public class IfStatement : Statement
+    public class WhileStatement : Statement
     {
-        public IfStatement(SyntaxToken keyword, Condition condition, Statement statement, ElseClause elseClause)
+        public WhileStatement(SyntaxToken keyword, Condition condition, Statement body)
         {
             Keyword = keyword;
             Condition = condition;
-            Statement = statement;
-            ElseClause = elseClause;
+            Body = body;
         }
         
         public SyntaxToken Keyword { get; }
         
         public Condition Condition { get; }
         
-        public Statement Statement { get; }
-        
-        public ElseClause ElseClause { get; }
+        public Statement Body { get; }
 
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }

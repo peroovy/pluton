@@ -17,6 +17,8 @@ namespace Translator.Core.Lexing.TokenParsers
             [';'] = TokenTypes.Semicolon,
             ['{'] = TokenTypes.OpenBrace,
             ['}'] = TokenTypes.CloseBrace,
+            ['<'] = TokenTypes.LeftArrow,
+            ['>'] = TokenTypes.RightArrow,
             ['\0'] = TokenTypes.Eof
         };
 

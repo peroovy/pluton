@@ -11,6 +11,7 @@
         FalseKeyword,
         IfKeyword,
         ElseKeyword,
+        WhileKeyword,
 
         LineSeparator,
         Space,
@@ -27,6 +28,8 @@
         DoubleAmpersand,
         DoublePipe,
         Equals,
+        LeftArrow,
+        RightArrow,
 
         Eof
     }

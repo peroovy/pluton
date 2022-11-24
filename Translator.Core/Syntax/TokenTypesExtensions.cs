@@ -16,6 +16,10 @@ namespace Translator.Core.Syntax
                 case TokenTypes.Minus:
                     return 50;
                 
+                case TokenTypes.LeftArrow:
+                case TokenTypes.RightArrow:
+                    return 20;
+                
                 case TokenTypes.DoubleAmpersand:
                     return 10;
 
