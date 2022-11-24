@@ -121,7 +121,7 @@ namespace Translator.Core.Execution
             var left = binary.Left.Accept(this);
             var right = binary.Right.Accept(this);
             var method = binaryOperations
-                .First(op => op.IsOperator(opToken.Type))
+                .Single(op => op.IsOperator(opToken.Type))
                 .GetMethod(left, right);
 
             if (method.IsUnknown)

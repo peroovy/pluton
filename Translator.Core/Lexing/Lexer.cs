@@ -34,7 +34,7 @@ namespace Translator.Core.Lexing
                 while (position < line.Length)
                 {
                     var token = tokenParsers
-                        .FirstOrDefault(p => p.CanParseFrom(line, position))
+                        .SingleOrDefault(p => p.CanParseFrom(line, position))
                         ?.Parse(line, position);
 
                     token ??= ParseUnknownToken(line, position);
