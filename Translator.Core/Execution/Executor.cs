@@ -217,35 +217,39 @@ namespace Translator.Core.Execution
             {
                 var actualCount = expression.PositionArguments.Length;
                 var expectedCount = function.PositionArguments.Length;
-                if (actualCount != expectedCount)
-                {
-                    var location = expression.OpenParenthesis.Location;
-                    var lenght = expression.CloseParenthesis.Location.Position - location.Position + 1;
-                    logger.Error(location, lenght,
-                        $"Function '{name.Text}' requires {expectedCount} arguments but was given {actualCount}");
+                if (actualCount == expectedCount) 
+                    return CallFunction(function, expression.PositionArguments);
+                
+                var location = expression.OpenParenthesis.Location;
+                var lenght = expression.CloseParenthesis.Location.Position - location.Position + 1;
+                logger.Error(location, lenght,
+                    $"Function '{name.Text}' requires {expectedCount} arguments but was given {actualCount}");
 
-                    return new Undefined();
-                }
-                
-                stack.Push(function);
-                var previousScope = currentScope;
-                currentScope = new Scope(previousScope);
-                for (var i = 0; i < expectedCount; i++)
-                {
-                    var parameter = function.PositionArguments[i];
-                    var parameterValue = expression.PositionArguments[i].Accept(this);
-                    currentScope.Assign(parameter, parameterValue);
-                }
-                function.Execute(function, currentScope);
-                currentScope = previousScope;
-                
-                var obj = stack.Pop();
-                return obj == function ? new Undefined() : obj;
+                return new Undefined();
             }
             
             logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
 
             return new Undefined();
+        }
+
+        private Obj CallFunction(Function function, ImmutableArray<Expression> arguments)
+        {
+            stack.Push(function);
+            var previousScope = currentScope;
+            currentScope = new Scope(previousScope);
+            for (var i = 0; i < function.PositionArguments.Length; i++)
+            {
+                var parameter = function.PositionArguments[i];
+                var parameterValue = arguments[i].Accept(this);
+                currentScope.Assign(parameter, parameterValue);
+            }
+
+            function.Call(function, currentScope);
+            currentScope = previousScope;
+
+            var obj = stack.Pop();
+            return obj == function ? new Undefined() : obj;
         }
 
         private bool TryAssignUp(string name, Obj value)
