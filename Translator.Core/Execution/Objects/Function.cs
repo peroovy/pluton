@@ -5,7 +5,7 @@ namespace Translator.Core.Execution.Objects
 {
     public class Function : Obj
     {
-        public Function(string name, ImmutableArray<string> positionArguments, Action<Function, Scope> call, bool isBuiltin) 
+        public Function(string name, ImmutableArray<string> positionArguments, Action<Function, Scope, Stack> call, bool isBuiltin) 
             : base(call)
         {
             Name = name;
@@ -20,7 +20,7 @@ namespace Translator.Core.Execution.Objects
         
         public ImmutableArray<string> PositionArguments { get; }
         
-        public Action<Function, Scope> Call { get; }
+        public Action<Function, Scope, Stack> Call { get; }
         
         public bool IsBuiltin { get; }
 

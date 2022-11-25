@@ -7,6 +7,7 @@ namespace Translator.Core.Execution.Objects.BuiltinFunctions
     public static class BuiltinFunctions
     {
         public static readonly PrintFunction Print = new();
+        public static readonly BoolFunction Bool = new();
         
         public static IEnumerable<Function> GetAll()
         {

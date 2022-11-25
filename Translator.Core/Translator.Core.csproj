@@ -64,6 +64,7 @@
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Execution\Objects\Boolean.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\BoolFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunctions.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
         <Compile Include="Execution\Objects\Function.cs" />
@@ -92,6 +93,7 @@
         <Compile Include="Execution\Operations\Unary\UnaryOperation.cs" />
         <Compile Include="Execution\Operations\Unary\UnaryPlusOperation.cs" />
         <Compile Include="Execution\Scope.cs" />
+        <Compile Include="Execution\Stack.cs" />
         <Compile Include="Lexing\ILexer.cs" />
         <Compile Include="Lexing\Lexer.cs" />
         <Compile Include="Lexing\TextLocation.cs" />

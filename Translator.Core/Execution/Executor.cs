@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Linq;
 using Translator.Core.Execution.Objects;
 using Translator.Core.Execution.Objects.BuiltinFunctions;
@@ -18,7 +17,7 @@ namespace Translator.Core.Execution
         private readonly UnaryOperation[] unaryOperations;
         private readonly ILogger logger;
 
-        private readonly Stack<Obj> stack = new();
+        private readonly Stack stack = new();
         private Scope currentScope = new(null);
 
         public Executor(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations, ILogger logger)
@@ -36,7 +35,7 @@ namespace Translator.Core.Execution
             var function = new Function(
                 statement.Name.Text,
                 statement.PositionParameters.Select(p => p.Text).ToImmutableArray(),
-                (func, _) =>
+                (func, _, _) =>
                 {
                     var enumerator = statement.Body.Statements.GetEnumerator();
                     while (stack.Peek() == func && enumerator.MoveNext())
@@ -55,8 +54,7 @@ namespace Translator.Core.Execution
             if (stack.Count > 0 && stack.Peek() is Function)
             {
                 var expression = statement.Expression?.Accept(this) ?? new Undefined();
-                stack.Pop();
-                stack.Push(expression);
+                stack.PushFunctionResult(expression);
 
                 return null;
             }
@@ -235,17 +233,17 @@ namespace Translator.Core.Execution
 
         private Obj CallFunction(Function function, ImmutableArray<Expression> arguments)
         {
-            stack.Push(function);
+            stack.PushFunction(function);
             var previousScope = currentScope;
             currentScope = new Scope(previousScope);
             for (var i = 0; i < function.PositionArguments.Length; i++)
             {
                 var parameter = function.PositionArguments[i];
-                var parameterValue = arguments[i].Accept(this);
-                currentScope.Assign(parameter, parameterValue);
+                var argument = arguments[i].Accept(this);
+                currentScope.Assign(parameter, argument);
             }
 
-            function.Call(function, currentScope);
+            function.Call(function, currentScope, stack);
             currentScope = previousScope;
 
             var obj = stack.Pop();
