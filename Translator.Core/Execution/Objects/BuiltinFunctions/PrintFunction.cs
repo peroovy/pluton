@@ -11,7 +11,7 @@ namespace Translator.Core.Execution.Objects.BuiltinFunctions
             : base(
                 "print", 
                 ImmutableArray.Create(ParameterName), 
-                scope => Console.WriteLine(scope.Lookup(ParameterName)),
+                (_, scope) => Console.WriteLine(scope.Lookup(ParameterName)),
                 isBuiltin: true)
         {
         }

@@ -14,6 +14,7 @@
         WhileKeyword,
         ForKeyword,
         DefKeyword,
+        ReturnKeyword,
 
         LineSeparator,
         Space,

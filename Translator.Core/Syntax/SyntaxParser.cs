@@ -76,6 +76,9 @@ namespace Translator.Core.Syntax
                 case TokenTypes.DefKeyword:
                     return ParseFunctionDeclarationStatement();
                 
+                case TokenTypes.ReturnKeyword:
+                    return ParseReturnStatement();
+                
                 default:
                     return ParseExpressionStatement();
             }
@@ -106,6 +109,15 @@ namespace Translator.Core.Syntax
                 keyword, name, openParenthesis, positionParameters.ToImmutable(),
                 closeParenthesis, body
             );
+        }
+
+        private ReturnStatement ParseReturnStatement()
+        {
+            var keyword = MatchToken(TokenTypes.ReturnKeyword);
+            var expression = Current.Type == TokenTypes.Semicolon ? null : ParseExpression();
+            var semicolon = MatchToken(TokenTypes.Semicolon);
+
+            return new ReturnStatement(keyword, expression, semicolon);
         }
 
         private ForStatement ParseForStatement()

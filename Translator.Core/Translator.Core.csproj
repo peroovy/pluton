@@ -127,6 +127,7 @@
         <Compile Include="Syntax\AST\ForStatement.cs" />
         <Compile Include="Syntax\AST\FunctionDeclarationStatement.cs" />
         <Compile Include="Syntax\AST\IfStatement.cs" />
+        <Compile Include="Syntax\AST\ReturnStatement.cs" />
         <Compile Include="Syntax\AST\Statement.cs" />
         <Compile Include="Syntax\AST\SyntaxNode.cs" />
         <Compile Include="Syntax\AST\WhileStatement.cs" />

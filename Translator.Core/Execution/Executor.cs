@@ -18,7 +18,7 @@ namespace Translator.Core.Execution
         private readonly UnaryOperation[] unaryOperations;
         private readonly ILogger logger;
 
-        private readonly Stack<Obj> returnedValues = new();
+        private readonly Stack<Obj> stack = new();
         private Scope currentScope = new(null);
 
         public Executor(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations, ILogger logger)
@@ -36,12 +36,34 @@ namespace Translator.Core.Execution
             var function = new Function(
                 statement.Name.Text,
                 statement.PositionParameters.Select(p => p.Text).ToImmutableArray(),
-                _ => statement.Body.Accept(this),
+                (func, _) =>
+                {
+                    var enumerator = statement.Body.Statements.GetEnumerator();
+                    while (stack.Peek() == func && enumerator.MoveNext())
+                        enumerator.Current.Accept(this);
+                },
                 isBuiltin: false
             );
 
             currentScope.Assign(function.Name, function);
 
+            return null;
+        }
+
+        public Obj Execute(ReturnStatement statement)
+        {
+            if (stack.Count > 0 && stack.Peek() is Function)
+            {
+                var expression = statement.Expression?.Accept(this) ?? new Undefined();
+                stack.Pop();
+                stack.Push(expression);
+
+                return null;
+            }
+
+            var keyword = statement.Keyword;
+            logger.Error(keyword.Location, keyword.Length, $"The 'return' statement can be only into function block");
+            
             return null;
         }
 
@@ -204,8 +226,8 @@ namespace Translator.Core.Execution
 
                     return new Undefined();
                 }
-
-                var previousStackCount = returnedValues.Count;
+                
+                stack.Push(function);
                 var previousScope = currentScope;
                 currentScope = new Scope(previousScope);
                 for (var i = 0; i < expectedCount; i++)
@@ -214,12 +236,11 @@ namespace Translator.Core.Execution
                     var parameterValue = expression.PositionArguments[i].Accept(this);
                     currentScope.Assign(parameter, parameterValue);
                 }
-                function.Execute(currentScope);
+                function.Execute(function, currentScope);
                 currentScope = previousScope;
-
-                return returnedValues.Count == previousStackCount + 1 
-                    ? returnedValues.Pop()
-                    : new Undefined();
+                
+                var obj = stack.Pop();
+                return obj == function ? new Undefined() : obj;
             }
             
             logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
