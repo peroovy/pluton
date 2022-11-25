@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Globalization;
+using Interpreter.Core;
 using Ninject;
-using Translator.Core;
-using Translator.Core.Execution;
-using Translator.Core.Lexing;
-using Translator.Core.Logging;
-using Translator.Core.Logging.Handlers;
-using Translator.Core.Syntax;
-using Translator.Core.Text;
+using Interpreter.Core.Execution;
+using Interpreter.Core.Lexing;
+using Interpreter.Core.Logging;
+using Interpreter.Core.Logging.Handlers;
+using Interpreter.Core.Syntax;
+using Interpreter.Core.Text;
 
 namespace Repl
 {
@@ -17,15 +17,15 @@ namespace Repl
         {
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             
-            var interpreter = Interpreter.Configure();
+            var core = Core.Configure();
             
-            var logger = interpreter.Get<ILogger>();
-            var handler = interpreter.Get<ILogHandler>();
+            var logger = core.Get<ILogger>();
+            var handler = core.Get<ILogHandler>();
 
-            var textParser = interpreter.Get<ITextParser>();
-            var lexer = interpreter.Get<ILexer>();
-            var syntaxParser = interpreter.Get<ISyntaxParser>();
-            var evaluator = interpreter.Get<IExecutor>();
+            var textParser = core.Get<ITextParser>();
+            var lexer = core.Get<ILexer>();
+            var syntaxParser = core.Get<ISyntaxParser>();
+            var evaluator = core.Get<IExecutor>();
 
             while (true)
             {

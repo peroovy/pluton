@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Translator.Core", "Translator.Core\Translator.Core.csproj", "{F38B8541-48C9-4389-A44E-5CE3ABEDCA93}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter.Core", "Interpreter.Core\Interpreter.Core.csproj", "{F38B8541-48C9-4389-A44E-5CE3ABEDCA93}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repl", "Repl\Repl.csproj", "{1266DA46-6D97-45CA-AE87-C5D825097B41}"
 EndProject
