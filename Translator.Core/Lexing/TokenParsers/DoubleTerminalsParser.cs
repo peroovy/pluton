@@ -12,7 +12,11 @@ namespace Translator.Core.Lexing.TokenParsers
             ["<="] = TokenTypes.LeftArrowEquals,
             [">="] = TokenTypes.RightArrowEquals,
             ["=="] = TokenTypes.DoubleEquals,
-            ["!="] = TokenTypes.ExclamationMarkEquals
+            ["!="] = TokenTypes.ExclamationMarkEquals,
+            ["+="] = TokenTypes.PlusEquals,
+            ["-="] = TokenTypes.MinusEquals,
+            ["*="] = TokenTypes.StarEquals,
+            ["/="] = TokenTypes.SlashEquals
         };
 
         public int Priority => 0;

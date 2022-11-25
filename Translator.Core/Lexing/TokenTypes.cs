@@ -36,6 +36,10 @@
         LeftArrowEquals,
         RightArrowEquals,
         DoubleEquals,
+        PlusEquals,
+        MinusEquals,
+        StarEquals,
+        SlashEquals,
         ExclamationMarkEquals,
         Percent,
 

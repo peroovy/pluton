@@ -11,7 +11,23 @@ namespace Translator.Core.Syntax
             TokenTypes.Minus,
             TokenTypes.ExclamationMark
         };
-            
+
+        private static readonly Dictionary<TokenTypes, TokenTypes> CompoundOperatorsToSingle = new()
+        {
+            [TokenTypes.PlusEquals] = TokenTypes.Plus,
+            [TokenTypes.MinusEquals] = TokenTypes.Minus,
+            [TokenTypes.StarEquals] = TokenTypes.Star,
+            [TokenTypes.SlashEquals] = TokenTypes.Slash
+        };
+
+        public static TokenTypes? TryConvertCompoundOperatorToSingle(this TokenTypes type)
+        {
+            if (!CompoundOperatorsToSingle.TryGetValue(type, out var single))
+                return null;
+
+            return single;
+        }
+
         public static int? TryGetBinaryOperatorPrecedence(this TokenTypes type)
         {
             switch (type)

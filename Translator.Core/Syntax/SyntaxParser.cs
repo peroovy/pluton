@@ -177,12 +177,43 @@ namespace Translator.Core.Syntax
 
         private Expression ParseExpression()
         {
-            if (Current.Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.Equals)
-                return ParseAssignmentExpression();
+            if (Peek(0).Type == TokenTypes.Identifier)
+            {
+                switch (Peek(1).Type)
+                {
+                    case TokenTypes.Equals:
+                        return ParseAssignmentExpression();
+                    
+                    case TokenTypes.PlusEquals:
+                    case TokenTypes.MinusEquals:
+                    case TokenTypes.StarEquals:
+                    case TokenTypes.SlashEquals:
+                        return ParseCompoundAssignmentExpression();
+                }
+            }
             
             return ParseBinaryExpression();
         }
 
+        private AssignmentExpression ParseCompoundAssignmentExpression()
+        {
+            var variable = MatchToken(TokenTypes.Identifier);
+            
+            var compoundOperator = NextToken();
+            var singleOperatorType = compoundOperator.Type.TryConvertCompoundOperatorToSingle();
+            if (singleOperatorType is null)
+                throw new ArgumentException($"Unknown compound operator '{compoundOperator.Type}'");
+
+            var singleOperator = new SyntaxToken(
+                singleOperatorType.Value, compoundOperator.Text, compoundOperator.Location
+            );
+            var leftExpression = new VariableExpression(variable);
+            var rightExpression = ParseExpression();
+            var compoundExpression = new BinaryExpression(leftExpression, singleOperator, rightExpression);
+
+            return new AssignmentExpression(variable, compoundOperator, compoundExpression);
+        }
+        
         private AssignmentExpression ParseAssignmentExpression()
         {
             var variable = MatchToken(TokenTypes.Identifier);
