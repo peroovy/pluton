@@ -6,6 +6,8 @@ namespace Translator.Core.Execution
 {
     public interface IExecutor
     {
+        Obj Execute(FunctionDeclarationStatement statement);
+        
         Obj Execute(ForStatement statement);
         
         Obj Execute(WhileStatement statement);

@@ -13,6 +13,7 @@
         ElseKeyword,
         WhileKeyword,
         ForKeyword,
+        DefKeyword,
 
         LineSeparator,
         Space,

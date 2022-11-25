@@ -73,9 +73,39 @@ namespace Translator.Core.Syntax
                 case TokenTypes.ForKeyword:
                     return ParseForStatement();
                 
+                case TokenTypes.DefKeyword:
+                    return ParseFunctionDeclarationStatement();
+                
                 default:
                     return ParseExpressionStatement();
             }
+        }
+
+        private FunctionDeclarationStatement ParseFunctionDeclarationStatement()
+        {
+            var keyword = MatchToken(TokenTypes.DefKeyword);
+            var name = MatchToken(TokenTypes.Identifier);
+            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
+            
+            var positionParameters = ImmutableArray.CreateBuilder<SyntaxToken>();
+            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof)
+            {
+                var parameter = MatchToken(TokenTypes.Identifier);
+                positionParameters.Add(parameter);
+                
+                if (Current.Type != TokenTypes.Comma)
+                    break;
+
+                MatchToken(TokenTypes.Comma);
+            }
+
+            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+            var body = ParseBlockStatement();
+
+            return new FunctionDeclarationStatement(
+                keyword, name, openParenthesis, positionParameters.ToImmutable(),
+                closeParenthesis, body
+            );
         }
 
         private ForStatement ParseForStatement()

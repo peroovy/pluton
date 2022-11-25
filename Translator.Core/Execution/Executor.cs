@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Translator.Core.Execution.Objects;
 using Translator.Core.Execution.Objects.BuiltinFunctions;
 using Translator.Core.Execution.Operations.Binary;
@@ -16,6 +18,7 @@ namespace Translator.Core.Execution
         private readonly UnaryOperation[] unaryOperations;
         private readonly ILogger logger;
 
+        private readonly Stack<Obj> returnedValues = new();
         private Scope currentScope = new(null);
 
         public Executor(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations, ILogger logger)
@@ -26,6 +29,20 @@ namespace Translator.Core.Execution
 
             foreach (var function in BuiltinFunctions.GetAll())
                 currentScope.Assign(function.Name, function);
+        }
+
+        public Obj Execute(FunctionDeclarationStatement statement)
+        {
+            var function = new Function(
+                statement.Name.Text,
+                statement.PositionParameters.Select(p => p.Text).ToImmutableArray(),
+                _ => statement.Body.Accept(this),
+                isBuiltin: false
+            );
+
+            currentScope.Assign(function.Name, function);
+
+            return null;
         }
 
         public Obj Execute(ForStatement statement)
@@ -111,17 +128,10 @@ namespace Translator.Core.Execution
                 return null;
             }
 
-            var current = currentScope;
-            do
-            {
-                if (current.Contains(name))
-                    return current.Assign(name, value);
+            if (!TryAssignUp(name, value))
+                currentScope.Assign(name, value);
 
-                current = current.Parent;
-            } 
-            while (current is not null);
-
-            return currentScope.Assign(name, value);
+            return value;
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
@@ -194,23 +204,44 @@ namespace Translator.Core.Execution
 
                     return new Undefined();
                 }
-                
+
+                var previousStackCount = returnedValues.Count;
                 var previousScope = currentScope;
-                var localScope = new Scope(previousScope);
+                currentScope = new Scope(previousScope);
                 for (var i = 0; i < expectedCount; i++)
                 {
                     var parameter = function.PositionArguments[i];
                     var parameterValue = expression.PositionArguments[i].Accept(this);
-                    localScope.Assign(parameter, parameterValue);
+                    currentScope.Assign(parameter, parameterValue);
                 }
+                function.Execute(currentScope);
                 currentScope = previousScope;
-                
-                return function.Execute(localScope);
+
+                return returnedValues.Count == previousStackCount + 1 
+                    ? returnedValues.Pop()
+                    : new Undefined();
             }
             
             logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
 
             return new Undefined();
+        }
+
+        private bool TryAssignUp(string name, Obj value)
+        {
+            var current = currentScope;
+            do
+            {
+                if (current.Contains(name))
+                {
+                    current.Assign(name, value);
+                    return true;
+                }
+
+                current = current.Parent;
+            } while (current is not null);
+
+            return false;
         }
     }
 }

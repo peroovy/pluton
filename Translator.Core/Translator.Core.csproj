@@ -125,6 +125,7 @@
         <Compile Include="Syntax\AST\Expressions\UnaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\VariableExpression.cs" />
         <Compile Include="Syntax\AST\ForStatement.cs" />
+        <Compile Include="Syntax\AST\FunctionDeclarationStatement.cs" />
         <Compile Include="Syntax\AST\IfStatement.cs" />
         <Compile Include="Syntax\AST\Statement.cs" />
         <Compile Include="Syntax\AST\SyntaxNode.cs" />
