@@ -32,10 +32,10 @@ namespace Repl
                 Console.Write(">> ");
                 var lines = textParser.ParseLines(Console.ReadLine());
                 var tokens = lexer.Tokenize(lines);
-                var syntaxNode = syntaxParser.Parse(tokens);
+                var syntaxTree = syntaxParser.Parse(tokens);
 
                 if (logger.IsEmpty)
-                    syntaxNode.Accept(evaluator);
+                    syntaxTree.Accept(evaluator);
                 
                 handler.Handle(logger);
                 logger.Reset();

@@ -23,12 +23,19 @@ namespace Interpreter.Core.Syntax
             this.logger = logger;
         }
 
-        public SyntaxNode Parse(ImmutableArray<SyntaxToken> syntaxTokens)
+        public SyntaxTree Parse(ImmutableArray<SyntaxToken> syntaxTokens)
         {
             tokens = syntaxTokens;
             position = 0;
 
-            return ParseStatement();
+            var members = ImmutableArray.CreateBuilder<SyntaxNode>();
+            while (Current.Type != TokenTypes.Eof)
+            {
+                var member = ParseStatement();
+                members.Add(member);
+            }
+
+            return new SyntaxTree(members.ToImmutable());
         }
         
         private SyntaxToken Peek(int offset)

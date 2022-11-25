@@ -7,7 +7,6 @@ using Interpreter.Core.Execution.Operations.Unary;
 using Interpreter.Core.Logging;
 using Interpreter.Core.Syntax.AST;
 using Interpreter.Core.Syntax.AST.Expressions;
-using Boolean = Interpreter.Core.Execution.Objects.Boolean;
 
 namespace Interpreter.Core.Execution
 {
@@ -28,6 +27,12 @@ namespace Interpreter.Core.Execution
 
             foreach (var function in BuiltinFunctions.GetAll())
                 currentScope.Assign(function.Name, function);
+        }
+
+        public void Execute(SyntaxTree tree)
+        {
+            foreach (var member in tree.Members)
+                member.Accept(this);
         }
 
         public Obj Execute(FunctionDeclarationStatement statement)

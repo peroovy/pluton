@@ -6,6 +6,8 @@ namespace Interpreter.Core.Execution
 {
     public interface IExecutor
     {
+        void Execute(SyntaxTree tree);
+        
         Obj Execute(FunctionDeclarationStatement statement);
 
         Obj Execute(ReturnStatement statement);

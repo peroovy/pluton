@@ -6,6 +6,6 @@ namespace Interpreter.Core.Syntax
 {
     public interface ISyntaxParser
     {
-        SyntaxNode Parse(ImmutableArray<SyntaxToken> tokens);
+        SyntaxTree Parse(ImmutableArray<SyntaxToken> tokens);
     }
 }

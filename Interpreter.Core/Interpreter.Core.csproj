@@ -142,6 +142,7 @@
         <Compile Include="Syntax\AST\ReturnStatement.cs" />
         <Compile Include="Syntax\AST\Statement.cs" />
         <Compile Include="Syntax\AST\SyntaxNode.cs" />
+        <Compile Include="Syntax\AST\SyntaxTree.cs" />
         <Compile Include="Syntax\AST\WhileStatement.cs" />
         <Compile Include="Syntax\ISyntaxParser.cs" />
         <Compile Include="Syntax\SyntaxParser.cs" />
