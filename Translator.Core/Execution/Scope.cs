@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Translator.Core.Execution.Objects;
+using Translator.Core.Lexing;
 
 namespace Translator.Core.Execution
 {
@@ -24,6 +26,14 @@ namespace Translator.Core.Execution
                 return true;
 
             return Parent?.TryLookup(name, out value) ?? false;
+        }
+
+        public Obj Lookup(string name)
+        {
+            if (!TryLookup(name, out var value))
+                throw new ArgumentException($"Unknown name '{name}'");
+
+            return value;
         }
     }
 }

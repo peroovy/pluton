@@ -268,7 +268,7 @@ namespace Translator.Core.Syntax
                     return ParseNumberExpression();
                 
                 default:
-                    return ParseVariableExpression();
+                    return ParseVariableOrCallExpression();
             }
         }
 
@@ -295,6 +295,36 @@ namespace Translator.Core.Syntax
             _ = value ? MatchToken(TokenTypes.TrueKeyword) : MatchToken(TokenTypes.FalseKeyword);
 
             return new BooleanExpression(value);
+        }
+
+        private Expression ParseVariableOrCallExpression()
+        {
+            if (Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.OpenParenthesis)
+                return ParseCallExpression();
+
+            return ParseVariableExpression();
+        }
+
+        private FunctionCallExpression ParseCallExpression()
+        {
+            var name = MatchToken(TokenTypes.Identifier);
+            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
+
+            var positionArguments = ImmutableArray.CreateBuilder<Expression>();
+            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof)
+            {
+                var argument = ParseExpression();
+                positionArguments.Add(argument);
+                
+                if (Current.Type != TokenTypes.Comma)
+                    break;
+
+                MatchToken(TokenTypes.Comma);
+            }
+
+            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+
+            return new FunctionCallExpression(name, openParenthesis, positionArguments.ToImmutable(), closeParenthesis);
         }
 
         private VariableExpression ParseVariableExpression()

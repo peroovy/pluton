@@ -41,13 +41,7 @@ namespace Translator
                 var syntaxNode = syntaxParser.Parse(tokens);
 
                 if (logger.IsEmpty)
-                {
-                    var value = syntaxNode.Accept(evaluator);
-
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    Console.WriteLine(value);
-                    Console.ResetColor();
-                }
+                    syntaxNode.Accept(evaluator);
                 
                 handler.Handle(logger);
                 logger.Reset();

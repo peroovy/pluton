@@ -64,6 +64,9 @@
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Execution\Objects\Boolean.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunctions.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
+        <Compile Include="Execution\Objects\Function.cs" />
         <Compile Include="Execution\Objects\Number.cs" />
         <Compile Include="Execution\Objects\Obj.cs" />
         <Compile Include="Execution\Objects\ObjectTypes.cs" />
@@ -115,6 +118,7 @@
         <Compile Include="Syntax\AST\Expressions\AssignmentExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BinaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BooleanExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\FunctionCallExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Expression.cs" />
         <Compile Include="Syntax\AST\Expressions\NumberExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\ParenthesizedExpression.cs" />

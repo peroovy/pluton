@@ -4,6 +4,7 @@
     {
         Number,
         Boolean,
-        Undefined
+        Undefined,
+        Function
     }
 }

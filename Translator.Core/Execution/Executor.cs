@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Translator.Core.Execution.Objects;
+using Translator.Core.Execution.Objects.BuiltinFunctions;
 using Translator.Core.Execution.Operations.Binary;
 using Translator.Core.Execution.Operations.Unary;
 using Translator.Core.Logging;
@@ -14,7 +15,7 @@ namespace Translator.Core.Execution
         private readonly BinaryOperation[] binaryOperations;
         private readonly UnaryOperation[] unaryOperations;
         private readonly ILogger logger;
-        
+
         private Scope currentScope = new(null);
 
         public Executor(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations, ILogger logger)
@@ -22,6 +23,9 @@ namespace Translator.Core.Execution
             this.binaryOperations = binaryOperations;
             this.unaryOperations = unaryOperations;
             this.logger = logger;
+
+            foreach (var function in BuiltinFunctions.GetAll())
+                currentScope.Assign(function.Name, function);
         }
 
         public Obj Execute(ForStatement statement)
@@ -89,9 +93,9 @@ namespace Translator.Core.Execution
 
         public Obj Execute(ExpressionStatement statement)
         {
-            // return null;
-            // TODO: temp
-            return statement.Expression.Accept(this);
+            statement.Expression.Accept(this);
+
+            return null;
         }
 
         public Obj Execute(AssignmentExpression assignment)
@@ -100,7 +104,12 @@ namespace Translator.Core.Execution
             var value = assignment.Expression.Accept(this);
 
             if (value is Undefined)
-                return value;
+            {
+                var op = assignment.OperatorToken;
+                logger.Error(op.Location, op.Length, "Expression must have a value");
+
+                return null;
+            }
 
             var current = currentScope;
             do
@@ -164,6 +173,42 @@ namespace Translator.Core.Execution
 
             var nameToken = variable.Name;
             logger.Error(nameToken.Location, nameToken.Length,$"Variable '{nameToken.Text}' does not exist");
+
+            return new Undefined();
+        }
+
+        public Obj Execute(FunctionCallExpression expression)
+        {
+            var name = expression.Name;
+
+            if (currentScope.TryLookup(name.Text, out var value) && value is Function function)
+            {
+                var actualCount = expression.PositionArguments.Length;
+                var expectedCount = function.PositionArguments.Length;
+                if (actualCount != expectedCount)
+                {
+                    var location = expression.OpenParenthesis.Location;
+                    var lenght = expression.CloseParenthesis.Location.Position - location.Position + 1;
+                    logger.Error(location, lenght,
+                        $"Function '{name.Text}' requires {expectedCount} arguments but was given {actualCount}");
+
+                    return new Undefined();
+                }
+                
+                var previousScope = currentScope;
+                var localScope = new Scope(previousScope);
+                for (var i = 0; i < expectedCount; i++)
+                {
+                    var parameter = function.PositionArguments[i];
+                    var parameterValue = expression.PositionArguments[i].Accept(this);
+                    localScope.Assign(parameter, parameterValue);
+                }
+                currentScope = previousScope;
+                
+                return function.Execute(localScope);
+            }
+            
+            logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
 
             return new Undefined();
         }

@@ -31,5 +31,7 @@ namespace Translator.Core.Execution
         Obj Execute(BooleanExpression boolean);
 
         Obj Execute(VariableExpression variable);
+
+        Obj Execute(FunctionCallExpression call);
     }
 }
