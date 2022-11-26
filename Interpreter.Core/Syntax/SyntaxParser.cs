@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace Interpreter.Core.Syntax
 {
     public class SyntaxParser : ISyntaxParser
     {
-        private IReadOnlyList<SyntaxToken> tokens;
+        private ImmutableArray<SyntaxToken> tokens;
         private int position;
 
         private readonly ILogger logger;
@@ -32,8 +31,13 @@ namespace Interpreter.Core.Syntax
             var members = ImmutableArray.CreateBuilder<SyntaxNode>();
             while (Current.Type != TokenTypes.Eof)
             {
+                var startToken = Current;
+                
                 var member = ParseStatement();
                 members.Add(member);
+
+                if (Current == startToken)
+                    NextToken();
             }
 
             return new SyntaxTree(members.ToImmutable());
@@ -43,7 +47,7 @@ namespace Interpreter.Core.Syntax
         {
             var index = position + offset;
             
-            return index >= tokens.Count ? tokens.Last() : tokens[index];
+            return index >= tokens.Length ? tokens.Last() : tokens[index];
         }
 
         private SyntaxToken NextToken()
@@ -207,9 +211,13 @@ namespace Interpreter.Core.Syntax
             var statements = ImmutableArray.CreateBuilder<Statement>();
             while (Current.Type != TokenTypes.CloseBrace && Current.Type != TokenTypes.Eof)
             {
-                var statement = ParseStatement();
+                var startToken = Current;
                 
+                var statement = ParseStatement();
                 statements.Add(statement);
+
+                if (Current == startToken)
+                    NextToken();
             }
 
             var closeBrace = MatchToken(TokenTypes.CloseBrace);
