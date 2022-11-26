@@ -13,7 +13,9 @@ namespace Interpreter.Core.Lexing.TokenParsers.Words
             ["while"] = TokenTypes.WhileKeyword,
             ["for"] = TokenTypes.ForKeyword,
             ["def"] = TokenTypes.DefKeyword,
-            ["return"] = TokenTypes.ReturnKeyword
+            ["return"] = TokenTypes.ReturnKeyword,
+            ["and"] = TokenTypes.AndKeyword,
+            ["or"] = TokenTypes.OrKeyword
         };
 
         public static TokenTypes? TryGetKeywordType(this string word) =>

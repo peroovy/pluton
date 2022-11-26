@@ -1,5 +1,4 @@
 ﻿using Interpreter.Core.Lexing;
-using Interpreter.Core.Execution.Operation.Binary;
 
 namespace Interpreter.Core.Execution.Operations.Binary
 {

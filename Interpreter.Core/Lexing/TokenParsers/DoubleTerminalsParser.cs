@@ -7,8 +7,6 @@ namespace Interpreter.Core.Lexing.TokenParsers
     {
         private readonly Dictionary<string, TokenTypes> terminalsTypes = new()
         {
-            ["&&"] = TokenTypes.DoubleAmpersand,
-            ["||"] = TokenTypes.DoublePipe,
             ["<="] = TokenTypes.LeftArrowEquals,
             [">="] = TokenTypes.RightArrowEquals,
             ["=="] = TokenTypes.DoubleEquals,

@@ -15,6 +15,8 @@
         ForKeyword,
         DefKeyword,
         ReturnKeyword,
+        AndKeyword,
+        OrKeyword,
 
         LineSeparator,
         Space,
@@ -30,8 +32,6 @@
         CloseParenthesis,
         OpenBrace,
         CloseBrace,
-        DoubleAmpersand,
-        DoublePipe,
         Equals,
         LeftArrow,
         RightArrow,

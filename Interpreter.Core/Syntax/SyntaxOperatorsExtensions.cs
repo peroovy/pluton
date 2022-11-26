@@ -49,10 +49,10 @@ namespace Interpreter.Core.Syntax
                 case TokenTypes.ExclamationMarkEquals:
                     return 20;
                 
-                case TokenTypes.DoubleAmpersand:
+                case TokenTypes.AndKeyword:
                     return 10;
 
-                case TokenTypes.DoublePipe:
+                case TokenTypes.OrKeyword:
                     return 5;
 
                 default:
