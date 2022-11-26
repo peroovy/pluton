@@ -5,11 +5,11 @@ namespace Interpreter.Core.Execution.Objects
 {
     public class Function : Obj
     {
-        public Function(string name, ImmutableArray<string> positionArguments, Action<Function, Scope, Stack> call, bool isBuiltin) 
+        public Function(string name, ImmutableArray<string> positionParameters, Action<Function, Scope, Stack> call, bool isBuiltin) 
             : base(call)
         {
             Name = name;
-            PositionArguments = positionArguments;
+            PositionParameters = positionParameters;
             Call = call;
             IsBuiltin = isBuiltin;
         }
@@ -18,7 +18,7 @@ namespace Interpreter.Core.Execution.Objects
 
         public string Name { get; }
         
-        public ImmutableArray<string> PositionArguments { get; }
+        public ImmutableArray<string> PositionParameters { get; }
         
         public Action<Function, Scope, Stack> Call { get; }
         

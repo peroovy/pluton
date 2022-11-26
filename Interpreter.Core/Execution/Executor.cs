@@ -17,7 +17,7 @@ namespace Interpreter.Core.Execution
         private readonly ILogger logger;
 
         private readonly Stack stack = new();
-        private Scope currentScope = new(null);
+        private Scope scope = new(null);
 
         public Executor(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations, ILogger logger)
         {
@@ -26,7 +26,7 @@ namespace Interpreter.Core.Execution
             this.logger = logger;
 
             foreach (var function in BuiltinFunctions.GetAll())
-                currentScope.Assign(function.Name, function);
+                scope.Assign(function.Name, function);
         }
 
         public void Execute(SyntaxTree tree)
@@ -49,7 +49,7 @@ namespace Interpreter.Core.Execution
                 isBuiltin: false
             );
 
-            currentScope.Assign(function.Name, function);
+            scope.Assign(function.Name, function);
 
             return null;
         }
@@ -72,8 +72,8 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(ForStatement statement)
         {
-            var previousScope = currentScope;
-            currentScope = new Scope(previousScope);
+            var previousScope = scope;
+            scope = new Scope(previousScope);
             
             foreach (var initializer in statement.Initializers)
                 initializer.Accept(this);
@@ -86,7 +86,7 @@ namespace Interpreter.Core.Execution
                     iterator.Accept(this);
             }
 
-            currentScope = previousScope;
+            scope = previousScope;
 
             return null;
         }
@@ -122,13 +122,13 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(BlockStatement block)
         {
-            var parentScope = currentScope;
-            currentScope = new Scope(parentScope);
+            var parentScope = scope;
+            scope = new Scope(parentScope);
             
             foreach (var statement in block.Statements)
                 statement.Accept(this);
 
-            currentScope = parentScope;
+            scope = parentScope;
 
             return null;
         }
@@ -154,7 +154,7 @@ namespace Interpreter.Core.Execution
             }
 
             if (!TryAssignUp(name, value))
-                currentScope.Assign(name, value);
+                scope.Assign(name, value);
 
             return value;
         }
@@ -203,7 +203,7 @@ namespace Interpreter.Core.Execution
         
         public Obj Execute(VariableExpression variable)
         {
-            if (currentScope.TryLookup(variable.Name.Text, out var value))
+            if (scope.TryLookup(variable.Name.Text, out var value))
                 return value;
 
             var nameToken = variable.Name;
@@ -216,10 +216,10 @@ namespace Interpreter.Core.Execution
         {
             var name = expression.Name;
 
-            if (currentScope.TryLookup(name.Text, out var value) && value is Function function)
+            if (scope.TryLookup(name.Text, out var value) && value is Function function)
             {
                 var actualCount = expression.PositionArguments.Length;
-                var expectedCount = function.PositionArguments.Length;
+                var expectedCount = function.PositionParameters.Length;
                 if (actualCount == expectedCount) 
                     return CallFunction(function, expression.PositionArguments);
                 
@@ -239,17 +239,18 @@ namespace Interpreter.Core.Execution
         private Obj CallFunction(Function function, ImmutableArray<Expression> arguments)
         {
             stack.PushFunction(function);
-            var previousScope = currentScope;
-            currentScope = new Scope(previousScope);
-            for (var i = 0; i < function.PositionArguments.Length; i++)
-            {
-                var parameter = function.PositionArguments[i];
-                var argument = arguments[i].Accept(this);
-                currentScope.Assign(parameter, argument);
-            }
-
-            function.Call(function, currentScope, stack);
-            currentScope = previousScope;
+            var evaluatedParams = function.PositionParameters
+                .Zip(arguments, (name, expression) => (nameParam: name, argument: expression.Accept(this)))
+                .ToImmutableArray();
+            
+            var previousScope = scope;
+            scope = new Scope(previousScope);
+            
+            foreach (var param in evaluatedParams)
+                scope.Assign(param.nameParam, param.argument);
+            
+            function.Call(function, scope, stack);
+            scope = previousScope;
 
             var obj = stack.Pop();
             return obj == function ? new Undefined() : obj;
@@ -257,7 +258,7 @@ namespace Interpreter.Core.Execution
 
         private bool TryAssignUp(string name, Obj value)
         {
-            var current = currentScope;
+            var current = scope;
             do
             {
                 if (current.Contains(name))

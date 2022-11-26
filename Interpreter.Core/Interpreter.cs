@@ -12,8 +12,45 @@ using Ninject.Extensions.Conventions;
 
 namespace Interpreter.Core
 {
-    public static class Core
+    public class Interpreter
     {
+        public Interpreter()
+        {
+            var container = Configure();
+            Logger = container.Get<ILogger>();
+            LogHandler = container.Get<ILogHandler>();
+
+            TextParser = container.Get<ITextParser>();
+            Lexer = container.Get<ILexer>();
+            SyntaxParser = container.Get<ISyntaxParser>();
+            Executor = container.Get<IExecutor>();
+        }
+        
+        public ILogger Logger { get; }
+        
+        public ILogHandler LogHandler { get; }
+        
+        public ITextParser TextParser { get; }
+        
+        public ILexer Lexer { get; }
+        
+        public ISyntaxParser SyntaxParser { get; }
+        
+        public IExecutor Executor { get; }
+
+        public void Interpret(string text)
+        {
+            var lines = TextParser.ParseLines(text);
+            var tokens = Lexer.Tokenize(lines);
+            var syntaxTree = SyntaxParser.Parse(tokens);
+
+            if (Logger.IsEmpty)
+                syntaxTree.Accept(Executor);
+                
+            LogHandler.Handle(Logger);
+            Logger.Reset();
+        }
+        
         public static StandardKernel Configure()
         {
             var container = new StandardKernel();
