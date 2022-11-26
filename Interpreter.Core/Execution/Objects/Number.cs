@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Interpreter.Core.Execution.Objects
 {
@@ -10,7 +11,12 @@ namespace Interpreter.Core.Execution.Objects
 
         public override ObjectTypes Type => ObjectTypes.Number;
 
-        public override string ToString() => Value.ToString();
+        public override string ToString()
+        {
+            var value = (double)Value;
+
+            return double.IsNaN(value) ? "NaN" : value.ToString(CultureInfo.InvariantCulture);
+        }
 
         public override Boolean ToBoolean() => new(Convert.ToBoolean((double)Value));
 

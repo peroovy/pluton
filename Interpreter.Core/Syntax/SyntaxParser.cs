@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Interpreter.Core.Lexing;
 using Interpreter.Core.Logging;
@@ -333,7 +334,7 @@ namespace Interpreter.Core.Syntax
         private NumberExpression ParseNumberExpression()
         {
             var numberToken = MatchToken(TokenTypes.Number);
-            var value = Convert.ToDouble(numberToken.Text);
+            var value = Convert.ToDouble(numberToken.Text, CultureInfo.InvariantCulture);
             
             return new NumberExpression(value);
         }
