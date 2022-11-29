@@ -5,8 +5,11 @@ namespace Interpreter.Core.Execution.Objects
 {
     public class Function : Obj
     {
-        public Function(string name, ImmutableArray<string> positionParameters, Action<Function, Scope, Stack> call, bool isBuiltin) 
-            : base(call)
+        public Function(
+            string name, 
+            ImmutableArray<string> positionParameters, 
+            Action<Function, Scope, Stack> call, 
+            bool isBuiltin) : base(call)
         {
             Name = name;
             PositionParameters = positionParameters;
@@ -24,7 +27,7 @@ namespace Interpreter.Core.Execution.Objects
         
         public bool IsBuiltin { get; }
 
-        public override string ToString() => (IsBuiltin ? "built-in " : string.Empty) + $"function {Name}";
+        public override string ToString() => (IsBuiltin ? "built-in " : string.Empty) + $"function <{Name}>";
 
         public override Boolean ToBoolean() => new(true);
     }
