@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Interpreter.Core;
 
 namespace Interpreter
 {
@@ -6,12 +7,12 @@ namespace Interpreter
     {
         public static void Main(string[] args)
         {
-            var interpreter = new Core.Interpreter();
+            var core = InterpreterCore.Create();
             var path = Path.Combine(Directory.GetCurrentDirectory(), "main.txt");
 
             using var streamReader = File.OpenText(path);
             var text = streamReader.ReadToEnd();
-            interpreter.Interpret(text);
+            core.Interpret(text);
         }
     }
 }

@@ -70,7 +70,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Interpreter.cs" />
+        <Compile Include="InterpreterCore.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Execution\Objects\Boolean.cs" />
