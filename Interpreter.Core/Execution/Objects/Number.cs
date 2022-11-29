@@ -18,37 +18,41 @@ namespace Interpreter.Core.Execution.Objects
             return double.IsNaN(value) ? "NaN" : value.ToString(CultureInfo.InvariantCulture);
         }
 
-        public override Boolean ToBoolean() => new(Convert.ToBoolean((double)Value));
+        public override Boolean ToBoolean() => new(Convert.ToBoolean(ToDouble()));
 
-        public static Number operator +(Number operand) => new((double)operand.Value);
+        public double ToDouble() => (double)Value;
 
-        public static Number operator -(Number operand) => new(-(double)operand.Value);
+        public static Number operator +(Number operand) => new(operand.ToDouble());
 
-        public static Number operator +(Number left, Number right) => new((double)left.Value + (double)right.Value);
+        public static Number operator -(Number operand) => new(-operand.ToDouble());
+
+        public static Number operator +(Number left, Number right) => new(left.ToDouble() + right.ToDouble());
         
-        public static Number operator -(Number left, Number right) => new((double)left.Value - (double)right.Value);
+        public static Number operator -(Number left, Number right) => new(left.ToDouble() - right.ToDouble());
         
-        public static Number operator *(Number left, Number right) => new((double)left.Value * (double)right.Value);
+        public static Number operator *(Number left, Number right) => new(left.ToDouble() * right.ToDouble());
+        
+        public static String operator *(Number number, String str) => str * number;
 
         public static Number operator /(Number left, Number right)
         {
-            var rightValue = (double)right.Value;
+            var rightValue = right.ToDouble();
 
-            return new Number(rightValue == 0 ? double.NaN : (double)left.Value / rightValue);
+            return new Number(rightValue == 0 ? double.NaN : left.ToDouble() / rightValue);
         }
 
-        public static Number operator %(Number left, Number right) => new((double)left.Value % (double)right.Value);
+        public static Number operator %(Number left, Number right) => new(left.ToDouble() % right.ToDouble());
 
-        public static Boolean operator <(Number left, Number right) => new((double)left.Value < (double)right.Value);
+        public static Boolean operator <(Number left, Number right) => new(left.ToDouble() < right.ToDouble());
 
-        public static Boolean operator >(Number left, Number right) => new((double)left.Value > (double)right.Value);
+        public static Boolean operator >(Number left, Number right) => new(left.ToDouble() > right.ToDouble());
         
-        public static Boolean operator <=(Number left, Number right) => new((double)left.Value <= (double)right.Value);
+        public static Boolean operator <=(Number left, Number right) => new(left.ToDouble() <= right.ToDouble());
 
-        public static Boolean operator >=(Number left, Number right) => new((double)left.Value >= (double)right.Value);
+        public static Boolean operator >=(Number left, Number right) => new(left.ToDouble() >= right.ToDouble());
         
-        public static Boolean operator ==(Number left, Number right) => new((double)left.Value == (double)right.Value);
+        public static Boolean operator ==(Number left, Number right) => new(left.ToDouble() == right.ToDouble());
 
-        public static Boolean operator !=(Number left, Number right) => new((double)left.Value != (double)right.Value);
+        public static Boolean operator !=(Number left, Number right) => new(left.ToDouble() != right.ToDouble());
     }
 }
