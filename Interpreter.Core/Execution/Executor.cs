@@ -199,7 +199,9 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(NumberExpression number) => new Number(number.Value);
 
-        public Obj Execute(BooleanExpression boolean) => new Objects.Boolean(boolean.Value);
+        public Obj Execute(BooleanExpression boolean) => new Boolean(boolean.Value);
+
+        public Obj Execute(StringExpression str) => new String(str.Value);
         
         public Obj Execute(VariableExpression variable)
         {

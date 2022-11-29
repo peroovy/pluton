@@ -325,6 +325,9 @@ namespace Interpreter.Core.Syntax
                 case TokenTypes.Number:
                     return ParseNumberExpression();
                 
+                case TokenTypes.String:
+                    return ParseStringExpression();
+                
                 default:
                     return ParseVariableOrCallExpression();
             }
@@ -353,6 +356,13 @@ namespace Interpreter.Core.Syntax
             _ = value ? MatchToken(TokenTypes.TrueKeyword) : MatchToken(TokenTypes.FalseKeyword);
 
             return new BooleanExpression(value);
+        }
+
+        private StringExpression ParseStringExpression()
+        {
+            var token = MatchToken(TokenTypes.String);
+
+            return new StringExpression(token.Text);
         }
 
         private Expression ParseVariableOrCallExpression()

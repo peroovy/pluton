@@ -6,7 +6,8 @@
         
         Number,
         Identifier,
-        
+        String,
+
         TrueKeyword,
         FalseKeyword,
         IfKeyword,

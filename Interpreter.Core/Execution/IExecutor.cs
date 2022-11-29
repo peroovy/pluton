@@ -36,6 +36,8 @@ namespace Interpreter.Core.Execution
 
         Obj Execute(BooleanExpression boolean);
 
+        Obj Execute(StringExpression str);
+
         Obj Execute(VariableExpression variable);
 
         Obj Execute(FunctionCallExpression call);

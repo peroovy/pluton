@@ -7,6 +7,13 @@
             Type = type;
             Text = text;
             Location = location;
+            Length = text?.Length ?? 0;
+        }
+
+        public SyntaxToken(TokenTypes type, string text, TextLocation location, int length)
+            : this(type, text, location)
+        {
+            Length = length;
         }
         
         public TokenTypes Type { get; }
@@ -15,7 +22,7 @@
         
         public TextLocation Location { get; }
 
-        public int Length => Text.Length;
+        public int Length { get; }
 
         public override string ToString() => $"{Type}: {Text}";
     }

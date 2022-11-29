@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Interpreter.Core.Logging;
 using Interpreter.Core.Text;
 
 namespace Interpreter.Core.Lexing.TokenParsers
@@ -29,7 +30,7 @@ namespace Interpreter.Core.Lexing.TokenParsers
         
         public bool CanParseFrom(Line line, int position) => terminalsTypes.ContainsKey(line.Value[position]);
 
-        public SyntaxToken Parse(Line line, int position)
+        public SyntaxToken Parse(Line line, int position, ILogger logger)
         {
             var terminal = line.Value[position];
             var type = terminalsTypes[terminal];

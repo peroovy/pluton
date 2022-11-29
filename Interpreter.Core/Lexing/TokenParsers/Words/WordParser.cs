@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Interpreter.Core.Logging;
 using Interpreter.Core.Text;
 
 namespace Interpreter.Core.Lexing.TokenParsers.Words
@@ -16,7 +17,7 @@ namespace Interpreter.Core.Lexing.TokenParsers.Words
             return char.IsLetter(current) || current == '_';
         }
 
-        public SyntaxToken Parse(Line line, int position)
+        public SyntaxToken Parse(Line line, int position, ILogger logger)
         {
             var value = regex
                 .Match(line.Value, position)

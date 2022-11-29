@@ -5,6 +5,7 @@
         Number,
         Boolean,
         Undefined,
-        Function
+        Function,
+        String
     }
 }

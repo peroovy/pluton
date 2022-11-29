@@ -1,4 +1,5 @@
-﻿using Interpreter.Core.Text;
+﻿using Interpreter.Core.Logging;
+using Interpreter.Core.Text;
 
 namespace Interpreter.Core.Lexing.TokenParsers
 {
@@ -8,6 +9,6 @@ namespace Interpreter.Core.Lexing.TokenParsers
         
         bool CanParseFrom(Line line, int position);
 
-        SyntaxToken Parse(Line line, int position);
+        SyntaxToken Parse(Line line, int position, ILogger logger);
     }
 }

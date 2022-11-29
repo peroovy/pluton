@@ -37,7 +37,7 @@ namespace Interpreter.Core.Lexing
                 {
                     var token = tokenParsers
                         .FirstOrDefault(p => p.CanParseFrom(line, position))
-                        ?.Parse(line, position);
+                        ?.Parse(line, position, logger);
 
                     token ??= ParseUnknownToken(line, position);
                     position += token.Length;

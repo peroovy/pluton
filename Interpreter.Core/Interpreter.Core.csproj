@@ -70,6 +70,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Execution\Objects\String.cs" />
         <Compile Include="InterpreterCore.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
@@ -112,6 +113,7 @@
         <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />
         <Compile Include="Lexing\TokenParsers\NumberParser.cs" />
         <Compile Include="Lexing\TokenParsers\SingleTerminalsParser.cs" />
+        <Compile Include="Lexing\TokenParsers\StringParser.cs" />
         <Compile Include="Lexing\TokenParsers\WhitespaceParser.cs" />
         <Compile Include="Lexing\TokenParsers\Words\Keywords.cs" />
         <Compile Include="Lexing\TokenParsers\Words\WordParser.cs" />
@@ -134,6 +136,7 @@
         <Compile Include="Syntax\AST\Expressions\Expression.cs" />
         <Compile Include="Syntax\AST\Expressions\NumberExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\ParenthesizedExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\StringExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\UnaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\VariableExpression.cs" />
         <Compile Include="Syntax\AST\ForStatement.cs" />

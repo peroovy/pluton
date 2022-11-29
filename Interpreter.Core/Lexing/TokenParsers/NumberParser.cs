@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Interpreter.Core.Logging;
 using Interpreter.Core.Text;
 
 namespace Interpreter.Core.Lexing.TokenParsers
@@ -19,7 +20,7 @@ namespace Interpreter.Core.Lexing.TokenParsers
             return char.IsDigit(current) || current == '.' && char.IsDigit(next);
         }
 
-        public SyntaxToken Parse(Line line, int position)
+        public SyntaxToken Parse(Line line, int position, ILogger logger)
         {
             var value = regex
                 .Match(line.Value, position)
