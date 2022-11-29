@@ -12,7 +12,7 @@ namespace Interpreter.Core.Execution.Objects
 
         public override string ToString() => (string)Value;
 
-        public override Boolean ToBoolean() => new(Value.ToString().Length > 0);
+        public override Boolean ToBoolean() => new(ToString().Length > 0);
 
         public static String operator +(String left, String right) => new(left.ToString() + right);
         
@@ -27,8 +27,7 @@ namespace Interpreter.Core.Execution.Objects
             return new String(result.ToString());
         }
 
-        public static Boolean operator ==(String left, String right)
-            => new(ReferenceEquals(left, right) || left.ToString() == right.ToString());
+        public static Boolean operator ==(String left, String right) => new(left.ToString() == right.ToString());
 
         public static Boolean operator !=(String left, String right) => !(left == right);
     }
