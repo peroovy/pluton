@@ -19,13 +19,17 @@ namespace Interpreter.Core.Execution
         private readonly Stack stack = new();
         private Scope scope = new(null);
 
-        public Executor(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations, ILogger logger)
+        public Executor(
+            BinaryOperation[] binaryOperations, 
+            UnaryOperation[] unaryOperations, 
+            BuiltinFunction[] builtinFunctions, 
+            ILogger logger)
         {
             this.binaryOperations = binaryOperations;
             this.unaryOperations = unaryOperations;
             this.logger = logger;
 
-            foreach (var function in BuiltinFunctions.GetAll())
+            foreach (var function in builtinFunctions)
                 scope.Assign(function.Name, function);
         }
 

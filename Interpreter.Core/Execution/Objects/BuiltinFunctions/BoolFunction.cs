@@ -2,7 +2,7 @@
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
-    public class BoolFunction : Function
+    public class BoolFunction : BuiltinFunction
     {
         private const string ParameterName = "obj";
         
@@ -14,8 +14,7 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 {
                     var boolean = scope.Lookup(ParameterName).ToBoolean();
                     stack.PushFunctionResult(boolean);
-                },
-                isBuiltin: true)
+                })
         {
         }
     }

@@ -70,13 +70,13 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
         <Compile Include="Execution\Objects\String.cs" />
         <Compile Include="InterpreterCore.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Execution\Objects\Boolean.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\BoolFunction.cs" />
-        <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunctions.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
         <Compile Include="Execution\Objects\Function.cs" />
         <Compile Include="Execution\Objects\Number.cs" />

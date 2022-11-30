@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
-    public class PrintFunction : Function
+    public class PrintFunction : BuiltinFunction
     {
         private const string ParameterName = "obj";
         
@@ -11,8 +11,7 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
             : base(
                 "print", 
                 ImmutableArray.Create(ParameterName), 
-                (_, scope, _) => Console.WriteLine(scope.Lookup(ParameterName)),
-                isBuiltin: true)
+                (_, scope, _) => Console.WriteLine(scope.Lookup(ParameterName)))
         {
         }
     }

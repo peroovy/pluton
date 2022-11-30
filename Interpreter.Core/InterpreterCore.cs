@@ -1,4 +1,5 @@
 ﻿using Interpreter.Core.Execution;
+using Interpreter.Core.Execution.Objects.BuiltinFunctions;
 using Interpreter.Core.Execution.Operations.Binary;
 using Interpreter.Core.Execution.Operations.Unary;
 using Interpreter.Core.Lexing;
@@ -82,6 +83,12 @@ namespace Interpreter.Core
                 .FromThisAssembly()
                 .SelectAllClasses()
                 .InheritedFrom<UnaryOperation>()
+                .BindBase());
+            
+            container.Bind(conf => conf
+                .FromThisAssembly()
+                .SelectAllClasses()
+                .InheritedFrom<BuiltinFunction>()
                 .BindBase());
 
             return container.Get<InterpreterCore>();
