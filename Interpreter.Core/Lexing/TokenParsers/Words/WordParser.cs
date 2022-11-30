@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
+using Castle.Core.Internal;
 using Interpreter.Core.Logging;
 using Interpreter.Core.Text;
 
@@ -6,7 +8,7 @@ namespace Interpreter.Core.Lexing.TokenParsers.Words
 {
     public class WordParser : ITokenParser
     {
-        private readonly Regex regex = new(@"_*([A-z]|[А-я]|[0-9])*");
+        private readonly Regex regex = new(@"_*([a-z]|[A-Z]|[А-Я]|[а-я]|[0-9])*");
 
         public int Priority => 1000;
 
@@ -22,6 +24,9 @@ namespace Interpreter.Core.Lexing.TokenParsers.Words
             var value = regex
                 .Match(line.Value, position)
                 .ToString();
+
+            if (value.IsNullOrEmpty())
+                throw new ArgumentException("Unknown word");
 
             var type = value.TryGetKeywordType() ?? TokenTypes.Identifier;
 
