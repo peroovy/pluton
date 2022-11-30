@@ -15,6 +15,6 @@ namespace Interpreter.Core.Execution.Operations.Binary
         }
 
         public Obj Invoke(Obj left, Obj right)
-            => (Obj)method?.Invoke(null, new object[] {left, right}) ?? new Undefined();
+            => (Obj)method?.Invoke(null, new object[] {left, right}) ?? new Null();
     }
 }

@@ -18,6 +18,7 @@
         ReturnKeyword,
         AndKeyword,
         OrKeyword,
+        NullKeyword,
 
         LineSeparator,
         Space,

@@ -15,7 +15,8 @@ namespace Interpreter.Core.Lexing.TokenParsers.Words
             ["def"] = TokenTypes.DefKeyword,
             ["return"] = TokenTypes.ReturnKeyword,
             ["and"] = TokenTypes.AndKeyword,
-            ["or"] = TokenTypes.OrKeyword
+            ["or"] = TokenTypes.OrKeyword,
+            ["null"] = TokenTypes.NullKeyword
         };
 
         public static TokenTypes? TryGetKeywordType(this string word) =>

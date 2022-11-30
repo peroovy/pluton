@@ -62,7 +62,7 @@ namespace Interpreter.Core.Execution
         {
             if (stack.Count > 0 && stack.Peek() is Function)
             {
-                var expression = statement.Expression?.Accept(this) ?? new Undefined();
+                var expression = statement.Expression?.Accept(this) ?? new Null();
                 stack.PushFunctionResult(expression);
 
                 return null;
@@ -149,14 +149,6 @@ namespace Interpreter.Core.Execution
             var name = assignment.Variable.Text;
             var value = assignment.Expression.Accept(this);
 
-            if (value is Undefined)
-            {
-                var op = assignment.OperatorToken;
-                logger.Error(op.Location, op.Length, "Expression must have a value");
-
-                return null;
-            }
-
             if (!TryAssignUp(name, value))
                 scope.Assign(name, value);
 
@@ -206,7 +198,9 @@ namespace Interpreter.Core.Execution
         public Obj Execute(BooleanExpression boolean) => new Boolean(boolean.Value);
 
         public Obj Execute(StringExpression str) => new String(str.Value);
-        
+
+        public Obj Execute(NullExpression expression) => new Null();
+
         public Obj Execute(VariableExpression variable)
         {
             if (scope.TryLookup(variable.Name.Text, out var value))
@@ -215,7 +209,7 @@ namespace Interpreter.Core.Execution
             var nameToken = variable.Name;
             logger.Error(nameToken.Location, nameToken.Length,$"Variable '{nameToken.Text}' does not exist");
 
-            return new Undefined();
+            return new Null();
         }
 
         public Obj Execute(FunctionCallExpression expression)
@@ -234,12 +228,12 @@ namespace Interpreter.Core.Execution
                 logger.Error(location, lenght,
                     $"Function '{name.Text}' requires {expectedCount} arguments but was given {actualCount}");
 
-                return new Undefined();
+                return new Null();
             }
             
             logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
 
-            return new Undefined();
+            return new Null();
         }
 
         private Obj CallFunction(Function function, ImmutableArray<Expression> arguments)
@@ -259,7 +253,7 @@ namespace Interpreter.Core.Execution
             scope = previousScope;
 
             var obj = stack.Pop();
-            return obj == function ? new Undefined() : obj;
+            return obj == function ? new Null() : obj;
         }
 
         private bool TryAssignUp(string name, Obj value)

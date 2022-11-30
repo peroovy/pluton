@@ -322,6 +322,9 @@ namespace Interpreter.Core.Syntax
                 case TokenTypes.FalseKeyword:
                     return ParseBooleanExpression();
                 
+                case TokenTypes.NullKeyword:
+                    return ParseNullExpression();
+                
                 case TokenTypes.Number:
                     return ParseNumberExpression();
                 
@@ -363,6 +366,13 @@ namespace Interpreter.Core.Syntax
             var token = MatchToken(TokenTypes.String);
 
             return new StringExpression(token.Text);
+        }
+
+        private NullExpression ParseNullExpression()
+        {
+            MatchToken(TokenTypes.NullKeyword);
+
+            return new NullExpression();
         }
 
         private Expression ParseVariableOrCallExpression()

@@ -4,7 +4,7 @@
     {
         Number,
         Boolean,
-        Undefined,
+        Null,
         Function,
         String
     }

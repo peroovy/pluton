@@ -38,6 +38,8 @@ namespace Interpreter.Core.Execution
 
         Obj Execute(StringExpression str);
 
+        Obj Execute(NullExpression expression);
+
         Obj Execute(VariableExpression variable);
 
         Obj Execute(FunctionCallExpression call);

@@ -82,7 +82,7 @@
         <Compile Include="Execution\Objects\Number.cs" />
         <Compile Include="Execution\Objects\Obj.cs" />
         <Compile Include="Execution\Objects\ObjectTypes.cs" />
-        <Compile Include="Execution\Objects\Undefined.cs" />
+        <Compile Include="Execution\Objects\Null.cs" />
         <Compile Include="Execution\Operations\Binary\AdditiveOperation.cs" />
         <Compile Include="Execution\Operations\Binary\BinaryOperation.cs" />
         <Compile Include="Execution\Operations\Binary\DivisionOperation.cs" />
@@ -134,6 +134,7 @@
         <Compile Include="Syntax\AST\Expressions\BooleanExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\FunctionCallExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Expression.cs" />
+        <Compile Include="Syntax\AST\Expressions\NullExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\NumberExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\ParenthesizedExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\StringExpression.cs" />
