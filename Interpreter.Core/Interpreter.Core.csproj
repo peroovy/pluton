@@ -74,6 +74,7 @@
         <Compile Include="Execution\Objects\List.cs" />
         <Compile Include="Execution\Objects\MagicMethods\IReadIndex.cs" />
         <Compile Include="Execution\Objects\String.cs" />
+        <Compile Include="Execution\RuntimeException.cs" />
         <Compile Include="InterpreterCore.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />

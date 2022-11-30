@@ -14,7 +14,6 @@ namespace Interpreter.Core.Execution.Operations.Unary
             this.method = method;
         }
 
-        public Obj Invoke(Obj operand)
-            => (Obj)method?.Invoke(null, new object[] { operand }) ?? new Null();
+        public Obj Invoke(Obj operand) => (Obj)method?.Invoke(null, new object[] { operand });
     }
 }

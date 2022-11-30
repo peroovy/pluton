@@ -6,7 +6,6 @@ using Interpreter.Core.Execution.Objects.BuiltinFunctions;
 using Interpreter.Core.Execution.Objects.MagicMethods;
 using Interpreter.Core.Execution.Operations.Binary;
 using Interpreter.Core.Execution.Operations.Unary;
-using Interpreter.Core.Lexing;
 using Interpreter.Core.Logging;
 using Interpreter.Core.Syntax.AST;
 using Interpreter.Core.Syntax.AST.Expressions;
@@ -40,8 +39,14 @@ namespace Interpreter.Core.Execution
 
         public void Execute(SyntaxTree tree)
         {
-            foreach (var member in tree.Members)
-                member.Accept(this);
+            try
+            {
+                foreach (var member in tree.Members)
+                    member.Accept(this);
+            }
+            catch (RuntimeException _)
+            {
+            }
         }
 
         public Obj Execute(FunctionDeclarationStatement statement)
@@ -74,9 +79,9 @@ namespace Interpreter.Core.Execution
             }
 
             var keyword = statement.Keyword;
-            logger.Error(keyword.Location, keyword.Length, $"The 'return' statement can be only into function block");
+            logger.Error(keyword.Location, keyword.Length, "The return statement can be only into function block");
             
-            return null;
+            throw new RuntimeException(keyword.Location);
         }
 
         public Obj Execute(ForStatement statement)
@@ -170,7 +175,7 @@ namespace Interpreter.Core.Execution
                 var name = expression.Variable.Name;
                 logger.Error(name.Location, name.Length, $"Type '{variableValue.Type}' is not indexed");
 
-                return new Null();
+                throw new RuntimeException(name.Location);
             }
 
             var index = expression.Index.Accept(this);
@@ -179,13 +184,15 @@ namespace Interpreter.Core.Execution
             if (index is not Number number)
             {
                 logger.Error(openLocation, length, $"Expected number value but was '{index.Type}' type");
-                return new Null();
+
+                throw new RuntimeException(openLocation);
             }
 
             if (!number.IsInteger)
             {
                 logger.Error(openLocation, length, "Expected integer value");
-                return new Null();
+
+                throw new RuntimeException(openLocation);
             }
 
             try
@@ -195,7 +202,8 @@ namespace Interpreter.Core.Execution
             catch (IndexOutOfRangeException _)
             {
                 logger.Error(openLocation, length, "The index was outside the bounds of the list");
-                return new Null();
+
+                throw new RuntimeException(openLocation);
             }
         }
 
@@ -209,13 +217,13 @@ namespace Interpreter.Core.Execution
                 .Single(op => op.IsOperator(opToken.Type))
                 .GetMethod(left, right);
 
-            if (method.IsUnknown)
-            {
-                logger.Error(opToken.Location, opToken.Length,
-                    $"The binary operator '{opToken.Text}' is not defined for '{left.Type}' and '{right.Type}' types");
-            }
+            if (!method.IsUnknown) 
+                return method.Invoke(left, right);
             
-            return method.Invoke(left, right);
+            logger.Error(opToken.Location, opToken.Length,
+                $"The binary operator '{opToken.Text}' is not defined for '{left.Type}' and '{right.Type}' types");
+
+            throw new RuntimeException(opToken.Location);
         }
 
         public Obj Execute(UnaryExpression unary)
@@ -225,14 +233,14 @@ namespace Interpreter.Core.Execution
             var method = unaryOperations
                 .Single(op => op.IsOperator(opToken.Type))
                 .GetMethod(operand);
-            
-            if (method.IsUnknown)
-            {
-                logger.Error(opToken.Location, opToken.Length,
-                    $"The unary operator '{opToken.Text}' is not defined for '{operand.Type}' type");
-            }
 
-            return method.Invoke(operand);
+            if (!method.IsUnknown) 
+                return method.Invoke(operand);
+            
+            logger.Error(opToken.Location, opToken.Length,
+                $"The unary operator '{opToken.Text}' is not defined for '{operand.Type}' type");
+                
+            throw new RuntimeException(opToken.Location);
         }
 
         public Obj Execute(NumberExpression number) => new Number(number.Value);
@@ -260,7 +268,7 @@ namespace Interpreter.Core.Execution
             var nameToken = variable.Name;
             logger.Error(nameToken.Location, nameToken.Length,$"Variable '{nameToken.Text}' does not exist");
 
-            return new Null();
+            throw new RuntimeException(nameToken.Location);
         }
 
         public Obj Execute(FunctionCallExpression expression)
@@ -279,12 +287,12 @@ namespace Interpreter.Core.Execution
                 logger.Error(location, lenght,
                     $"Function '{name.Text}' requires {expectedCount} arguments but was given {actualCount}");
 
-                return new Null();
+                throw new RuntimeException(location);
             }
             
             logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
 
-            return new Null();
+            throw new RuntimeException(name.Location);
         }
 
         private Obj CallFunction(Function function, ImmutableArray<Expression> arguments)
