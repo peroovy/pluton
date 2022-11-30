@@ -11,6 +11,15 @@ namespace Interpreter.Core.Execution.Objects
 
         public override ObjectTypes Type => ObjectTypes.Number;
 
+        public bool IsInteger
+        {
+            get
+            {
+                var value = ToDouble();
+                return Math.Abs(Math.Round(value) - value) < double.Epsilon;
+            }
+        }
+
         public override string ToString()
         {
             var value = (double)Value;

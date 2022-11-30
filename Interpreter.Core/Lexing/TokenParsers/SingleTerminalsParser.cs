@@ -18,6 +18,8 @@ namespace Interpreter.Core.Lexing.TokenParsers
             [';'] = TokenTypes.Semicolon,
             ['{'] = TokenTypes.OpenBrace,
             ['}'] = TokenTypes.CloseBrace,
+            ['['] = TokenTypes.OpenBracket,
+            [']'] = TokenTypes.CloseBracket,
             ['<'] = TokenTypes.LeftArrow,
             ['>'] = TokenTypes.RightArrow,
             [','] = TokenTypes.Comma,

@@ -136,11 +136,11 @@ namespace Interpreter.Core.Syntax
         {
             var keyword = MatchToken(TokenTypes.ForKeyword);
             var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
-            var initializers = ParseForStatementParameters(TokenTypes.Semicolon);
+            var initializers = ParseSeparatedExpressions(TokenTypes.Semicolon);
             var firstSemicolon = MatchToken(TokenTypes.Semicolon);
             var condition = ParseExpression();
             var secondSemicolon = MatchToken(TokenTypes.Semicolon);
-            var iterators = ParseForStatementParameters(TokenTypes.CloseParenthesis);
+            var iterators = ParseSeparatedExpressions(TokenTypes.CloseParenthesis);
             var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
             var body = ParseStatement();
 
@@ -155,23 +155,6 @@ namespace Interpreter.Core.Syntax
                 closeParenthesis,
                 body
             );
-        }
-
-        private ImmutableArray<Expression> ParseForStatementParameters(TokenTypes endToken)
-        {
-            var parameters = ImmutableArray.CreateBuilder<Expression>();
-            while (Current.Type != endToken && Current.Type != TokenTypes.Eof)
-            {
-                var parameter = ParseExpression();
-                parameters.Add(parameter);
-                
-                if (Current.Type != TokenTypes.Comma)
-                    break;
-
-                MatchToken(TokenTypes.Comma);
-            }
-
-            return parameters.ToImmutable();
         }
 
         private WhileStatement ParseWhileStatement()
@@ -313,10 +296,16 @@ namespace Interpreter.Core.Syntax
 
         private Expression ParsePrimaryExpression()
         {
+            if (Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.OpenBracket)
+                return ParseCollectionIndexExpression();
+            
             switch (Current.Type)
             {
                 case TokenTypes.OpenParenthesis:
                     return ParseParenthesizedExpression();
+                
+                case TokenTypes.OpenBracket:
+                    return ParseListExpression();
                 
                 case TokenTypes.TrueKeyword:
                 case TokenTypes.FalseKeyword:
@@ -343,6 +332,16 @@ namespace Interpreter.Core.Syntax
             var close = MatchToken(TokenTypes.CloseParenthesis);
 
             return new ParenthesizedExpression(open, expression, close);
+        }
+        
+        private CollectionIndexExpression ParseCollectionIndexExpression()
+        {
+            var name = ParseVariableExpression();
+            var openBracket = MatchToken(TokenTypes.OpenBracket);
+            var index = ParseExpression();
+            var closeBracket = MatchToken(TokenTypes.CloseBracket);
+
+            return new CollectionIndexExpression(name, openBracket, index, closeBracket);
         }
 
         private NumberExpression ParseNumberExpression()
@@ -387,22 +386,10 @@ namespace Interpreter.Core.Syntax
         {
             var name = MatchToken(TokenTypes.Identifier);
             var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
-
-            var positionArguments = ImmutableArray.CreateBuilder<Expression>();
-            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof)
-            {
-                var argument = ParseExpression();
-                positionArguments.Add(argument);
-                
-                if (Current.Type != TokenTypes.Comma)
-                    break;
-
-                MatchToken(TokenTypes.Comma);
-            }
-
+            var positionArguments = ParseSeparatedExpressions(TokenTypes.CloseParenthesis);
             var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
 
-            return new FunctionCallExpression(name, openParenthesis, positionArguments.ToImmutable(), closeParenthesis);
+            return new FunctionCallExpression(name, openParenthesis, positionArguments, closeParenthesis);
         }
 
         private VariableExpression ParseVariableExpression()
@@ -410,6 +397,33 @@ namespace Interpreter.Core.Syntax
             var name = MatchToken(TokenTypes.Identifier);
 
             return new VariableExpression(name);
+        }
+
+        private ListExpression ParseListExpression()
+        {
+            var openBracket = MatchToken(TokenTypes.OpenBracket);
+            var items = ParseSeparatedExpressions(TokenTypes.CloseBracket);
+            var closeBracket = MatchToken(TokenTypes.CloseBracket);
+
+            return new ListExpression(openBracket, items, closeBracket);
+        }
+
+        private ImmutableArray<Expression> ParseSeparatedExpressions(TokenTypes endLimiter)
+        {
+            var expressions = ImmutableArray.CreateBuilder<Expression>();
+            
+            while (Current.Type != endLimiter && Current.Type != TokenTypes.Eof)
+            {
+                var expression = ParseExpression();
+                expressions.Add(expression);
+                
+                if (Current.Type != TokenTypes.Comma)
+                    break;
+
+                MatchToken(TokenTypes.Comma);
+            }
+
+            return expressions.ToImmutable();
         }
     }
 }

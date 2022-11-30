@@ -1,12 +1,17 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using Interpreter.Core.Execution.Objects;
 using Interpreter.Core.Execution.Objects.BuiltinFunctions;
+using Interpreter.Core.Execution.Objects.MagicMethods;
 using Interpreter.Core.Execution.Operations.Binary;
 using Interpreter.Core.Execution.Operations.Unary;
+using Interpreter.Core.Lexing;
 using Interpreter.Core.Logging;
 using Interpreter.Core.Syntax.AST;
 using Interpreter.Core.Syntax.AST.Expressions;
+using Boolean = Interpreter.Core.Execution.Objects.Boolean;
+using String = Interpreter.Core.Execution.Objects.String;
 
 namespace Interpreter.Core.Execution
 {
@@ -156,6 +161,43 @@ namespace Interpreter.Core.Execution
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
+        
+        public Obj Execute(CollectionIndexExpression expression)
+        {
+            var variableValue = expression.Variable.Accept(this);
+            if (variableValue is not IReadIndex collection)
+            {
+                var name = expression.Variable.Name;
+                logger.Error(name.Location, name.Length, $"Type '{variableValue.Type}' is not indexed");
+
+                return new Null();
+            }
+
+            var index = expression.Index.Accept(this);
+            var openLocation = expression.OpenBracket.Location;
+            var length = expression.CloseBracket.Location.Position - openLocation.Position + 1;
+            if (index is not Number number)
+            {
+                logger.Error(openLocation, length, $"Expected number value but was '{index.Type}' type");
+                return new Null();
+            }
+
+            if (!number.IsInteger)
+            {
+                logger.Error(openLocation, length, "Expected integer value");
+                return new Null();
+            }
+
+            try
+            {
+                return collection[(int)number.ToDouble()];
+            }
+            catch (IndexOutOfRangeException _)
+            {
+                logger.Error(openLocation, length, "The index was outside the bounds of the list");
+                return new Null();
+            }
+        }
 
         public Obj Execute(BinaryExpression binary)
         {
@@ -198,6 +240,15 @@ namespace Interpreter.Core.Execution
         public Obj Execute(BooleanExpression boolean) => new Boolean(boolean.Value);
 
         public Obj Execute(StringExpression str) => new String(str.Value);
+        
+        public Obj Execute(ListExpression list)
+        {
+            var items = list.Items
+                .Select(expression => expression.Accept(this))
+                .ToImmutableArray();
+
+            return new List(items);
+        }
 
         public Obj Execute(NullExpression expression) => new Null();
 

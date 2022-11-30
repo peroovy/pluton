@@ -34,6 +34,8 @@
         CloseParenthesis,
         OpenBrace,
         CloseBrace,
+        OpenBracket,
+        CloseBracket,
         Equals,
         LeftArrow,
         RightArrow,

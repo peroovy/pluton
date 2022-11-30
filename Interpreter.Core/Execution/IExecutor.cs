@@ -27,6 +27,8 @@ namespace Interpreter.Core.Execution
         Obj Execute(AssignmentExpression assignment);
             
         Obj Execute(ParenthesizedExpression expression);
+
+        Obj Execute(CollectionIndexExpression expression);
         
         Obj Execute(BinaryExpression binary);
 
@@ -37,6 +39,8 @@ namespace Interpreter.Core.Execution
         Obj Execute(BooleanExpression boolean);
 
         Obj Execute(StringExpression str);
+
+        Obj Execute(ListExpression list);
 
         Obj Execute(NullExpression expression);
 

@@ -71,6 +71,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
+        <Compile Include="Execution\Objects\List.cs" />
+        <Compile Include="Execution\Objects\MagicMethods\IReadIndex.cs" />
         <Compile Include="Execution\Objects\String.cs" />
         <Compile Include="InterpreterCore.cs" />
         <Compile Include="Execution\Executor.cs" />
@@ -132,8 +134,10 @@
         <Compile Include="Syntax\AST\Expressions\AssignmentExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BinaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BooleanExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\CollectionIndexExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\FunctionCallExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Expression.cs" />
+        <Compile Include="Syntax\AST\Expressions\ListExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\NullExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\NumberExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\ParenthesizedExpression.cs" />
