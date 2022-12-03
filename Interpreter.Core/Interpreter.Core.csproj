@@ -132,7 +132,7 @@
         <Compile Include="Syntax\AST\BlockStatement.cs" />
         <Compile Include="Syntax\AST\ElseClause.cs" />
         <Compile Include="Syntax\AST\ExpressionStatement.cs" />
-        <Compile Include="Syntax\AST\Expressions\AssignmentExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\VariableAssignmentExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BinaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BooleanExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\IndexAccessExpression.cs" />

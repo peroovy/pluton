@@ -156,10 +156,10 @@ namespace Interpreter.Core.Execution
             return null;
         }
 
-        public Obj Execute(AssignmentExpression assignment)
+        public Obj Execute(VariableAssignmentExpression variableAssignment)
         {
-            var name = assignment.Variable.Text;
-            var value = assignment.Expression.Accept(this);
+            var name = variableAssignment.Variable.Text;
+            var value = variableAssignment.Expression.Accept(this);
 
             if (!TryAssignUp(name, value))
                 scope.Assign(name, value);

@@ -236,7 +236,7 @@ namespace Interpreter.Core.Syntax
             return ParseBinaryExpression();
         }
 
-        private AssignmentExpression ParseCompoundAssignmentExpression()
+        private VariableAssignmentExpression ParseCompoundAssignmentExpression()
         {
             var variable = MatchToken(TokenTypes.Identifier);
             
@@ -252,16 +252,16 @@ namespace Interpreter.Core.Syntax
             var rightExpression = ParseExpression();
             var compoundExpression = new BinaryExpression(leftExpression, singleOperator, rightExpression);
 
-            return new AssignmentExpression(variable, compoundOperator, compoundExpression);
+            return new VariableAssignmentExpression(variable, compoundOperator, compoundExpression);
         }
         
-        private AssignmentExpression ParseAssignmentExpression()
+        private VariableAssignmentExpression ParseAssignmentExpression()
         {
             var variable = MatchToken(TokenTypes.Identifier);
             var equals = MatchToken(TokenTypes.Equals);
             var expression = ParseExpression();
 
-            return new AssignmentExpression(variable, equals, expression);
+            return new VariableAssignmentExpression(variable, equals, expression);
         }
 
         private Expression ParseBinaryExpression(int parentPrecedence = 0)

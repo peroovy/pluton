@@ -20,6 +20,8 @@ namespace Interpreter.Core.Execution.Objects
         {
             get
             {
+                index = NormalizeIndex(index);
+                    
                 if (!IsInBound(index))
                     throw new IndexOutOfRangeException();
 
@@ -28,6 +30,8 @@ namespace Interpreter.Core.Execution.Objects
 
             set
             {
+                index = NormalizeIndex(index);
+                
                 if (!IsInBound(index))
                     throw new IndexOutOfRangeException();
 
@@ -57,5 +61,7 @@ namespace Interpreter.Core.Execution.Objects
         public override Boolean ToBoolean() => new(Items.Length > 0);
 
         private bool IsInBound(int index) => index >= 0 && index < Items.Length;
+
+        private int NormalizeIndex(int index) => index >= 0 ? index : Items.Length + index;
     }
 }

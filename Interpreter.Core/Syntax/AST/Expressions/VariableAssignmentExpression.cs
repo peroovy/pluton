@@ -1,12 +1,12 @@
-﻿using Interpreter.Core.Execution;
+using Interpreter.Core.Execution;
 using Interpreter.Core.Execution.Objects;
 using Interpreter.Core.Lexing;
 
 namespace Interpreter.Core.Syntax.AST.Expressions
 {
-    public class AssignmentExpression : Expression
+    public class VariableAssignmentExpression : Expression
     {
-        public AssignmentExpression(SyntaxToken variable, SyntaxToken operatorToken, Expression expression)
+        public VariableAssignmentExpression(SyntaxToken variable, SyntaxToken operatorToken, Expression expression)
         {
             Variable = variable;
             OperatorToken = operatorToken;
