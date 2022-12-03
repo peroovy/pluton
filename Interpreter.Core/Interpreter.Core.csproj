@@ -74,6 +74,10 @@
         <Compile Include="Execution\ContinueInterrupt.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
         <Compile Include="Execution\Objects\Array.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\InputFunction.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\NumFunction.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\StrFunction.cs" />
         <Compile Include="Execution\Objects\MagicMethods\IIndexReadable.cs" />
         <Compile Include="Execution\Objects\MagicMethods\IIndexSettable.cs" />
         <Compile Include="Execution\Objects\String.cs" />
@@ -83,7 +87,6 @@
         <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Execution\Objects\Boolean.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\BoolFunction.cs" />
-        <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
         <Compile Include="Execution\Objects\Function.cs" />
         <Compile Include="Execution\Objects\Number.cs" />
         <Compile Include="Execution\Objects\Obj.cs" />
