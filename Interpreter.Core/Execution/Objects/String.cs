@@ -1,8 +1,10 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using Interpreter.Core.Execution.Objects.MagicMethods;
 
 namespace Interpreter.Core.Execution.Objects
 {
-    public class String : Obj
+    public class String : Obj, IIndexReadable
     {
         public String(object value) : base(value)
         {
@@ -10,9 +12,26 @@ namespace Interpreter.Core.Execution.Objects
 
         public override ObjectTypes Type => ObjectTypes.String;
 
+        public Obj this[int index]
+        {
+            get
+            {
+                index = NormalizeIndex(index);
+                    
+                if (!IsInBound(index))
+                    throw new IndexOutOfRangeException();
+
+                return new String(ToString()[index].ToString());
+            }
+        }
+
         public override string ToString() => (string)Value;
 
         public override Boolean ToBoolean() => new(ToString().Length > 0);
+        
+        private bool IsInBound(int index) => index >= 0 && index < ToString().Length;
+
+        private int NormalizeIndex(int index) => index >= 0 ? index : ToString().Length + index;
 
         public static String operator +(String left, String right) => new(left.ToString() + right);
         
