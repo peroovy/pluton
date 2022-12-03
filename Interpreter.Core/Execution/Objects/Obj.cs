@@ -2,14 +2,12 @@
 {
     public abstract class Obj
     {
-        protected Obj(object value)
+        protected Obj()
         {
-            Value = value;
+            TypeName = GetType().Name;
         }
         
-        public object Value { get; }
-
-        public abstract ObjectTypes Type { get; }
+        public string TypeName { get; }
 
         public abstract override string ToString();
 

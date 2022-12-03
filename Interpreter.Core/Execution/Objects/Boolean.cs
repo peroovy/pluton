@@ -3,22 +3,31 @@ namespace Interpreter.Core.Execution.Objects
 {
     public class Boolean : Obj
     {
-        public Boolean(object value) : base(value)
+        public Boolean(bool value)
         {
+            Value = value;
         }
 
-        public override ObjectTypes Type => ObjectTypes.Boolean;
-
-        public bool IsTrue => (bool)Value;
+        public bool Value { get; }
         
-        public override string ToString() => Value.ToString();
+        public override string ToString() => Value.ToString().ToLower();
         
         public override Boolean ToBoolean() => new(Value);
 
-        public static Boolean operator !(Boolean operand) => new(!operand.IsTrue);
+        public override bool Equals(object obj) => obj is Boolean boolean && Equals(boolean);
 
-        public static Boolean operator &(Boolean left, Boolean right) => new(left.IsTrue && right.IsTrue);
+        public override int GetHashCode() => Value.GetHashCode();
+
+        private bool Equals(Boolean other) => Value == other.Value;
+
+        public static Boolean operator !(Boolean operand) => new(!operand.Value);
+
+        public static Boolean operator &(Boolean left, Boolean right) => new(left.Value && right.Value);
         
-        public static Boolean operator |(Boolean left, Boolean right) => new(left.IsTrue || right.IsTrue);
+        public static Boolean operator |(Boolean left, Boolean right) => new(left.Value || right.Value);
+
+        public static Boolean operator ==(Boolean left, Boolean right) => new(left.Value == right.Value);
+        
+        public static Boolean operator !=(Boolean left, Boolean right) => new(left.Value != right.Value);
     }
 }

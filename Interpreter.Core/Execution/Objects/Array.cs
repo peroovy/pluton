@@ -8,17 +8,17 @@ namespace Interpreter.Core.Execution.Objects
 {
     public class Array : Obj, IIndexReadable, IIndexSettable
     {
-        public Array(ImmutableArray<Obj> items) : base(items.ToArray())
+        public Array(ImmutableArray<Obj> items)
         {
+            Items = items.ToArray();
         }
 
-        private Array(Obj[] items) : base(items)
+        private Array(Obj[] items)
         {
+            Items = items;
         }
-
-        public override ObjectTypes Type => ObjectTypes.Array;
-
-        private Obj[] Items => (Obj[])Value;
+        
+        private Obj[] Items { get; }
         
         public Obj this[int index]
         {
@@ -52,7 +52,7 @@ namespace Interpreter.Core.Execution.Objects
             {
                 var item = Items[i];
                 
-                result.Append(item.Type == ObjectTypes.String ? $"\"{item}\"" : item);
+                result.Append(item is String ? $"\"{item}\"" : item);
 
                 if (i + 1 < Items.Length)
                     result.Append(", ");
@@ -89,7 +89,7 @@ namespace Interpreter.Core.Execution.Objects
 
         public static Array operator *(Array left, Number right)
         {
-            var amount = (int)Math.Round(right.ToDouble());
+            var amount = (int)Math.Round(right.Value);
 
             var items = Enumerable.Empty<Obj>();
             for (var i = 0; i < amount; i++)
@@ -100,6 +100,6 @@ namespace Interpreter.Core.Execution.Objects
 
         public static Boolean operator ==(Array left, Array right) => new(left.Equals(right));
 
-        public static Boolean operator !=(Array left, Array right) => !(left == right);
+        public static Boolean operator !=(Array left, Array right) => new(!left.Equals(right));
     }
 }

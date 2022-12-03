@@ -9,15 +9,13 @@ namespace Interpreter.Core.Execution.Objects
             string name, 
             ImmutableArray<string> positionParameters, 
             Action<Function, Scope, Stack> call, 
-            bool isBuiltin) : base(call)
+            bool isBuiltin)
         {
             Name = name;
             PositionParameters = positionParameters;
             Call = call;
             IsBuiltin = isBuiltin;
         }
-
-        public override ObjectTypes Type => ObjectTypes.Function;
 
         public string Name { get; }
         
@@ -30,5 +28,15 @@ namespace Interpreter.Core.Execution.Objects
         public override string ToString() => (IsBuiltin ? "built-in " : string.Empty) + $"function <{Name}>";
 
         public override Boolean ToBoolean() => new(true);
+
+        public override bool Equals(object obj) => obj is Function function && Equals(function);
+
+        public override int GetHashCode() => Call.GetHashCode();
+
+        private bool Equals(Function other) => ReferenceEquals(this, other);
+
+        public static Boolean operator ==(Function left, Function right) => new(left.Equals(right));
+        
+        public static Boolean operator !=(Function left, Function right) => new(!left.Equals(right));
     }
 }

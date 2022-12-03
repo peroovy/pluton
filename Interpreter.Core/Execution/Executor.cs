@@ -58,7 +58,7 @@ namespace Interpreter.Core.Execution
                 (func, _, _) =>
                 {
                     var enumerator = statement.Body.Statements.GetEnumerator();
-                    while (stack.Peek() == func && enumerator.MoveNext())
+                    while (func.Equals(stack.Peek()) && enumerator.MoveNext())
                         enumerator.Current.Accept(this);
                 },
                 isBuiltin: false
@@ -93,7 +93,7 @@ namespace Interpreter.Core.Execution
             foreach (var initializer in statement.Initializers)
                 initializer.Accept(this);
 
-            while (statement.Condition.Accept(this).ToBoolean().IsTrue)
+            while (statement.Condition.Accept(this).ToBoolean().Value)
             {
                 statement.Body.Accept(this);
 
@@ -108,7 +108,7 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(WhileStatement statement)
         {
-            while (statement.Condition.Accept(this).ToBoolean().IsTrue)
+            while (statement.Condition.Accept(this).ToBoolean().Value)
                 statement.Body.Accept(this);
 
             return null;
@@ -116,7 +116,7 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(IfStatement statement)
         {
-            if (statement.Condition.Accept(this).ToBoolean().IsTrue)
+            if (statement.Condition.Accept(this).ToBoolean().Value)
             {
                 statement.Statement.Accept(this);
             }
@@ -174,7 +174,7 @@ namespace Interpreter.Core.Execution
             var obj = assignment.Expression.Accept(this);
             if (obj is not IIndexSettable settable)
             {
-                logger.Error(openBracket.Location, length, $"Type '{obj.Type}' is not settable by index");
+                logger.Error(openBracket.Location, length, $"Type '{obj.TypeName}' is not settable by index");
 
                 throw new RuntimeException(openBracket.Location);
             }
@@ -206,7 +206,7 @@ namespace Interpreter.Core.Execution
 
             if (parent is not IIndexReadable readable)
             {
-                logger.Error(openBracket.Location, lengthBetween, $"Type '{parent.Type}' is not readable by index");
+                logger.Error(openBracket.Location, lengthBetween, $"Type '{parent.TypeName}' is not readable by index");
 
                 throw new RuntimeException(openBracket.Location);
             }
@@ -239,7 +239,7 @@ namespace Interpreter.Core.Execution
                 return method.Invoke(left, right);
             
             logger.Error(opToken.Location, opToken.Length,
-                $"The binary operator '{opToken.Text}' is not defined for '{left.Type}' and '{right.Type}' types");
+                $"The binary operator '{opToken.Text}' is not defined for '{left.TypeName}' and '{right.TypeName}' types");
 
             throw new RuntimeException(opToken.Location);
         }
@@ -256,7 +256,7 @@ namespace Interpreter.Core.Execution
                 return method.Invoke(operand);
             
             logger.Error(opToken.Location, opToken.Length,
-                $"The unary operator '{opToken.Text}' is not defined for '{operand.Type}' type");
+                $"The unary operator '{opToken.Text}' is not defined for '{operand.TypeName}' type");
                 
             throw new RuntimeException(opToken.Location);
         }
@@ -330,7 +330,7 @@ namespace Interpreter.Core.Execution
             scope = previousScope;
 
             var obj = stack.Pop();
-            return obj == function ? new Null() : obj;
+            return function.Equals(obj) ? new Null() : obj;
         }
         
         private int GetIndex(SyntaxIndex syntaxIndex)
@@ -343,13 +343,13 @@ namespace Interpreter.Core.Execution
             
             if (index is not Number number)
             {
-                logger.Error(openBracket.Location, lengthBetween, $"Expected number value but was '{index.Type}' type");
+                logger.Error(openBracket.Location, lengthBetween, $"Expected number value but was '{index.TypeName}' type");
 
                 throw new RuntimeException(openBracket.Location);
             }
 
             if (number.IsInteger) 
-                return (int)number.ToDouble();
+                return (int)number.Value;
             
             logger.Error(openBracket.Location, lengthBetween, "Expected integer value");
             throw new RuntimeException(openBracket.Location);

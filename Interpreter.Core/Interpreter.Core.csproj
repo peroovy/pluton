@@ -85,7 +85,6 @@
         <Compile Include="Execution\Objects\Function.cs" />
         <Compile Include="Execution\Objects\Number.cs" />
         <Compile Include="Execution\Objects\Obj.cs" />
-        <Compile Include="Execution\Objects\ObjectTypes.cs" />
         <Compile Include="Execution\Objects\Null.cs" />
         <Compile Include="Execution\Operations\Binary\AdditiveOperation.cs" />
         <Compile Include="Execution\Operations\Binary\BinaryOperation.cs" />
