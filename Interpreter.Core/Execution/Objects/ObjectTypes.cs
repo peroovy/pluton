@@ -7,6 +7,6 @@
         Null,
         Function,
         String,
-        List
+        Array
     }
 }

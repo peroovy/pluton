@@ -6,9 +6,11 @@ using Interpreter.Core.Execution.Objects.BuiltinFunctions;
 using Interpreter.Core.Execution.Objects.MagicMethods;
 using Interpreter.Core.Execution.Operations.Binary;
 using Interpreter.Core.Execution.Operations.Unary;
+using Interpreter.Core.Lexing;
 using Interpreter.Core.Logging;
 using Interpreter.Core.Syntax.AST;
 using Interpreter.Core.Syntax.AST.Expressions;
+using Array = Interpreter.Core.Execution.Objects.Array;
 using Boolean = Interpreter.Core.Execution.Objects.Boolean;
 using String = Interpreter.Core.Execution.Objects.String;
 
@@ -167,43 +169,45 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
         
-        public Obj Execute(CollectionIndexExpression expression)
+        public Obj Execute(IndexAccessExpression indexAccess)
         {
-            var variableValue = expression.Variable.Accept(this);
-            if (variableValue is not IReadIndex collection)
-            {
-                var name = expression.Variable.Name;
-                logger.Error(name.Location, name.Length, $"Type '{variableValue.Type}' is not indexed");
+            var parent = indexAccess.Expression.Accept(this);
 
-                throw new RuntimeException(name.Location);
+            var openBracket = indexAccess.OpenBracket;
+            var closeBracket = indexAccess.CloseBracket;
+            var lengthBetween = closeBracket.Location.Position - openBracket.Location.Position + 1;
+
+            if (parent is not IIndexed indexed)
+            {
+                logger.Error(openBracket.Location, lengthBetween, $"Type '{parent.Type}' is not indexed");
+
+                throw new RuntimeException(openBracket.Location);
             }
 
-            var index = expression.Index.Accept(this);
-            var openLocation = expression.OpenBracket.Location;
-            var length = expression.CloseBracket.Location.Position - openLocation.Position + 1;
+            var index = indexAccess.Index.Accept(this);
             if (index is not Number number)
             {
-                logger.Error(openLocation, length, $"Expected number value but was '{index.Type}' type");
+                logger.Error(openBracket.Location, lengthBetween, $"Expected number value but was '{index.Type}' type");
 
-                throw new RuntimeException(openLocation);
+                throw new RuntimeException(openBracket.Location);
             }
 
             if (!number.IsInteger)
             {
-                logger.Error(openLocation, length, "Expected integer value");
+                logger.Error(openBracket.Location, lengthBetween, "Expected integer value");
 
-                throw new RuntimeException(openLocation);
+                throw new RuntimeException(openBracket.Location);
             }
 
             try
             {
-                return collection[(int)number.ToDouble()];
+                return indexed[(int)number.ToDouble()];
             }
             catch (IndexOutOfRangeException _)
             {
-                logger.Error(openLocation, length, "The index was outside the bounds of the list");
+                logger.Error(openBracket.Location, lengthBetween, "The index was outside the bounds of the list");
 
-                throw new RuntimeException(openLocation);
+                throw new RuntimeException(openBracket.Location);
             }
         }
 
@@ -255,7 +259,7 @@ namespace Interpreter.Core.Execution
                 .Select(expression => expression.Accept(this))
                 .ToImmutableArray();
 
-            return new List(items);
+            return new Array(items);
         }
 
         public Obj Execute(NullExpression expression) => new Null();

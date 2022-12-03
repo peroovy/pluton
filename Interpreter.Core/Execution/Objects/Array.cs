@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -7,15 +6,15 @@ using Interpreter.Core.Execution.Objects.MagicMethods;
 
 namespace Interpreter.Core.Execution.Objects
 {
-    public class List : Obj, IReadIndex
+    public class Array : Obj, IIndexed
     {
-        public List(ImmutableArray<Obj> items) : base(items.ToList())
+        public Array(ImmutableArray<Obj> items) : base(items.ToArray())
         {
         }
-        
-        public override ObjectTypes Type => ObjectTypes.List;
 
-        private List<Obj> Items => (List<Obj>)Value;
+        public override ObjectTypes Type => ObjectTypes.Array;
+
+        private Obj[] Items => (Obj[])Value;
         
         public Obj this[int index]
         {
@@ -41,18 +40,13 @@ namespace Interpreter.Core.Execution.Objects
             var result = new StringBuilder();
             result.Append('[');
 
-            for (var i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Length; i++)
             {
                 var item = Items[i];
                 
-                if (item.Type == ObjectTypes.String)
-                {
-                    result.Append($"\"{item}\"");
-                    continue;
-                }
+                result.Append(item.Type == ObjectTypes.String ? $"\"{item}\"" : item);
 
-                result.Append(item);
-                if (i + 1 < Items.Count)
+                if (i + 1 < Items.Length)
                     result.Append(", ");
             }
             
@@ -60,8 +54,8 @@ namespace Interpreter.Core.Execution.Objects
             return result.ToString();
         }
 
-        public override Boolean ToBoolean() => new(Items.Count > 0);
+        public override Boolean ToBoolean() => new(Items.Length > 0);
 
-        private bool IsInBound(int index) => index >= 0 && index < Items.Count;
+        private bool IsInBound(int index) => index >= 0 && index < Items.Length;
     }
 }

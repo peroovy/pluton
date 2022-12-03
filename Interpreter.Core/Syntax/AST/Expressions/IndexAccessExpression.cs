@@ -1,20 +1,21 @@
-﻿using Interpreter.Core.Execution;
+﻿using System.Collections.Immutable;
+using Interpreter.Core.Execution;
 using Interpreter.Core.Execution.Objects;
 using Interpreter.Core.Lexing;
 
 namespace Interpreter.Core.Syntax.AST.Expressions
 {
-    public class CollectionIndexExpression : Expression
+    public class IndexAccessExpression : Expression
     {
-        public CollectionIndexExpression(VariableExpression variable, SyntaxToken openBracket, Expression index, SyntaxToken closeBracket)
+        public IndexAccessExpression(Expression expression, SyntaxToken openBracket, Expression index, SyntaxToken closeBracket)
         {
-            Variable = variable;
+            Expression = expression;
             OpenBracket = openBracket;
             Index = index;
             CloseBracket = closeBracket;
         }
         
-        public VariableExpression Variable { get; }
+        public Expression Expression { get; }
         
         public SyntaxToken OpenBracket { get; }
         

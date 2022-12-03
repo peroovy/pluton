@@ -2,6 +2,7 @@
 using System.Reflection;
 using Interpreter.Core.Execution.Objects;
 using Interpreter.Core.Lexing;
+using Array = System.Array;
 
 namespace Interpreter.Core.Execution.Operations.Binary
 {

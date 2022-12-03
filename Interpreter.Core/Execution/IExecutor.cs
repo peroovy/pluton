@@ -23,12 +23,12 @@ namespace Interpreter.Core.Execution
         Obj Execute(BlockStatement block);
         
         Obj Execute(ExpressionStatement statement);
-        
+
         Obj Execute(AssignmentExpression assignment);
             
         Obj Execute(ParenthesizedExpression expression);
 
-        Obj Execute(CollectionIndexExpression expression);
+        Obj Execute(IndexAccessExpression expression);
         
         Obj Execute(BinaryExpression binary);
 

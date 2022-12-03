@@ -296,33 +296,59 @@ namespace Interpreter.Core.Syntax
 
         private Expression ParsePrimaryExpression()
         {
-            if (Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.OpenBracket)
-                return ParseCollectionIndexExpression();
+            Expression primary;
             
             switch (Current.Type)
             {
                 case TokenTypes.OpenParenthesis:
-                    return ParseParenthesizedExpression();
+                    primary = ParseParenthesizedExpression(); 
+                    break;
                 
                 case TokenTypes.OpenBracket:
-                    return ParseListExpression();
+                    primary = ParseArrayExpression(); 
+                    break;
                 
                 case TokenTypes.TrueKeyword:
                 case TokenTypes.FalseKeyword:
-                    return ParseBooleanExpression();
+                    primary = ParseBooleanExpression();
+                    break;
                 
                 case TokenTypes.NullKeyword:
-                    return ParseNullExpression();
+                    primary = ParseNullExpression();
+                    break;
                 
                 case TokenTypes.Number:
-                    return ParseNumberExpression();
-                
+                    primary = ParseNumberExpression();
+                    break;
+
                 case TokenTypes.String:
-                    return ParseStringExpression();
+                    primary = ParseStringExpression();
+                    break;
                 
                 default:
-                    return ParseVariableOrCallExpression();
+                    primary = ParseVariableOrCallExpression();
+                    break;
             }
+
+            if (Current.Type == TokenTypes.OpenBracket)
+                primary = ParseIndexAccessExpression(primary);
+
+            return primary;
+        }
+
+        private Expression ParseIndexAccessExpression(Expression parent)
+        {
+            do
+            {
+                var openBracket = MatchToken(TokenTypes.OpenBracket);
+                var index = ParseExpression();
+                var closeBracket = MatchToken(TokenTypes.CloseBracket);
+
+                parent = new IndexAccessExpression(parent, openBracket, index, closeBracket);
+                
+            } while (Current.Type == TokenTypes.OpenBracket && Current.Type != TokenTypes.Eof);
+
+            return parent;
         }
 
         private ParenthesizedExpression ParseParenthesizedExpression()
@@ -332,16 +358,6 @@ namespace Interpreter.Core.Syntax
             var close = MatchToken(TokenTypes.CloseParenthesis);
 
             return new ParenthesizedExpression(open, expression, close);
-        }
-        
-        private CollectionIndexExpression ParseCollectionIndexExpression()
-        {
-            var name = ParseVariableExpression();
-            var openBracket = MatchToken(TokenTypes.OpenBracket);
-            var index = ParseExpression();
-            var closeBracket = MatchToken(TokenTypes.CloseBracket);
-
-            return new CollectionIndexExpression(name, openBracket, index, closeBracket);
         }
 
         private NumberExpression ParseNumberExpression()
@@ -399,7 +415,7 @@ namespace Interpreter.Core.Syntax
             return new VariableExpression(name);
         }
 
-        private ListExpression ParseListExpression()
+        private ListExpression ParseArrayExpression()
         {
             var openBracket = MatchToken(TokenTypes.OpenBracket);
             var items = ParseSeparatedExpressions(TokenTypes.CloseBracket);
