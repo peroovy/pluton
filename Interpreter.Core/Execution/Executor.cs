@@ -45,7 +45,7 @@ namespace Interpreter.Core.Execution
                 foreach (var member in tree.Members)
                     member.Accept(this);
             }
-            catch (RuntimeException _)
+            catch (RuntimeException)
             {
             }
         }
@@ -186,7 +186,7 @@ namespace Interpreter.Core.Execution
             {
                 return settable[index] = value;
             }
-            catch (IndexOutOfRangeException _)
+            catch (IndexOutOfRangeException)
             {
                 logger.Error(openBracket.Location, length, "The index was outside the bounds of the list");
 
@@ -217,7 +217,7 @@ namespace Interpreter.Core.Execution
             {
                 return readable[index];
             }
-            catch (IndexOutOfRangeException _)
+            catch (IndexOutOfRangeException)
             {
                 logger.Error(openBracket.Location, lengthBetween, "The index was outside the bounds of the list");
 

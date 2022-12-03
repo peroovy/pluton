@@ -30,6 +30,12 @@ namespace Interpreter.Core.Execution.Objects
         public override Boolean ToBoolean() => new(Convert.ToBoolean(ToDouble()));
 
         public double ToDouble() => (double)Value;
+        
+        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is Number number && Equals(number);
+
+        public override int GetHashCode() => ToDouble().GetHashCode();
+
+        private bool Equals(Number other) => Math.Abs(ToDouble() - other.ToDouble()) < double.Epsilon;
 
         public static Number operator +(Number operand) => new(operand.ToDouble());
 
@@ -42,6 +48,8 @@ namespace Interpreter.Core.Execution.Objects
         public static Number operator *(Number left, Number right) => new(left.ToDouble() * right.ToDouble());
         
         public static String operator *(Number number, String str) => str * number;
+        
+        public static Array operator *(Number number, Array array) => array * number;
 
         public static Number operator /(Number left, Number right)
         {
@@ -60,8 +68,8 @@ namespace Interpreter.Core.Execution.Objects
 
         public static Boolean operator >=(Number left, Number right) => new(left.ToDouble() >= right.ToDouble());
         
-        public static Boolean operator ==(Number left, Number right) => new(left.ToDouble() == right.ToDouble());
+        public static Boolean operator ==(Number left, Number right) => new(left.Equals(right));
 
-        public static Boolean operator !=(Number left, Number right) => new(left.ToDouble() != right.ToDouble());
+        public static Boolean operator !=(Number left, Number right) => !(left == right);
     }
 }

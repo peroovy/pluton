@@ -29,6 +29,12 @@ namespace Interpreter.Core.Execution.Objects
 
         public override Boolean ToBoolean() => new(ToString().Length > 0);
         
+        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is String str && Equals(str);
+
+        public override int GetHashCode() => ToString().GetHashCode();
+
+        private bool Equals(String other) => ToString() == other.ToString();
+        
         private bool IsInBound(int index) => index >= 0 && index < ToString().Length;
 
         private int NormalizeIndex(int index) => index >= 0 ? index : ToString().Length + index;
@@ -39,14 +45,14 @@ namespace Interpreter.Core.Execution.Objects
         {
             var result = new StringBuilder();
 
-            var amount = (int)number.ToDouble();
+            var amount = (int)Math.Round(number.ToDouble());
             for (var i = 0; i < amount; i++)
                 result.Append((string)str.Value);
 
             return new String(result.ToString());
         }
 
-        public static Boolean operator ==(String left, String right) => new(left.ToString() == right.ToString());
+        public static Boolean operator ==(String left, String right) => new(left.Equals(right));
 
         public static Boolean operator !=(String left, String right) => !(left == right);
     }

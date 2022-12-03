@@ -12,6 +12,10 @@ namespace Interpreter.Core.Execution.Objects
         {
         }
 
+        private Array(Obj[] items) : base(items)
+        {
+        }
+
         public override ObjectTypes Type => ObjectTypes.Array;
 
         private Obj[] Items => (Obj[])Value;
@@ -60,8 +64,42 @@ namespace Interpreter.Core.Execution.Objects
 
         public override Boolean ToBoolean() => new(Items.Length > 0);
 
+        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is Array array && Equals(array);
+
+        public override int GetHashCode() => Items.GetHashCode();
+
+        private bool Equals(Array other)
+        {
+            if (Items.Length != other.Items.Length)
+                return false;
+
+            return !Items.Where((item, idx) => !item.Equals(other.Items[idx])).Any();
+        }
+        
         private bool IsInBound(int index) => index >= 0 && index < Items.Length;
 
         private int NormalizeIndex(int index) => index >= 0 ? index : Items.Length + index;
+
+        public static Array operator +(Array left, Array right)
+        {
+            var items = left.Items.Concat(right.Items);
+
+            return new Array(items.ToArray());
+        }
+
+        public static Array operator *(Array left, Number right)
+        {
+            var amount = (int)Math.Round(right.ToDouble());
+
+            var items = Enumerable.Empty<Obj>();
+            for (var i = 0; i < amount; i++)
+                items = items.Concat(left.Items);
+
+            return new Array(items.ToArray());
+        }
+
+        public static Boolean operator ==(Array left, Array right) => new(left.Equals(right));
+
+        public static Boolean operator !=(Array left, Array right) => !(left == right);
     }
 }
