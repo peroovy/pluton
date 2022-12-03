@@ -91,6 +91,12 @@ namespace Interpreter.Core.Syntax
                 case TokenTypes.ReturnKeyword:
                     return ParseReturnStatement();
                 
+                case TokenTypes.BreakKeyword:
+                    return ParseBreakStatement();
+                
+                case TokenTypes.ContinueKeyword:
+                    return ParseContinueStatement();
+                
                 default:
                     return ParseExpressionStatement();
             }
@@ -130,6 +136,22 @@ namespace Interpreter.Core.Syntax
             var semicolon = MatchToken(TokenTypes.Semicolon);
 
             return new ReturnStatement(keyword, expression, semicolon);
+        }
+
+        private BreakStatement ParseBreakStatement()
+        {
+            var keyword = MatchToken(TokenTypes.BreakKeyword);
+            var semicolon = MatchToken(TokenTypes.Semicolon);
+
+            return new BreakStatement(keyword, semicolon);
+        }
+        
+        private ContinueStatement ParseContinueStatement()
+        {
+            var keyword = MatchToken(TokenTypes.ContinueKeyword);
+            var semicolon = MatchToken(TokenTypes.Semicolon);
+
+            return new ContinueStatement(keyword, semicolon);
         }
 
         private ForStatement ParseForStatement()

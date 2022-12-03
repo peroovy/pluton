@@ -19,6 +19,8 @@
         AndKeyword,
         OrKeyword,
         NullKeyword,
+        BreakKeyword,
+        ContinueKeyword,
 
         LineSeparator,
         Space,

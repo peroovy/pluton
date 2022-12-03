@@ -4,7 +4,7 @@ using Interpreter.Core.Execution.Objects;
 
 namespace Interpreter.Core.Execution
 {
-    public class Stack
+    public class CallStack
     {
         private readonly Stack<Obj> stack = new();
 

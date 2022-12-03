@@ -8,7 +8,7 @@ namespace Interpreter.Core.Execution.Objects
         public Function(
             string name, 
             ImmutableArray<string> positionParameters, 
-            Action<Function, Scope, Stack> call, 
+            Action<Function, Scope, CallStack> call, 
             bool isBuiltin)
         {
             Name = name;
@@ -21,7 +21,7 @@ namespace Interpreter.Core.Execution.Objects
         
         public ImmutableArray<string> PositionParameters { get; }
         
-        public Action<Function, Scope, Stack> Call { get; }
+        public Action<Function, Scope, CallStack> Call { get; }
         
         public bool IsBuiltin { get; }
 

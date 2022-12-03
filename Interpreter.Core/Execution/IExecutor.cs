@@ -11,6 +11,10 @@ namespace Interpreter.Core.Execution
         Obj Execute(FunctionDeclarationStatement statement);
 
         Obj Execute(ReturnStatement statement);
+
+        Obj Execute(BreakStatement statement);
+        
+        Obj Execute(ContinueStatement statement);
         
         Obj Execute(ForStatement statement);
         

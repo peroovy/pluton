@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Interpreter.Core.Execution.Objects;
@@ -21,7 +22,8 @@ namespace Interpreter.Core.Execution
         private readonly UnaryOperation[] unaryOperations;
         private readonly ILogger logger;
 
-        private readonly Stack stack = new();
+        private readonly CallStack callStack = new();
+        private readonly Stack<Statement> loopStack = new();
         private Scope scope = new(null);
 
         public Executor(
@@ -58,7 +60,7 @@ namespace Interpreter.Core.Execution
                 (func, _, _) =>
                 {
                     var enumerator = statement.Body.Statements.GetEnumerator();
-                    while (func.Equals(stack.Peek()) && enumerator.MoveNext())
+                    while (func.Equals(callStack.Peek()) && enumerator.MoveNext())
                         enumerator.Current.Accept(this);
                 },
                 isBuiltin: false
@@ -71,10 +73,10 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(ReturnStatement statement)
         {
-            if (stack.Count > 0 && stack.Peek() is Function)
+            if (callStack.Count > 0 && callStack.Peek() is Function)
             {
                 var expression = statement.Expression?.Accept(this) ?? new Null();
-                stack.PushFunctionResult(expression);
+                callStack.PushFunctionResult(expression);
 
                 return null;
             }
@@ -85,8 +87,32 @@ namespace Interpreter.Core.Execution
             throw new RuntimeException(keyword.Location);
         }
 
+        public Obj Execute(BreakStatement statement)
+        {
+            if (loopStack.Count != 0)
+                throw new BreakInterrupt();
+            
+            var keyword = statement.Keyword;
+            logger.Error(keyword.Location, keyword.Length, "The break statement is only valid inside loop");
+
+            throw new RuntimeException(keyword.Location);
+        }
+        
+        public Obj Execute(ContinueStatement statement)
+        {
+            if (loopStack.Count != 0) 
+                throw new ContinueInterrupt();
+            
+            var keyword = statement.Keyword;
+            logger.Error(keyword.Location, keyword.Length, "The continue statement is only valid inside loop");
+
+            throw new RuntimeException(keyword.Location);
+        }
+
         public Obj Execute(ForStatement statement)
         {
+            loopStack.Push(statement);
+            
             var previousScope = scope;
             scope = new Scope(previousScope);
             
@@ -95,22 +121,49 @@ namespace Interpreter.Core.Execution
 
             while (statement.Condition.Accept(this).ToBoolean().Value)
             {
-                statement.Body.Accept(this);
-
+                try
+                {
+                    statement.Body.Accept(this);
+                }
+                catch (BreakInterrupt)
+                {
+                    break;
+                }
+                catch (ContinueInterrupt)
+                {
+                }
+                
                 foreach (var iterator in statement.Iterators)
                     iterator.Accept(this);
             }
 
             scope = previousScope;
 
+            loopStack.Pop();
             return null;
         }
 
         public Obj Execute(WhileStatement statement)
         {
-            while (statement.Condition.Accept(this).ToBoolean().Value)
-                statement.Body.Accept(this);
+            loopStack.Push(statement);
 
+            while (statement.Condition.Accept(this).ToBoolean().Value)
+            {
+                try
+                {
+                    statement.Body.Accept(this);
+                }
+                catch (BreakInterrupt)
+                {
+                    break;
+                }
+                catch (ContinueInterrupt)
+                {
+                }
+            }
+
+            loopStack.Pop();
+            
             return null;
         }
 
@@ -315,7 +368,7 @@ namespace Interpreter.Core.Execution
 
         private Obj CallFunction(Function function, ImmutableArray<Expression> arguments)
         {
-            stack.PushFunction(function);
+            callStack.PushFunction(function);
             var evaluatedParams = function.PositionParameters
                 .Zip(arguments, (name, expression) => (nameParam: name, argument: expression.Accept(this)))
                 .ToImmutableArray();
@@ -326,10 +379,10 @@ namespace Interpreter.Core.Execution
             foreach (var param in evaluatedParams)
                 scope.Assign(param.nameParam, param.argument);
             
-            function.Call(function, scope, stack);
+            function.Call(function, scope, callStack);
             scope = previousScope;
 
-            var obj = stack.Pop();
+            var obj = callStack.Pop();
             return function.Equals(obj) ? new Null() : obj;
         }
         
