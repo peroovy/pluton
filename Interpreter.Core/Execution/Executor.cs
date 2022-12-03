@@ -6,7 +6,6 @@ using Interpreter.Core.Execution.Objects.BuiltinFunctions;
 using Interpreter.Core.Execution.Objects.MagicMethods;
 using Interpreter.Core.Execution.Operations.Binary;
 using Interpreter.Core.Execution.Operations.Unary;
-using Interpreter.Core.Lexing;
 using Interpreter.Core.Logging;
 using Interpreter.Core.Syntax.AST;
 using Interpreter.Core.Syntax.AST.Expressions;
@@ -156,10 +155,10 @@ namespace Interpreter.Core.Execution
             return null;
         }
 
-        public Obj Execute(VariableAssignmentExpression variableAssignment)
+        public Obj Execute(VariableAssignmentExpression assignment)
         {
-            var name = variableAssignment.Variable.Text;
-            var value = variableAssignment.Expression.Accept(this);
+            var name = assignment.Variable.Text;
+            var value = assignment.Expression.Accept(this);
 
             if (!TryAssignUp(name, value))
                 scope.Assign(name, value);
@@ -167,41 +166,56 @@ namespace Interpreter.Core.Execution
             return value;
         }
 
-        public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
-        
-        public Obj Execute(IndexAccessExpression indexAccess)
+        public Obj Execute(IndexAssignmentExpression assignment)
         {
-            var parent = indexAccess.Expression.Accept(this);
-
-            var openBracket = indexAccess.OpenBracket;
-            var closeBracket = indexAccess.CloseBracket;
-            var lengthBetween = closeBracket.Location.Position - openBracket.Location.Position + 1;
-
-            if (parent is not IIndexed indexed)
+            var openBracket = assignment.Index.OpenBracket;
+            var length = assignment.Index.CloseBracket.Location.Position - openBracket.Location.Position + 1;
+            
+            var obj = assignment.Expression.Accept(this);
+            if (obj is not IIndexSettable settable)
             {
-                logger.Error(openBracket.Location, lengthBetween, $"Type '{parent.Type}' is not indexed");
+                logger.Error(openBracket.Location, length, $"Type '{obj.Type}' is not settable by index");
 
                 throw new RuntimeException(openBracket.Location);
             }
 
-            var index = indexAccess.Index.Accept(this);
-            if (index is not Number number)
-            {
-                logger.Error(openBracket.Location, lengthBetween, $"Expected number value but was '{index.Type}' type");
-
-                throw new RuntimeException(openBracket.Location);
-            }
-
-            if (!number.IsInteger)
-            {
-                logger.Error(openBracket.Location, lengthBetween, "Expected integer value");
-
-                throw new RuntimeException(openBracket.Location);
-            }
+            var index = GetIndex(assignment.Index);
+            var value = assignment.Value.Accept(this);
 
             try
             {
-                return indexed[(int)number.ToDouble()];
+                return settable[index] = value;
+            }
+            catch (IndexOutOfRangeException _)
+            {
+                logger.Error(openBracket.Location, length, "The index was outside the bounds of the list");
+
+                throw new RuntimeException(openBracket.Location);
+            }
+        }
+
+        public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
+
+        public Obj Execute(IndexAccessExpression indexAccess)
+        {
+            var parent = indexAccess.ParentExpression.Accept(this);
+
+            var openBracket = indexAccess.Index.OpenBracket;
+            var closeBracket = indexAccess.Index.CloseBracket;
+            var lengthBetween = closeBracket.Location.Position - openBracket.Location.Position + 1;
+
+            if (parent is not IIndexReadable readable)
+            {
+                logger.Error(openBracket.Location, lengthBetween, $"Type '{parent.Type}' is not readable by index");
+
+                throw new RuntimeException(openBracket.Location);
+            }
+
+            var index = GetIndex(indexAccess.Index);
+
+            try
+            {
+                return readable[index];
             }
             catch (IndexOutOfRangeException _)
             {
@@ -317,6 +331,28 @@ namespace Interpreter.Core.Execution
 
             var obj = stack.Pop();
             return obj == function ? new Null() : obj;
+        }
+        
+        private int GetIndex(SyntaxIndex syntaxIndex)
+        {
+            var openBracket = syntaxIndex.OpenBracket;
+            var closeBracket = syntaxIndex.CloseBracket;
+            var lengthBetween = closeBracket.Location.Position - openBracket.Location.Position + 1;
+            
+            var index = syntaxIndex.Index.Accept(this);
+            
+            if (index is not Number number)
+            {
+                logger.Error(openBracket.Location, lengthBetween, $"Expected number value but was '{index.Type}' type");
+
+                throw new RuntimeException(openBracket.Location);
+            }
+
+            if (number.IsInteger) 
+                return (int)number.ToDouble();
+            
+            logger.Error(openBracket.Location, lengthBetween, "Expected integer value");
+            throw new RuntimeException(openBracket.Location);
         }
 
         private bool TryAssignUp(string name, Obj value)

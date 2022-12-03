@@ -1,7 +1,7 @@
 ﻿namespace Interpreter.Core.Execution.Objects.MagicMethods
 {
-    public interface IIndexed
+    public interface IIndexSettable
     {
-        Obj this[int index] { get; set; }
+        Obj this[int index] { set; }
     }
 }

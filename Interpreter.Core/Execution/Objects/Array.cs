@@ -6,7 +6,7 @@ using Interpreter.Core.Execution.Objects.MagicMethods;
 
 namespace Interpreter.Core.Execution.Objects
 {
-    public class Array : Obj, IIndexed
+    public class Array : Obj, IIndexReadable, IIndexSettable
     {
         public Array(ImmutableArray<Obj> items) : base(items.ToArray())
         {

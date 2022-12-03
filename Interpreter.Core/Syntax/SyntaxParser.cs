@@ -218,28 +218,73 @@ namespace Interpreter.Core.Syntax
 
         private Expression ParseExpression()
         {
-            if (Peek(0).Type == TokenTypes.Identifier)
+            var expression = ParseBinaryExpression();
+
+            switch (Current.Type)
             {
-                switch (Peek(1).Type)
+                case TokenTypes.Equals:
                 {
-                    case TokenTypes.Equals:
-                        return ParseAssignmentExpression();
-                    
-                    case TokenTypes.PlusEquals:
-                    case TokenTypes.MinusEquals:
-                    case TokenTypes.StarEquals:
-                    case TokenTypes.SlashEquals:
-                        return ParseCompoundAssignmentExpression();
+                    switch (expression)
+                    {
+                        case VariableExpression variableExpression:
+                            return ParseVariableAssignmentExpression(variableExpression);
+                        
+                        case IndexAccessExpression indexAccessExpression:
+                            return ParseIndexAssignmentExpression(indexAccessExpression);
+                    }
+                    break;
+                }
+
+                case TokenTypes.PlusEquals:
+                case TokenTypes.MinusEquals:
+                case TokenTypes.StarEquals:
+                case TokenTypes.SlashEquals:
+                {
+                    switch (expression)
+                    {
+                        case VariableExpression variableExpression:
+                            return ParseCompoundVariableAssignmentExpression(variableExpression);
+                        
+                        case IndexAccessExpression indexAccessExpression:
+                            return ParseCompoundIndexAssignmentExpression(indexAccessExpression);
+                    }
+                    break;
                 }
             }
             
-            return ParseBinaryExpression();
+            return ParseBinaryExpression(expression);
         }
 
-        private VariableAssignmentExpression ParseCompoundAssignmentExpression()
+        private IndexAssignmentExpression ParseIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
         {
-            var variable = MatchToken(TokenTypes.Identifier);
+            var equals = MatchToken(TokenTypes.Equals);
+            var value = ParseExpression();
+
+            return new IndexAssignmentExpression(
+                indexAccessExpression.ParentExpression, indexAccessExpression.Index, equals, value
+            );
+        }
+
+        private IndexAssignmentExpression ParseCompoundIndexAssignmentExpression(
+            IndexAccessExpression indexAccessExpression)
+        {
+            var (compoundOperator, expression) = ParseCompoundAssignmentExpression(indexAccessExpression);
             
+            return new IndexAssignmentExpression(
+                indexAccessExpression.ParentExpression, indexAccessExpression.Index, compoundOperator, expression
+            );
+        }
+
+        private VariableAssignmentExpression ParseCompoundVariableAssignmentExpression(VariableExpression variableExpression)
+        {
+            var (compoundOperator, expression) = ParseCompoundAssignmentExpression(variableExpression);
+            
+            return new VariableAssignmentExpression(variableExpression.Name, compoundOperator, expression);
+        }
+
+        private (SyntaxToken compoundOperator, BinaryExpression expression) ParseCompoundAssignmentExpression(
+            Expression leftExpression)
+        {
             var compoundOperator = NextToken();
             var singleOperatorType = compoundOperator.Type.TryConvertCompoundOperatorToSingle();
             if (singleOperatorType is null)
@@ -248,28 +293,25 @@ namespace Interpreter.Core.Syntax
             var singleOperator = new SyntaxToken(
                 singleOperatorType.Value, compoundOperator.Text, compoundOperator.Location
             );
-            var leftExpression = new VariableExpression(variable);
             var rightExpression = ParseExpression();
-            var compoundExpression = new BinaryExpression(leftExpression, singleOperator, rightExpression);
 
-            return new VariableAssignmentExpression(variable, compoundOperator, compoundExpression);
+            return (compoundOperator, new BinaryExpression(leftExpression, singleOperator, rightExpression));
         }
-        
-        private VariableAssignmentExpression ParseAssignmentExpression()
+
+        private VariableAssignmentExpression ParseVariableAssignmentExpression(VariableExpression variable)
         {
-            var variable = MatchToken(TokenTypes.Identifier);
             var equals = MatchToken(TokenTypes.Equals);
             var expression = ParseExpression();
 
-            return new VariableAssignmentExpression(variable, equals, expression);
+            return new VariableAssignmentExpression(variable.Name, equals, expression);
         }
 
-        private Expression ParseBinaryExpression(int parentPrecedence = 0)
+        private Expression ParseBinaryExpression(Expression leftInit = null, int parentPrecedence = 0)
         {
             var unaryPrecedence = Current.Type.TryGetUnaryPrecedence();
-            var left = unaryPrecedence >= parentPrecedence
+            var left = leftInit ?? (unaryPrecedence >= parentPrecedence
                 ? ParseUnaryExpression(unaryPrecedence.Value) 
-                : ParsePrimaryExpression();
+                : ParsePrimaryExpression());
 
             while (true)
             {
@@ -278,7 +320,7 @@ namespace Interpreter.Core.Syntax
                     break;
 
                 var operatorToken = NextToken();
-                var right = ParseBinaryExpression(precedence.Value);
+                var right = ParseBinaryExpression(parentPrecedence: precedence.Value);
 
                 left = new BinaryExpression(left, operatorToken, right);
             }
@@ -289,7 +331,7 @@ namespace Interpreter.Core.Syntax
         private UnaryExpression ParseUnaryExpression(int unaryPrecedence)
         {
             var op = NextToken();
-            var expression = ParseBinaryExpression(unaryPrecedence);
+            var expression = ParseBinaryExpression(parentPrecedence: unaryPrecedence);
 
             return new UnaryExpression(op, expression);
         }
@@ -340,11 +382,9 @@ namespace Interpreter.Core.Syntax
         {
             do
             {
-                var openBracket = MatchToken(TokenTypes.OpenBracket);
-                var index = ParseExpression();
-                var closeBracket = MatchToken(TokenTypes.CloseBracket);
+                var index = ParseSyntaxIndex();
 
-                parent = new IndexAccessExpression(parent, openBracket, index, closeBracket);
+                parent = new IndexAccessExpression(parent, index);
                 
             } while (Current.Type == TokenTypes.OpenBracket && Current.Type != TokenTypes.Eof);
 
@@ -440,6 +480,15 @@ namespace Interpreter.Core.Syntax
             }
 
             return expressions.ToImmutable();
+        }
+        
+        private SyntaxIndex ParseSyntaxIndex()
+        {
+            var openBracket = MatchToken(TokenTypes.OpenBracket);
+            var index = ParseExpression();
+            var closeBracket = MatchToken(TokenTypes.CloseBracket);
+
+            return new SyntaxIndex(openBracket, index, closeBracket);
         }
     }
 }

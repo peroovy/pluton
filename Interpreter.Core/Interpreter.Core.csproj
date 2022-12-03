@@ -72,7 +72,8 @@
     <ItemGroup>
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
         <Compile Include="Execution\Objects\Array.cs" />
-        <Compile Include="Execution\Objects\MagicMethods\IIndexed.cs" />
+        <Compile Include="Execution\Objects\MagicMethods\IIndexReadable.cs" />
+        <Compile Include="Execution\Objects\MagicMethods\IIndexSettable.cs" />
         <Compile Include="Execution\Objects\String.cs" />
         <Compile Include="Execution\RuntimeException.cs" />
         <Compile Include="InterpreterCore.cs" />
@@ -132,6 +133,8 @@
         <Compile Include="Syntax\AST\BlockStatement.cs" />
         <Compile Include="Syntax\AST\ElseClause.cs" />
         <Compile Include="Syntax\AST\ExpressionStatement.cs" />
+        <Compile Include="Syntax\AST\Expressions\IndexAssignmentExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\SyntaxIndex.cs" />
         <Compile Include="Syntax\AST\Expressions\VariableAssignmentExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BinaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BooleanExpression.cs" />

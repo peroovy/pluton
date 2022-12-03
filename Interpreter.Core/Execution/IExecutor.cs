@@ -24,7 +24,9 @@ namespace Interpreter.Core.Execution
         
         Obj Execute(ExpressionStatement statement);
 
-        Obj Execute(VariableAssignmentExpression variableAssignment);
+        Obj Execute(VariableAssignmentExpression assignment);
+
+        Obj Execute(IndexAssignmentExpression assignment);
             
         Obj Execute(ParenthesizedExpression expression);
 
