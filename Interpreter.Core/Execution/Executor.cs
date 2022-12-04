@@ -68,10 +68,10 @@ namespace Interpreter.Core.Execution
                 statement.Name.Text,
                 positions,
                 defaults,
-                (func, _, _) =>
+                context =>
                 {
                     var enumerator = statement.Body.Statements.GetEnumerator();
-                    while (func.Equals(callStack.Peek()) && enumerator.MoveNext())
+                    while (context.Function.Equals(callStack.Peek()) && enumerator.MoveNext())
                         enumerator.Current.Accept(this);
                 },
                 isBuiltin: false
@@ -378,8 +378,8 @@ namespace Interpreter.Core.Execution
             
             foreach (var param in arguments)
                 scope.Assign(param.Key, param.Value);
-            
-            function.Call(function, scope, callStack);
+
+            function.Call(new FunctionCallContext(function, scope, callStack));
             scope = previousScope;
 
             var obj = callStack.Pop();

@@ -11,10 +11,10 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 "bool", 
                 ImmutableArray.Create(ParameterName), 
                 ImmutableArray<(string name, Obj value)>.Empty,
-                (_, scope, stack) =>
+                context =>
                 {
-                    var boolean = scope.Lookup(ParameterName).ToBoolean();
-                    stack.PushFunctionResult(boolean);
+                    var boolean = context.Scope.Lookup(ParameterName).ToBoolean();
+                    context.CallStack.PushFunctionResult(boolean);
                 })
         {
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
@@ -12,10 +11,10 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 "str",
                 ImmutableArray.Create(ParameterName), 
                 ImmutableArray<(string name, Obj value)>.Empty, 
-                (_, scope, stack) =>
+                context =>
                 {
-                    var value = scope.Lookup(ParameterName).ToString();
-                    stack.PushFunctionResult(new String(value));
+                    var value = context.Scope.Lookup(ParameterName).ToString();
+                    context.CallStack.PushFunctionResult(new String(value));
                 })
         {
         }

@@ -13,10 +13,10 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 "print", 
                 ImmutableArray.Create(ObjParameter),
                 ImmutableArray.Create<(string, Obj)>((EndParameter, new String("\n"))), 
-                (_, scope, _) =>
+                context =>
                 {
-                    var value = scope.Lookup(ObjParameter).ToString();
-                    var end = scope.Lookup(EndParameter).ToString();
+                    var value = context.Scope.Lookup(ObjParameter).ToString();
+                    var end = context.Scope.Lookup(EndParameter).ToString();
 
                     Console.Write(value + end);
                 })

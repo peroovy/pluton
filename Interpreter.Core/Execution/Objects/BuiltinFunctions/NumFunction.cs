@@ -11,12 +11,12 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 "num",
                 ImmutableArray.Create(ParameterName), 
                 ImmutableArray<(string name, Obj value)>.Empty, 
-                (_, scope, stack) =>
+                context =>
                 {
-                    var str = scope.Lookup(ParameterName).ToString();
+                    var str = context.Scope.Lookup(ParameterName).ToString();
                     var parsed = double.TryParse(str, out var value);
                     
-                    stack.PushFunctionResult(parsed ? new Number(value) : new Null());
+                    context.CallStack.PushFunctionResult(parsed ? new Number(value) : new Null());
                 })
         {
         }

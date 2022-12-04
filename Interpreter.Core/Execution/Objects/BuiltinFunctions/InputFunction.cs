@@ -12,14 +12,14 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 "input",
                 ImmutableArray<string>.Empty,
                 ImmutableArray.Create<(string, Obj)>((ParameterName, new String(string.Empty))),
-                (_, scope, stack) =>
+                context =>
                 {
-                    var message = scope.Lookup(ParameterName).ToString();
+                    var message = context.Scope.Lookup(ParameterName).ToString();
                     
                     Console.Write(message);
                     var value = Console.ReadLine();
                     
-                    stack.PushFunctionResult(new String(value));
+                    context.CallStack.PushFunctionResult(new String(value));
                 })
         {
         }

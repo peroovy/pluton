@@ -72,6 +72,7 @@
     <ItemGroup>
         <Compile Include="Execution\BreakInterrupt.cs" />
         <Compile Include="Execution\ContinueInterrupt.cs" />
+        <Compile Include="Execution\FunctionCallContext.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
         <Compile Include="Execution\Objects\Array.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\InputFunction.cs" />
