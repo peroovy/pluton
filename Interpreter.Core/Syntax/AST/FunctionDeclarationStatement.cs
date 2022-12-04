@@ -2,6 +2,7 @@
 using Interpreter.Core.Execution;
 using Interpreter.Core.Execution.Objects;
 using Interpreter.Core.Lexing;
+using Interpreter.Core.Syntax.AST.Expressions;
 
 namespace Interpreter.Core.Syntax.AST
 {
@@ -11,7 +12,8 @@ namespace Interpreter.Core.Syntax.AST
             SyntaxToken keyword, 
             SyntaxToken name, 
             SyntaxToken openParenthesis, 
-            ImmutableArray<SyntaxToken> positionParameters, 
+            ImmutableArray<SyntaxToken> positionParameters,
+            ImmutableArray<SyntaxDefaultParameter> defaultParameters,
             SyntaxToken closeParenthesis, 
             BlockStatement body)
         {
@@ -19,6 +21,7 @@ namespace Interpreter.Core.Syntax.AST
             Name = name;
             OpenParenthesis = openParenthesis;
             PositionParameters = positionParameters;
+            DefaultParameters = defaultParameters;
             CloseParenthesis = closeParenthesis;
             Body = body;
         }
@@ -31,6 +34,8 @@ namespace Interpreter.Core.Syntax.AST
         
         public ImmutableArray<SyntaxToken> PositionParameters { get; }
         
+        public ImmutableArray<SyntaxDefaultParameter> DefaultParameters { get; }
+
         public SyntaxToken CloseParenthesis { get; }
         
         public BlockStatement Body { get; }

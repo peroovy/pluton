@@ -107,12 +107,26 @@ namespace Interpreter.Core.Syntax
             var keyword = MatchToken(TokenTypes.DefKeyword);
             var name = MatchToken(TokenTypes.Identifier);
             var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
+            var positionParameters = ParsePositionParameters();
+            var defaultParameters = ParseDefaultParameters();
+            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+            var body = ParseBlockStatement();
+
+            return new FunctionDeclarationStatement(
+                keyword, name, openParenthesis, positionParameters, defaultParameters,
+                closeParenthesis, body
+            );
+        }
+
+        private ImmutableArray<SyntaxToken> ParsePositionParameters()
+        {
+            var parameters = ImmutableArray.CreateBuilder<SyntaxToken>();
             
-            var positionParameters = ImmutableArray.CreateBuilder<SyntaxToken>();
-            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof)
+            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof
+                   && !(Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.Equals))
             {
                 var parameter = MatchToken(TokenTypes.Identifier);
-                positionParameters.Add(parameter);
+                parameters.Add(parameter);
                 
                 if (Current.Type != TokenTypes.Comma)
                     break;
@@ -120,13 +134,30 @@ namespace Interpreter.Core.Syntax
                 MatchToken(TokenTypes.Comma);
             }
 
-            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
-            var body = ParseBlockStatement();
+            return parameters.ToImmutable();
+        }
 
-            return new FunctionDeclarationStatement(
-                keyword, name, openParenthesis, positionParameters.ToImmutable(),
-                closeParenthesis, body
-            );
+        private ImmutableArray<SyntaxDefaultParameter> ParseDefaultParameters()
+        {
+            var parameters = ImmutableArray.CreateBuilder<SyntaxDefaultParameter>();
+            
+            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof
+                   && Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.Equals)
+            {
+                var name = MatchToken(TokenTypes.Identifier);
+                var equals = MatchToken(TokenTypes.Equals);
+                var expression = ParseBinaryExpression();
+
+                var parameter = new SyntaxDefaultParameter(name, equals, expression);
+                parameters.Add(parameter);
+                
+                if (Current.Type != TokenTypes.Comma)
+                    break;
+
+                MatchToken(TokenTypes.Comma);
+            }
+
+            return parameters.ToImmutable();
         }
 
         private ReturnStatement ParseReturnStatement()
@@ -464,10 +495,10 @@ namespace Interpreter.Core.Syntax
         {
             var name = MatchToken(TokenTypes.Identifier);
             var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
-            var positionArguments = ParseSeparatedExpressions(TokenTypes.CloseParenthesis);
+            var arguments = ParseSeparatedExpressions(TokenTypes.CloseParenthesis);
             var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
 
-            return new FunctionCallExpression(name, openParenthesis, positionArguments, closeParenthesis);
+            return new FunctionCallExpression(name, openParenthesis, arguments, closeParenthesis);
         }
 
         private VariableExpression ParseVariableExpression()

@@ -7,11 +7,11 @@ namespace Interpreter.Core.Syntax.AST.Expressions
 {
     public class FunctionCallExpression : Expression
     {
-        public FunctionCallExpression(SyntaxToken name, SyntaxToken openParenthesis, ImmutableArray<Expression> positionArguments, SyntaxToken closeParenthesis)
+        public FunctionCallExpression(SyntaxToken name, SyntaxToken openParenthesis, ImmutableArray<Expression> arguments, SyntaxToken closeParenthesis)
         {
             Name = name;
             OpenParenthesis = openParenthesis;
-            PositionArguments = positionArguments;
+            Arguments = arguments;
             CloseParenthesis = closeParenthesis;
         }
         
@@ -19,7 +19,7 @@ namespace Interpreter.Core.Syntax.AST.Expressions
         
         public SyntaxToken OpenParenthesis { get; }
         
-        public ImmutableArray<Expression> PositionArguments { get; }
+        public ImmutableArray<Expression> Arguments { get; }
         
         public SyntaxToken CloseParenthesis { get; }
         

@@ -13,7 +13,7 @@ namespace Repl
             
             while (true)
             {
-                Console.Write(">> ");
+                Console.Write("\n>> ");
                 core.Interpret(Console.ReadLine());
             }
         }

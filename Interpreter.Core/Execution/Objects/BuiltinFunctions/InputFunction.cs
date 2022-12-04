@@ -10,7 +10,8 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
         public InputFunction() 
             : base(
                 "input",
-                ImmutableArray.Create(ParameterName), 
+                ImmutableArray<string>.Empty,
+                ImmutableArray.Create<(string, Obj)>((ParameterName, new String(string.Empty))),
                 (_, scope, stack) =>
                 {
                     var message = scope.Lookup(ParameterName).ToString();

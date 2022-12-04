@@ -10,6 +10,7 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
             : base(
                 "bool", 
                 ImmutableArray.Create(ParameterName), 
+                ImmutableArray<(string name, Obj value)>.Empty,
                 (_, scope, stack) =>
                 {
                     var boolean = scope.Lookup(ParameterName).ToBoolean();

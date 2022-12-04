@@ -8,7 +8,8 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
         protected BuiltinFunction(
             string name, 
             ImmutableArray<string> positionParameters, 
-            Action<Function, Scope, CallStack> call) : base(name, positionParameters, call, isBuiltin: true)
+            ImmutableArray<(string name, Obj value)> defaultParameters, 
+            Action<Function, Scope, CallStack> call) : base(name, positionParameters, defaultParameters, call, isBuiltin: true)
         {
         }
     }

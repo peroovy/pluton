@@ -11,6 +11,7 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
             : base(
                 "str",
                 ImmutableArray.Create(ParameterName), 
+                ImmutableArray<(string name, Obj value)>.Empty, 
                 (_, scope, stack) =>
                 {
                     var value = scope.Lookup(ParameterName).ToString();

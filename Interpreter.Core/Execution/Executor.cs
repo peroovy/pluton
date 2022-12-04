@@ -54,9 +54,20 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(FunctionDeclarationStatement statement)
         {
+            var positions = statement
+                .PositionParameters
+                .Select(token => token.Text)
+                .ToImmutableArray();
+
+            var defaults = statement
+                .DefaultParameters
+                .Select(parameter => (parameter.Name.Text, parameter.Expression.Accept(this)))
+                .ToImmutableArray();
+
             var function = new Function(
                 statement.Name.Text,
-                statement.PositionParameters.Select(p => p.Text).ToImmutableArray(),
+                positions,
+                defaults,
                 (func, _, _) =>
                 {
                     var enumerator = statement.Body.Statements.GetEnumerator();
@@ -348,17 +359,9 @@ namespace Interpreter.Core.Execution
 
             if (scope.TryLookup(name.Text, out var value) && value is Function function)
             {
-                var actualCount = expression.PositionArguments.Length;
-                var expectedCount = function.PositionParameters.Length;
-                if (actualCount == expectedCount) 
-                    return CallFunction(function, expression.PositionArguments);
+                var arguments = EvaluateArguments(expression, function);
                 
-                var location = expression.OpenParenthesis.Location;
-                var lenght = expression.CloseParenthesis.Location.Position - location.Position + 1;
-                logger.Error(location, lenght,
-                    $"Function '{name.Text}' requires {expectedCount} arguments but was given {actualCount}");
-
-                throw new RuntimeException(location);
+                return CallFunction(function, arguments);
             }
             
             logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
@@ -366,18 +369,15 @@ namespace Interpreter.Core.Execution
             throw new RuntimeException(name.Location);
         }
 
-        private Obj CallFunction(Function function, ImmutableArray<Expression> arguments)
+        private Obj CallFunction(Function function, ImmutableDictionary<string, Obj> arguments)
         {
             callStack.PushFunction(function);
-            var evaluatedParams = function.PositionParameters
-                .Zip(arguments, (name, expression) => (nameParam: name, argument: expression.Accept(this)))
-                .ToImmutableArray();
-            
+
             var previousScope = scope;
             scope = new Scope(previousScope);
             
-            foreach (var param in evaluatedParams)
-                scope.Assign(param.nameParam, param.argument);
+            foreach (var param in arguments)
+                scope.Assign(param.Key, param.Value);
             
             function.Call(function, scope, callStack);
             scope = previousScope;
@@ -385,7 +385,43 @@ namespace Interpreter.Core.Execution
             var obj = callStack.Pop();
             return function.Equals(obj) ? new Null() : obj;
         }
-        
+
+        private ImmutableDictionary<string, Obj> EvaluateArguments(FunctionCallExpression expression, Function function)
+        {
+            var evaluatedArguments = ImmutableDictionary.CreateBuilder<string, Obj>();
+            
+            var arguments = expression.Arguments;
+            var positions = function.PositionParameters;
+            var defaults = function.DefaultParameters;
+
+            var expectedLength = positions.Length + defaults.Length;
+            if (!(arguments.Length >= positions.Length && arguments.Length <= expectedLength))
+            {
+                var location = expression.OpenParenthesis.Location;
+                var lenght = expression.CloseParenthesis.Location.Position - location.Position + 1;
+                var name = expression.Name.Text;
+                
+                logger.Error(location, lenght,
+                    $"Function '{name}' requires {expectedLength} arguments but was given {arguments.Length}");
+
+                throw new RuntimeException(location);
+            }
+            
+            for (var i = 0; i < positions.Length; i++)
+                evaluatedArguments[positions[i]] = arguments[i].Accept(this);
+
+            for (var i = 0; i < arguments.Length - positions.Length; i++)
+                evaluatedArguments[defaults[i].name] = arguments[i + positions.Length].Accept(this);
+
+            for (var i = 0; i < positions.Length + defaults.Length - arguments.Length; i++)
+            {
+                var offset = i + arguments.Length - positions.Length;
+                evaluatedArguments[defaults[offset].name] = defaults[offset].value;
+            }
+
+            return evaluatedArguments.ToImmutable();
+        }
+
         private int GetIndex(SyntaxIndex syntaxIndex)
         {
             var openBracket = syntaxIndex.OpenBracket;
