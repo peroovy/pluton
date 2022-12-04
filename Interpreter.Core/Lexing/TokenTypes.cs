@@ -21,12 +21,12 @@
         NullKeyword,
         BreakKeyword,
         ContinueKeyword,
+        NotKeyword,
 
         LineSeparator,
         Space,
         Semicolon,
         Comma,
-        ExclamationMark,
 
         Plus,
         Minus,

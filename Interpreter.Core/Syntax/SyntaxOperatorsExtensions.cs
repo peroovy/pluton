@@ -9,7 +9,7 @@ namespace Interpreter.Core.Syntax
         {
             TokenTypes.Plus,
             TokenTypes.Minus,
-            TokenTypes.ExclamationMark
+            TokenTypes.NotKeyword
         };
 
         private static readonly Dictionary<TokenTypes, TokenTypes> CompoundOperatorsToSingle = new()

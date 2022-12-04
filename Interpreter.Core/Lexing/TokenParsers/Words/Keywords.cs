@@ -16,6 +16,7 @@ namespace Interpreter.Core.Lexing.TokenParsers.Words
             ["return"] = TokenTypes.ReturnKeyword,
             ["and"] = TokenTypes.AndKeyword,
             ["or"] = TokenTypes.OrKeyword,
+            ["not"] = TokenTypes.NotKeyword,
             ["null"] = TokenTypes.NullKeyword,
             ["break"] = TokenTypes.BreakKeyword,
             ["continue"] = TokenTypes.ContinueKeyword

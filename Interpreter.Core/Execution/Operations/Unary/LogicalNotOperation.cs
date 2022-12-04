@@ -6,6 +6,6 @@ namespace Interpreter.Core.Execution.Operations.Unary
     {
         protected override string OperatorMethodName => "op_LogicalNot";
 
-        protected override TokenTypes Operator => TokenTypes.ExclamationMark;
+        protected override TokenTypes Operator => TokenTypes.NotKeyword;
     }
 }

@@ -23,7 +23,6 @@ namespace Interpreter.Core.Lexing.TokenParsers
             ['<'] = TokenTypes.LeftArrow,
             ['>'] = TokenTypes.RightArrow,
             [','] = TokenTypes.Comma,
-            ['!'] = TokenTypes.ExclamationMark,
             ['%'] = TokenTypes.Percent,
             ['\0'] = TokenTypes.Eof
         };
