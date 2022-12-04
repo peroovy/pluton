@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repl", "Repl\Repl.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "Interpreter\Interpreter.csproj", "{BDA4A609-1509-4A10-B603-1B49A1802805}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter.Tests", "Interpreter.Tests\Interpreter.Tests.csproj", "{9A9408A2-7AB6-4801-B446-04495607E18D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{BDA4A609-1509-4A10-B603-1B49A1802805}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDA4A609-1509-4A10-B603-1B49A1802805}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDA4A609-1509-4A10-B603-1B49A1802805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A9408A2-7AB6-4801-B446-04495607E18D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A9408A2-7AB6-4801-B446-04495607E18D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A9408A2-7AB6-4801-B446-04495607E18D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A9408A2-7AB6-4801-B446-04495607E18D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

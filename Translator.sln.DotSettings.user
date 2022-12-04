@@ -1,0 +1,16 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=14c415be_002D0ee3_002D4307_002Db9e6_002D8c54068ec7be/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;And&gt;&#xD;
+      &lt;TestAncestor&gt;&#xD;
+        &lt;TestId&gt;NUnit3x::9A9408A2-7AB6-4801-B446-04495607E18D::.NETFramework,Version=v4.8::Interpreter.Tests.TextTests.LineShould&lt;/TestId&gt;&#xD;
+      &lt;/TestAncestor&gt;&#xD;
+      &lt;Project Location="C:\Users\Nikita\Desktop\C#\pluton\Interpreter.Tests" Presentation="&amp;lt;Interpreter.Tests&amp;gt;" /&gt;&#xD;
+      &lt;Namespace&gt;Interpreter.Tests.TextTests&lt;/Namespace&gt;&#xD;
+    &lt;/And&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::9A9408A2-7AB6-4801-B446-04495607E18D::.NETFramework,Version=v4.8::Interpreter.Tests.TextTests.ParserShould.CheckParse&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::9A9408A2-7AB6-4801-B446-04495607E18D::.NETFramework,Version=v4.8::Interpreter.Tests.TextTests.ParserShould.EmptyLine&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
