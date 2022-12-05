@@ -59,6 +59,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="LexingTests\TokenParsersTests\ParsersShould.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="TextTests\LineShould.cs" />
         <Compile Include="TextTests\ParserShould.cs" />
