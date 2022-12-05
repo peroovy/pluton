@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Interpreter.Core.Execution.Interrupts;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
@@ -14,7 +15,8 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 context =>
                 {
                     var value = context.Scope.Lookup(ParameterName).ToString();
-                    context.CallStack.PushFunctionResult(new String(value));
+                    
+                    throw new ReturnInterrupt(new String(value));
                 })
         {
         }

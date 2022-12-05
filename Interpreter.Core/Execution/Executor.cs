@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Interpreter.Core.Execution.Interrupts;
 using Interpreter.Core.Execution.Objects;
 using Interpreter.Core.Execution.Objects.BuiltinFunctions;
 using Interpreter.Core.Execution.Objects.MagicMethods;
@@ -22,7 +23,7 @@ namespace Interpreter.Core.Execution
         private readonly UnaryOperation[] unaryOperations;
         private readonly ILogger logger;
 
-        private readonly CallStack callStack = new();
+        private readonly Stack<Function> callStack = new();
         private readonly Stack<Statement> loopStack = new();
         private Scope scope = new(null);
 
@@ -71,7 +72,7 @@ namespace Interpreter.Core.Execution
                 context =>
                 {
                     var enumerator = statement.Body.Statements.GetEnumerator();
-                    while (context.Function.Equals(callStack.Peek()) && enumerator.MoveNext())
+                    while (ReferenceEquals(context.Function, callStack.Peek()) && enumerator.MoveNext())
                         enumerator.Current.Accept(this);
                 },
                 isBuiltin: false
@@ -84,18 +85,17 @@ namespace Interpreter.Core.Execution
 
         public Obj Execute(ReturnStatement statement)
         {
-            if (callStack.Count > 0 && callStack.Peek() is Function)
+            if (callStack.Count > 0)
             {
-                var expression = statement.Expression?.Accept(this) ?? new Null();
-                callStack.PushFunctionResult(expression);
+                var value = statement.Expression?.Accept(this) ?? new Null();
 
-                return null;
+                throw new ReturnInterrupt(value);
             }
 
             var keyword = statement.Keyword;
             logger.Error(keyword.Location, keyword.Length, "The return statement can be only into function block");
             
-            throw new RuntimeException(keyword.Location);
+            throw new RuntimeException();
         }
 
         public Obj Execute(BreakStatement statement)
@@ -106,7 +106,7 @@ namespace Interpreter.Core.Execution
             var keyword = statement.Keyword;
             logger.Error(keyword.Location, keyword.Length, "The break statement is only valid inside loop");
 
-            throw new RuntimeException(keyword.Location);
+            throw new RuntimeException();
         }
         
         public Obj Execute(ContinueStatement statement)
@@ -117,7 +117,7 @@ namespace Interpreter.Core.Execution
             var keyword = statement.Keyword;
             logger.Error(keyword.Location, keyword.Length, "The continue statement is only valid inside loop");
 
-            throw new RuntimeException(keyword.Location);
+            throw new RuntimeException();
         }
 
         public Obj Execute(ForStatement statement)
@@ -240,7 +240,7 @@ namespace Interpreter.Core.Execution
             {
                 logger.Error(openBracket.Location, length, $"Type '{obj.TypeName}' is not settable by index");
 
-                throw new RuntimeException(openBracket.Location);
+                throw new RuntimeException();
             }
 
             var index = GetIndex(assignment.Index);
@@ -254,7 +254,7 @@ namespace Interpreter.Core.Execution
             {
                 logger.Error(openBracket.Location, length, "The index was outside the bounds of the list");
 
-                throw new RuntimeException(openBracket.Location);
+                throw new RuntimeException();
             }
         }
 
@@ -272,7 +272,7 @@ namespace Interpreter.Core.Execution
             {
                 logger.Error(openBracket.Location, lengthBetween, $"Type '{parent.TypeName}' is not readable by index");
 
-                throw new RuntimeException(openBracket.Location);
+                throw new RuntimeException();
             }
 
             var index = GetIndex(indexAccess.Index);
@@ -285,7 +285,7 @@ namespace Interpreter.Core.Execution
             {
                 logger.Error(openBracket.Location, lengthBetween, "The index was outside the bounds of the list");
 
-                throw new RuntimeException(openBracket.Location);
+                throw new RuntimeException();
             }
         }
 
@@ -305,7 +305,7 @@ namespace Interpreter.Core.Execution
             logger.Error(opToken.Location, opToken.Length,
                 $"The binary operator '{opToken.Text}' is not defined for '{left.TypeName}' and '{right.TypeName}' types");
 
-            throw new RuntimeException(opToken.Location);
+            throw new RuntimeException();
         }
 
         public Obj Execute(UnaryExpression unary)
@@ -322,7 +322,7 @@ namespace Interpreter.Core.Execution
             logger.Error(opToken.Location, opToken.Length,
                 $"The unary operator '{opToken.Text}' is not defined for '{operand.TypeName}' type");
                 
-            throw new RuntimeException(opToken.Location);
+            throw new RuntimeException();
         }
 
         public Obj Execute(NumberExpression number) => new Number(number.Value);
@@ -350,7 +350,7 @@ namespace Interpreter.Core.Execution
             var nameToken = variable.Name;
             logger.Error(nameToken.Location, nameToken.Length,$"Variable '{nameToken.Text}' does not exist");
 
-            throw new RuntimeException(nameToken.Location);
+            throw new RuntimeException();
         }
 
         public Obj Execute(FunctionCallExpression expression)
@@ -366,12 +366,12 @@ namespace Interpreter.Core.Execution
             
             logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
 
-            throw new RuntimeException(name.Location);
+            throw new RuntimeException();
         }
 
         private Obj CallFunction(Function function, ImmutableDictionary<string, Obj> arguments)
         {
-            callStack.PushFunction(function);
+            callStack.Push(function);
 
             var previousScope = scope;
             scope = new Scope(previousScope);
@@ -379,11 +379,20 @@ namespace Interpreter.Core.Execution
             foreach (var param in arguments)
                 scope.Assign(param.Key, param.Value);
 
-            function.Call(new FunctionCallContext(function, scope, callStack));
+            Obj returnedValue = new Null();
+            try
+            {
+                function.Call(new FunctionCallContext(function, scope));
+            }
+            catch (ReturnInterrupt interrupt)
+            {
+                returnedValue = interrupt.Value;
+            }
+            
             scope = previousScope;
+            callStack.Pop();
 
-            var obj = callStack.Pop();
-            return function.Equals(obj) ? new Null() : obj;
+            return returnedValue;
         }
 
         private ImmutableDictionary<string, Obj> EvaluateArguments(FunctionCallExpression expression, Function function)
@@ -404,7 +413,7 @@ namespace Interpreter.Core.Execution
                 logger.Error(location, lenght,
                     $"Function '{name}' requires {expectedLength} arguments but was given {arguments.Length}");
 
-                throw new RuntimeException(location);
+                throw new RuntimeException();
             }
             
             for (var i = 0; i < positions.Length; i++)
@@ -434,14 +443,14 @@ namespace Interpreter.Core.Execution
             {
                 logger.Error(openBracket.Location, lengthBetween, $"Expected number value but was '{index.TypeName}' type");
 
-                throw new RuntimeException(openBracket.Location);
+                throw new RuntimeException();
             }
 
             if (number.IsInteger) 
                 return (int)number.Value;
             
             logger.Error(openBracket.Location, lengthBetween, "Expected integer value");
-            throw new RuntimeException(openBracket.Location);
+            throw new RuntimeException();
         }
 
         private bool TryAssignUp(string name, Obj value)

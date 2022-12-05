@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using Interpreter.Core.Execution.Interrupts;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
@@ -19,7 +20,7 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                     Console.Write(message);
                     var value = Console.ReadLine();
                     
-                    context.CallStack.PushFunctionResult(new String(value));
+                    throw new ReturnInterrupt(new String(value));
                 })
         {
         }

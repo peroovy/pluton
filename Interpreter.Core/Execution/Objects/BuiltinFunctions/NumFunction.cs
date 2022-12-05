@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Interpreter.Core.Execution.Interrupts;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
@@ -16,7 +17,7 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                     var str = context.Scope.Lookup(ParameterName).ToString();
                     var parsed = double.TryParse(str, out var value);
                     
-                    context.CallStack.PushFunctionResult(parsed ? new Number(value) : new Null());
+                    throw new ReturnInterrupt(parsed ? new Number(value) : new Null());
                 })
         {
         }
