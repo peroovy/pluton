@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Interpreter.Core.Logging;
 using Interpreter.Core.Text;
 
 namespace Interpreter.Core.Lexing.TokenParsers
@@ -19,20 +18,14 @@ namespace Interpreter.Core.Lexing.TokenParsers
         };
 
         public int Priority => 0;
-
-        public bool CanParseFrom(Line line, int position)
+        
+        public SyntaxToken TryParse(Line line, int position)
         {
-            var actualTerminal = string.Concat(line.Value.TakeFrom(position, 2));
+            var terminal = string.Concat(line.Value.TakeFrom(position, 2));
 
-            return terminalsTypes.ContainsKey(actualTerminal);
-        }
-
-        public SyntaxToken Parse(Line line, int position, ILogger logger)
-        {
-            var terminal = string.Concat(line.Value[position], line.Value[position + 1]);
-            var type = terminalsTypes[terminal];
-
-            return new SyntaxToken(type, terminal, new TextLocation(line, position));
+            return terminalsTypes.TryGetValue(terminal, out var type) 
+                ? new SyntaxToken(type, terminal, new TextLocation(line, position)) 
+                : null;
         }
     }
 }
