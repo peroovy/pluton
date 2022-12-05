@@ -10,6 +10,7 @@
     &lt;/And&gt;&#xD;
     &lt;TestAncestor&gt;&#xD;
       &lt;TestId&gt;NUnit3x::9A9408A2-7AB6-4801-B446-04495607E18D::.NETFramework,Version=v4.8::Interpreter.Tests.LexingTests.LexerShould.LexerTokenizeCorrectlyAllTokenTypes&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::9A9408A2-7AB6-4801-B446-04495607E18D::.NETFramework,Version=v4.8::Interpreter.Tests.LoggingTests.LoggerShould.LoggingErrors&lt;/TestId&gt;&#xD;
     &lt;/TestAncestor&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
