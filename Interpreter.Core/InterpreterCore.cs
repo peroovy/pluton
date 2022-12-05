@@ -54,8 +54,15 @@ namespace Interpreter.Core
             LogHandler.Handle(Logger);
             Logger.Reset();
         }
-        
+
         public static InterpreterCore Create()
+        {
+            var container = ConfigureContainer();
+
+            return container.Get<InterpreterCore>();
+        }
+        
+        public static StandardKernel ConfigureContainer()
         {
             var container = new StandardKernel();
 
@@ -91,7 +98,7 @@ namespace Interpreter.Core
                 .InheritedFrom<BuiltinFunction>()
                 .BindBase());
 
-            return container.Get<InterpreterCore>();
+            return container;
         }      
     }
 }
