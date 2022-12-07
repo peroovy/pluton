@@ -5,7 +5,7 @@ namespace Interpreter.Core.Lexing.TokenParsers.Words
 {
     public class WordParser : ITokenParser
     {
-        private readonly Regex regex = new(@"_*([a-z]|[A-Z]|[А-Я]|[а-я]|[0-9])*");
+        private readonly Regex regex = new(@"_*([a-z]|[A-Z]|[А-Я]|[а-я]|[0-9]|_)*");
 
         public int Priority => 1000;
         
