@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using Interpreter.Core.Execution.Objects.MagicMethods;
 
 namespace Interpreter.Core.Execution.Objects
@@ -25,6 +26,8 @@ namespace Interpreter.Core.Execution.Objects
         }
         
         public string Value { get; }
+
+        public string AsEscaped => Regex.Escape($"\"{Value}\"");
 
         public override string ToString() => Value;
 

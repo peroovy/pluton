@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Interpreter.Core.Execution.Objects.MagicMethods;
 
 namespace Interpreter.Core.Execution.Objects
@@ -53,7 +52,7 @@ namespace Interpreter.Core.Execution.Objects
             {
                 var item = Items[i];
                 
-                result.Append(item is String ? Regex.Escape($"\"{item}\"") : item);
+                result.Append(item is String str ? str.AsEscaped : item);
 
                 if (i + 1 < Items.Length)
                     result.Append(", ");
