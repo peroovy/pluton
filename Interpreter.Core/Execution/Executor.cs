@@ -25,7 +25,8 @@ namespace Interpreter.Core.Execution
 
         private readonly Stack<Function> callStack = new();
         private readonly Stack<Statement> loopStack = new();
-        private Scope scope = new(null);
+        private readonly Scope globalScope = new(null);
+        private Scope scope;
 
         public Executor(
             BinaryOperation[] binaryOperations, 
@@ -38,7 +39,9 @@ namespace Interpreter.Core.Execution
             this.logger = logger;
 
             foreach (var function in builtinFunctions)
-                scope.Assign(function.Name, function);
+                globalScope.Assign(function.Name, function);
+
+            scope = globalScope;
         }
 
         public void Execute(SyntaxTree tree)
@@ -374,7 +377,7 @@ namespace Interpreter.Core.Execution
             callStack.Push(function);
 
             var previousScope = scope;
-            scope = new Scope(previousScope);
+            scope = new Scope(globalScope);
             
             foreach (var param in arguments)
                 scope.Assign(param.Key, param.Value);
