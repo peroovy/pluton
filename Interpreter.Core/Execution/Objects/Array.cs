@@ -2,11 +2,12 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Interpreter.Core.Execution.Objects.MagicMethods;
+using Interpreter.Core.Execution.Objects.DataModel;
+using Interpreter.Core.Execution.Objects.Indexer;
 
 namespace Interpreter.Core.Execution.Objects
 {
-    public class Array : Obj, IIndexReadable, IIndexSettable
+    public class Array : Obj, IIndexReadable, IIndexSettable, ICollection
     {
         public Array(ImmutableArray<Obj> items)
         {
@@ -17,7 +18,9 @@ namespace Interpreter.Core.Execution.Objects
         {
             Items = items;
         }
-        
+
+        public int Length => Items.Length;
+
         private Obj[] Items { get; }
         
         public Obj this[int index]

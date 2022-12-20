@@ -5,7 +5,7 @@ using System.Linq;
 using Interpreter.Core.Execution.Interrupts;
 using Interpreter.Core.Execution.Objects;
 using Interpreter.Core.Execution.Objects.BuiltinFunctions;
-using Interpreter.Core.Execution.Objects.MagicMethods;
+using Interpreter.Core.Execution.Objects.Indexer;
 using Interpreter.Core.Execution.Operations.Binary;
 using Interpreter.Core.Execution.Operations.Unary;
 using Interpreter.Core.Logging;

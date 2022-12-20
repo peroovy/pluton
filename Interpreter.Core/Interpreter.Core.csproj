@@ -78,11 +78,13 @@
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
         <Compile Include="Execution\Objects\Array.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\InputFunction.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\LenFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\NumFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\StrFunction.cs" />
-        <Compile Include="Execution\Objects\MagicMethods\IIndexReadable.cs" />
-        <Compile Include="Execution\Objects\MagicMethods\IIndexSettable.cs" />
+        <Compile Include="Execution\Objects\DataModel\ICollection.cs" />
+        <Compile Include="Execution\Objects\Indexer\IIndexReadable.cs" />
+        <Compile Include="Execution\Objects\Indexer\IIndexSettable.cs" />
         <Compile Include="Execution\Objects\String.cs" />
         <Compile Include="InterpreterCore.cs" />
         <Compile Include="Execution\Executor.cs" />
