@@ -44,12 +44,6 @@ namespace Interpreter.Tests.LexingTests.TokenParsersTests
             Assert.AreEqual(typeExpected, actual.Type);
             return actual;
         }
-
-        public void ThrowExceptionCorrectly(ITokenParser parser, string text, int position)
-        {
-            var line = new Line(0, text);
-            Assert.Throws<ArgumentException>(() => parser.Parse(line, position, logger));
-        }
         
         [TestCase(">=", 0, true)]
         [TestCase("смайлик: =)", 9, false)]

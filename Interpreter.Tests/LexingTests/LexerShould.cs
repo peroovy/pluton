@@ -12,31 +12,20 @@ namespace Interpreter.Tests.LexingTests
     [TestFixture]
     public class LexerShould
     {
-        private Lexer lexer;
+        private ILexer lexer;
 
         [SetUp]
         public void SetUp()
         {
-            var parsers = 
-            lexer = new Lexer(
-                new ITokenParser[]
-                    {
-                        new WordParser(),
-                        new DoubleTerminalsParser(),
-                        new NumberParser(),
-                        new SingleTerminalsParser(),
-                        new StringParser(),
-                        new WhitespaceParser()
-                    }, 
-                new Logger());
+            lexer = Core.InterpreterCore.Create().Lexer;
         }
 
         private void AssertTokenEqual(SyntaxToken expected, SyntaxToken actual)
         {
             
         }
-        
-        public void LexerTokenizeCorrectly(Line[] lines, SyntaxToken[] expected)
+
+        private void LexerTokenizeCorrectly(Line[] lines, SyntaxToken[] expected)
         {
 
             var actual = lexer.Tokenize(lines.ToImmutableArray());
