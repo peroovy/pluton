@@ -1,4 +1,4 @@
-﻿namespace Interpreter.Core.Execution.Objects.MagicMethods
+﻿namespace Interpreter.Core.Execution.Objects.Indexer
 {
     public interface IIndexSettable
     {

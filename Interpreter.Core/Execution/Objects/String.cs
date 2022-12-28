@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Text;
-using Interpreter.Core.Execution.Objects.MagicMethods;
+using System.Text.RegularExpressions;
+using Interpreter.Core.Execution.Objects.DataModel;
+using Interpreter.Core.Execution.Objects.Indexer;
 
 namespace Interpreter.Core.Execution.Objects
 {
-    public class String : Obj, IIndexReadable
+    public class String : Obj, IIndexReadable, ICollection
     {
         public String(string value)
         {
             Value = value;
         }
+        
+        public string Value { get; }
+
+        public int Length => Value.Length;
+
+        public string AsEscaped => Regex.Escape($"\"{Value}\"");
 
         public Obj this[int index]
         {
@@ -23,8 +31,6 @@ namespace Interpreter.Core.Execution.Objects
                 return new String(ToString()[index].ToString());
             }
         }
-        
-        public string Value { get; }
 
         public override string ToString() => Value;
 

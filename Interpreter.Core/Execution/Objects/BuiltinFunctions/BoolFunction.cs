@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Interpreter.Core.Execution.Interrupts;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
@@ -11,10 +12,11 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 "bool", 
                 ImmutableArray.Create(ParameterName), 
                 ImmutableArray<(string name, Obj value)>.Empty,
-                (_, scope, stack) =>
+                context =>
                 {
-                    var boolean = scope.Lookup(ParameterName).ToBoolean();
-                    stack.PushFunctionResult(boolean);
+                    var boolean = context.Scope.Lookup(ParameterName).ToBoolean();
+
+                    throw new ReturnInterrupt(boolean);
                 })
         {
         }

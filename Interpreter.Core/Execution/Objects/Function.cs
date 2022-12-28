@@ -9,7 +9,7 @@ namespace Interpreter.Core.Execution.Objects
             string name, 
             ImmutableArray<string> positionParameters, 
             ImmutableArray<(string name, Obj value)> defaultParameters,
-            Action<Function, Scope, CallStack> call, 
+            Action<FunctionCallContext> call, 
             bool isBuiltin)
         {
             Name = name;
@@ -25,7 +25,7 @@ namespace Interpreter.Core.Execution.Objects
         
         public ImmutableArray<(string name, Obj value)> DefaultParameters { get; }
 
-        public Action<Function, Scope, CallStack> Call { get; }
+        public Action<FunctionCallContext> Call { get; }
         
         public bool IsBuiltin { get; }
 

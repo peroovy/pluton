@@ -70,18 +70,22 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Execution\BreakInterrupt.cs" />
-        <Compile Include="Execution\ContinueInterrupt.cs" />
+        <Compile Include="Execution\FunctionCallContext.cs" />
+        <Compile Include="Execution\Interrupts\BreakInterrupt.cs" />
+        <Compile Include="Execution\Interrupts\ContinueInterrupt.cs" />
+        <Compile Include="Execution\Interrupts\ReturnInterrupt.cs" />
+        <Compile Include="Execution\Interrupts\RuntimeException.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
         <Compile Include="Execution\Objects\Array.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\InputFunction.cs" />
+        <Compile Include="Execution\Objects\BuiltinFunctions\LenFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\NumFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\StrFunction.cs" />
-        <Compile Include="Execution\Objects\MagicMethods\IIndexReadable.cs" />
-        <Compile Include="Execution\Objects\MagicMethods\IIndexSettable.cs" />
+        <Compile Include="Execution\Objects\DataModel\ICollection.cs" />
+        <Compile Include="Execution\Objects\Indexer\IIndexReadable.cs" />
+        <Compile Include="Execution\Objects\Indexer\IIndexSettable.cs" />
         <Compile Include="Execution\Objects\String.cs" />
-        <Compile Include="Execution\RuntimeException.cs" />
         <Compile Include="InterpreterCore.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
@@ -112,7 +116,6 @@
         <Compile Include="Execution\Operations\Unary\UnaryOperation.cs" />
         <Compile Include="Execution\Operations\Unary\UnaryPlusOperation.cs" />
         <Compile Include="Execution\Scope.cs" />
-        <Compile Include="Execution\CallStack.cs" />
         <Compile Include="Lexing\ILexer.cs" />
         <Compile Include="Lexing\Lexer.cs" />
         <Compile Include="Lexing\TextLocation.cs" />

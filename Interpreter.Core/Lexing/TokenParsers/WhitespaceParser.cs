@@ -1,5 +1,4 @@
-﻿using Interpreter.Core.Logging;
-using Interpreter.Core.Text;
+﻿using Interpreter.Core.Text;
 
 namespace Interpreter.Core.Lexing.TokenParsers
 {
@@ -7,10 +6,11 @@ namespace Interpreter.Core.Lexing.TokenParsers
     {
         public int Priority => 3;
         
-        public bool CanParseFrom(Line line, int position) => char.IsWhiteSpace(line.Value[position]);
-
-        public SyntaxToken Parse(Line line, int position, ILogger logger)
+        public SyntaxToken TryParse(Line line, int position)
         {
+            if (!char.IsWhiteSpace(line.Value[position]))
+                return null;
+            
             var location = new TextLocation(line, position);
             
             if (line.Value[position] == '\n')

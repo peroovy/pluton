@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Interpreter.Core.Execution.Interrupts;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
@@ -11,12 +12,12 @@ namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
                 "num",
                 ImmutableArray.Create(ParameterName), 
                 ImmutableArray<(string name, Obj value)>.Empty, 
-                (_, scope, stack) =>
+                context =>
                 {
-                    var str = scope.Lookup(ParameterName).ToString();
+                    var str = context.Scope.Lookup(ParameterName).ToString();
                     var parsed = double.TryParse(str, out var value);
                     
-                    stack.PushFunctionResult(parsed ? new Number(value) : new Null());
+                    throw new ReturnInterrupt(parsed ? new Number(value) : new Null());
                 })
         {
         }

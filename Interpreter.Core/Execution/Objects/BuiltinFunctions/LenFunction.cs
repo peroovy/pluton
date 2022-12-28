@@ -1,22 +1,27 @@
 ﻿using System.Collections.Immutable;
 using Interpreter.Core.Execution.Interrupts;
+using Interpreter.Core.Execution.Objects.DataModel;
 
 namespace Interpreter.Core.Execution.Objects.BuiltinFunctions
 {
-    public class StrFunction : BuiltinFunction
+    public class LenFunction : BuiltinFunction
     {
         private const string ParameterName = "obj";
 
-        public StrFunction() 
+        public LenFunction() 
             : base(
-                "str",
+                "len", 
                 ImmutableArray.Create(ParameterName), 
                 ImmutableArray<(string name, Obj value)>.Empty, 
                 context =>
                 {
-                    var value = context.Scope.Lookup(ParameterName).ToString();
+                    var obj = context.Scope.Lookup(ParameterName);
+
+                    Obj value = obj is ICollection collection
+                        ? new Number(collection.Length)
+                        : new Null();
                     
-                    throw new ReturnInterrupt(new String(value));
+                    throw new ReturnInterrupt(value);
                 })
         {
         }
