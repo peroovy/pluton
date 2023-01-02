@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Core.Diagnostic;
 using Core.Execution.Interrupts;
 using Core.Execution.Objects;
 using Core.Execution.Objects.BuiltinFunctions;
 using Core.Execution.Objects.Indexer;
 using Core.Execution.Operations.Binary;
 using Core.Execution.Operations.Unary;
-using Core.Logging;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
-using Array = Core.Execution.Objects.Array;
-using Boolean = Core.Execution.Objects.Boolean;
-using String = Core.Execution.Objects.String;
 
 namespace Core.Execution
 {
@@ -21,22 +18,24 @@ namespace Core.Execution
     {
         private readonly BinaryOperation[] binaryOperations;
         private readonly UnaryOperation[] unaryOperations;
-        private readonly ILogger logger;
+        private readonly IDiagnosticBag diagnosticBag;
 
         private readonly Stack<Function> callStack = new();
         private readonly Stack<Statement> loopStack = new();
         private readonly Scope globalScope = new(null);
         private Scope scope;
 
+        private Obj lastExpressionValue;
+
         public Executor(
             BinaryOperation[] binaryOperations, 
             UnaryOperation[] unaryOperations, 
             BuiltinFunction[] builtinFunctions, 
-            ILogger logger)
+            IDiagnosticBag diagnosticBag)
         {
             this.binaryOperations = binaryOperations;
             this.unaryOperations = unaryOperations;
-            this.logger = logger;
+            this.diagnosticBag = diagnosticBag;
 
             foreach (var function in builtinFunctions)
                 globalScope.Assign(function.Name, function);
@@ -44,16 +43,12 @@ namespace Core.Execution
             scope = globalScope;
         }
 
-        public void Execute(SyntaxTree tree)
+        public Obj Execute(SyntaxTree tree)
         {
-            try
-            {
-                foreach (var member in tree.Members)
-                    member.Accept(this);
-            }
-            catch (RuntimeException)
-            {
-            }
+            foreach (var member in tree.Members)
+                member.Accept(this);
+
+            return lastExpressionValue;
         }
 
         public Obj Execute(FunctionDeclarationStatement statement)
@@ -96,7 +91,7 @@ namespace Core.Execution
             }
 
             var keyword = statement.Keyword;
-            logger.Error(keyword.Location, keyword.Length, "The return statement can be only into function block");
+            diagnosticBag.AddError(keyword.Location, keyword.Length, "The return statement can be only into function block");
             
             throw new RuntimeException();
         }
@@ -107,7 +102,7 @@ namespace Core.Execution
                 throw new BreakInterrupt();
             
             var keyword = statement.Keyword;
-            logger.Error(keyword.Location, keyword.Length, "The break statement is only valid inside loop");
+            diagnosticBag.AddError(keyword.Location, keyword.Length, "The break statement is only valid inside loop");
 
             throw new RuntimeException();
         }
@@ -118,7 +113,7 @@ namespace Core.Execution
                 throw new ContinueInterrupt();
             
             var keyword = statement.Keyword;
-            logger.Error(keyword.Location, keyword.Length, "The continue statement is only valid inside loop");
+            diagnosticBag.AddError(keyword.Location, keyword.Length, "The continue statement is only valid inside loop");
 
             throw new RuntimeException();
         }
@@ -217,7 +212,7 @@ namespace Core.Execution
 
         public Obj Execute(ExpressionStatement statement)
         {
-            statement.Expression.Accept(this);
+            lastExpressionValue = statement.Expression.Accept(this);
 
             return null;
         }
@@ -241,7 +236,7 @@ namespace Core.Execution
             var obj = assignment.Expression.Accept(this);
             if (obj is not IIndexSettable settable)
             {
-                logger.Error(openBracket.Location, length, $"Type '{obj.TypeName}' is not settable by index");
+                diagnosticBag.AddError(openBracket.Location, length, $"Type '{obj.TypeName}' is not settable by index");
 
                 throw new RuntimeException();
             }
@@ -255,7 +250,7 @@ namespace Core.Execution
             }
             catch (IndexOutOfRangeException)
             {
-                logger.Error(openBracket.Location, length, "The index was outside the bounds of the list");
+                diagnosticBag.AddError(openBracket.Location, length, "The index was outside the bounds of the list");
 
                 throw new RuntimeException();
             }
@@ -273,7 +268,7 @@ namespace Core.Execution
 
             if (parent is not IIndexReadable readable)
             {
-                logger.Error(openBracket.Location, lengthBetween, $"Type '{parent.TypeName}' is not readable by index");
+                diagnosticBag.AddError(openBracket.Location, lengthBetween, $"Type '{parent.TypeName}' is not readable by index");
 
                 throw new RuntimeException();
             }
@@ -286,7 +281,7 @@ namespace Core.Execution
             }
             catch (IndexOutOfRangeException)
             {
-                logger.Error(openBracket.Location, lengthBetween, "The index was outside the bounds of the list");
+                diagnosticBag.AddError(openBracket.Location, lengthBetween, "The index was outside the bounds of the list");
 
                 throw new RuntimeException();
             }
@@ -305,7 +300,7 @@ namespace Core.Execution
             if (!method.IsUnknown) 
                 return method.Invoke(left, right);
             
-            logger.Error(opToken.Location, opToken.Length,
+            diagnosticBag.AddError(opToken.Location, opToken.Length,
                 $"The binary operator '{opToken.Text}' is not defined for '{left.TypeName}' and '{right.TypeName}' types");
 
             throw new RuntimeException();
@@ -322,7 +317,7 @@ namespace Core.Execution
             if (!method.IsUnknown) 
                 return method.Invoke(operand);
             
-            logger.Error(opToken.Location, opToken.Length,
+            diagnosticBag.AddError(opToken.Location, opToken.Length,
                 $"The unary operator '{opToken.Text}' is not defined for '{operand.TypeName}' type");
                 
             throw new RuntimeException();
@@ -351,7 +346,7 @@ namespace Core.Execution
                 return value;
 
             var nameToken = variable.Name;
-            logger.Error(nameToken.Location, nameToken.Length,$"Variable '{nameToken.Text}' does not exist");
+            diagnosticBag.AddError(nameToken.Location, nameToken.Length,$"Variable '{nameToken.Text}' does not exist");
 
             throw new RuntimeException();
         }
@@ -367,7 +362,7 @@ namespace Core.Execution
                 return CallFunction(function, arguments);
             }
             
-            logger.Error(name.Location, name.Length,$"Function '{name.Text}' does not exist");
+            diagnosticBag.AddError(name.Location, name.Length,$"Function '{name.Text}' does not exist");
 
             throw new RuntimeException();
         }
@@ -413,7 +408,7 @@ namespace Core.Execution
                 var lenght = expression.CloseParenthesis.Location.Position - location.Position + 1;
                 var name = expression.Name.Text;
                 
-                logger.Error(location, lenght,
+                diagnosticBag.AddError(location, lenght,
                     $"Function '{name}' requires {expectedLength} arguments but was given {arguments.Length}");
 
                 throw new RuntimeException();
@@ -444,7 +439,7 @@ namespace Core.Execution
             
             if (index is not Number number)
             {
-                logger.Error(openBracket.Location, lengthBetween, $"Expected number value but was '{index.TypeName}' type");
+                diagnosticBag.AddError(openBracket.Location, lengthBetween, $"Expected number value but was '{index.TypeName}' type");
 
                 throw new RuntimeException();
             }
@@ -452,7 +447,7 @@ namespace Core.Execution
             if (number.IsInteger) 
                 return (int)number.Value;
             
-            logger.Error(openBracket.Location, lengthBetween, "Expected integer value");
+            diagnosticBag.AddError(openBracket.Location, lengthBetween, "Expected integer value");
             throw new RuntimeException();
         }
 

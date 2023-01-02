@@ -1,8 +1,9 @@
 ﻿using System;
+using Core.Diagnostic;
 
-namespace Core.Logging.Handlers
+namespace Repl
 {
-    public class ConsoleHandler : ILogHandler
+    public class DiagnosticPrinter : IDiagnosticPrinter
     {
         private const int CodeIndent = 6;
         
@@ -11,9 +12,9 @@ namespace Core.Logging.Handlers
         private const ConsoleColor CodeFontColor = ConsoleColor.White;
         private const ConsoleColor HighlightBackColor = ConsoleColor.DarkRed;
         
-        public void Handle(ILogger logger)
+        public void Print(IDiagnosticBag diagnosticBag)
         {
-            foreach (var log in logger.Bucket)
+            foreach (var log in diagnosticBag.Bucket)
             {
                 PrintMessage(log);
                 PrintCode(log);

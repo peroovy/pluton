@@ -29,6 +29,8 @@ namespace Core.Execution.Objects
         
         public bool IsBuiltin { get; }
 
+        public override string ToRepresentation() => ToString();
+
         public override string ToString() => (IsBuiltin ? "built-in " : string.Empty) + $"function <{Name}>";
 
         public override Boolean ToBoolean() => new(true);

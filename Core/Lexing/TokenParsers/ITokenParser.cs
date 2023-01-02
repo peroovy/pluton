@@ -1,5 +1,4 @@
 ﻿using Core.Text;
-using Core.Logging;
 
 namespace Core.Lexing.TokenParsers
 {

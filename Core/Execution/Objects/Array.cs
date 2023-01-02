@@ -46,6 +46,8 @@ namespace Core.Execution.Objects
             }
         }
 
+        public override string ToRepresentation() => ToString();
+
         public override string ToString()
         {
             var result = new StringBuilder();
@@ -53,9 +55,7 @@ namespace Core.Execution.Objects
 
             for (var i = 0; i < Items.Length; i++)
             {
-                var item = Items[i];
-                
-                result.Append(item is String str ? str.AsEscaped : item);
+                result.Append(Items[i].ToRepresentation());
 
                 if (i + 1 < Items.Length)
                     result.Append(", ");

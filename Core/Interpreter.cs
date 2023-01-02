@@ -1,11 +1,11 @@
-﻿using Core.Execution;
+﻿using Core.Diagnostic;
+using Core.Execution;
+using Core.Execution.Objects;
 using Core.Execution.Objects.BuiltinFunctions;
 using Core.Execution.Operations.Binary;
 using Core.Execution.Operations.Unary;
 using Core.Lexing;
 using Core.Lexing.TokenParsers;
-using Core.Logging;
-using Core.Logging.Handlers;
 using Core.Syntax;
 using Core.Text;
 using Ninject;
@@ -20,14 +20,13 @@ namespace Core
             ILexer lexer, 
             ISyntaxParser syntaxParser, 
             IExecutor executor, 
-            ILogger logger, ILogHandler logHandler)
+            IDiagnosticBag diagnosticBag)
         {
             TextParser = textParser;
             Lexer = lexer;
             SyntaxParser = syntaxParser;
             Executor = executor;
-            Logger = logger;
-            LogHandler = logHandler;
+            DiagnosticBag = diagnosticBag;
         }
         
         public ITextParser TextParser { get; }
@@ -38,36 +37,37 @@ namespace Core
         
         public IExecutor Executor { get; }
         
-        public ILogger Logger { get; }
-        
-        public ILogHandler LogHandler { get; }
+        public IDiagnosticBag DiagnosticBag { get; }
 
-        public void Interpret(string text)
+        public Obj Execute(string text)
         {
             var lines = TextParser.ParseLines(text);
             var tokens = Lexer.Tokenize(lines);
             var syntaxTree = SyntaxParser.Parse(tokens);
 
-            if (Logger.IsEmpty)
-                syntaxTree.Accept(Executor);
-                
-            LogHandler.Handle(Logger);
-            Logger.Reset();
+            if (!DiagnosticBag.IsEmpty)
+                throw new CompilationException();
+
+            return syntaxTree.Accept(Executor);
+        }
+
+        public void Reset()
+        {
+            DiagnosticBag.Reset();
         }
 
         public static Interpreter Create()
         {
-            var container = ConfigureContainer();
+            var container = CreateContainer();
 
             return container.Get<Interpreter>();
         }
         
-        public static StandardKernel ConfigureContainer()
+        public static StandardKernel CreateContainer()
         {
             var container = new StandardKernel();
 
-            container.Bind<ILogger>().To<Logger>().InSingletonScope();
-            container.Bind<ILogHandler>().To<ConsoleHandler>().InSingletonScope();
+            container.Bind<IDiagnosticBag>().To<DiagnosticBag>().InSingletonScope();
 
             container.Bind<ITextParser>().To<TextParser>().InSingletonScope();
             container.Bind<ILexer>().To<Lexer>().InSingletonScope();

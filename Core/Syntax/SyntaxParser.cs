@@ -2,8 +2,8 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
+using Core.Diagnostic;
 using Core.Lexing;
-using Core.Logging;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
 
@@ -14,13 +14,13 @@ namespace Core.Syntax
         private ImmutableArray<SyntaxToken> tokens;
         private int position;
 
-        private readonly ILogger logger;
+        private readonly IDiagnosticBag diagnosticBag;
 
         private SyntaxToken Current => Peek(0);
         
-        public SyntaxParser(ILogger logger)
+        public SyntaxParser(IDiagnosticBag diagnosticBag)
         {
-            this.logger = logger;
+            this.diagnosticBag = diagnosticBag;
         }
 
         public SyntaxTree Parse(ImmutableArray<SyntaxToken> syntaxTokens)
@@ -64,7 +64,7 @@ namespace Core.Syntax
             if (Current.Type == expected)
                 return NextToken();
 
-            logger.Error(Current.Location, Current.Length, $"Expected '{expected}' but was parsed '{Current.Type}'");
+            diagnosticBag.AddError(Current.Location, Current.Length, $"Expected '{expected}' but was parsed '{Current.Type}'");
             
             return new SyntaxToken(expected, null, Current.Location);
         }

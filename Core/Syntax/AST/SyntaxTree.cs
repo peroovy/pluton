@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Core.Execution;
+using Core.Execution.Objects;
 
 namespace Core.Syntax.AST
 {
@@ -12,6 +13,6 @@ namespace Core.Syntax.AST
         
         public ImmutableArray<SyntaxNode> Members { get; }
 
-        public void Accept(IExecutor executor) => executor.Execute(this);
+        public Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

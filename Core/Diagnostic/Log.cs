@@ -1,6 +1,6 @@
 ﻿using Core.Lexing;
 
-namespace Core.Logging
+namespace Core.Diagnostic
 {
     public class Log
     {

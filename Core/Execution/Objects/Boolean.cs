@@ -9,7 +9,9 @@ namespace Core.Execution.Objects
         }
 
         public bool Value { get; }
-        
+
+        public override string ToRepresentation() => ToString();
+
         public override string ToString() => Value.ToString().ToLower();
         
         public override Boolean ToBoolean() => new(Value);

@@ -14,6 +14,8 @@ namespace Core.Execution.Objects
 
         public bool IsInteger => Math.Abs(Math.Round(Value) - Value) < double.Epsilon;
 
+        public override string ToRepresentation() => ToString();
+
         public override string ToString() => double.IsNaN(Value) ? "NaN" : Value.ToString(CultureInfo.InvariantCulture);
 
         public override Boolean ToBoolean() => new(Convert.ToBoolean(Value));

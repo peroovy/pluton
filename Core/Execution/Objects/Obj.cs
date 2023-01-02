@@ -9,6 +9,8 @@
         
         public string TypeName { get; }
 
+        public abstract string ToRepresentation();
+
         public abstract override string ToString();
 
         public abstract Boolean ToBoolean();

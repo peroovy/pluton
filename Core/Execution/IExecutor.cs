@@ -6,7 +6,7 @@ namespace Core.Execution
 {
     public interface IExecutor
     {
-        void Execute(SyntaxTree tree);
+        Obj Execute(SyntaxTree tree);
         
         Obj Execute(FunctionDeclarationStatement statement);
 

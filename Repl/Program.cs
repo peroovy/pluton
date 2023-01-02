@@ -1,6 +1,5 @@
-﻿using System;
-using System.Globalization;
-using Core;
+﻿using System.Globalization;
+using Ninject;
 
 namespace Repl
 {
@@ -9,13 +8,18 @@ namespace Repl
         public static void Main(string[] args)
         {
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-            var core = Interpreter.Create();
+
+            var repl = ConfigureRepl();
+            repl.Run();
+        }
+
+        private static Repl ConfigureRepl()
+        {
+            var container = new StandardKernel();
+
+            container.Bind<IDiagnosticPrinter>().To<DiagnosticPrinter>().InSingletonScope();
             
-            while (true)
-            {
-                Console.Write("\n>> ");
-                core.Interpret(Console.ReadLine());
-            }
+            return container.Get<Repl>();
         }
     }
 }

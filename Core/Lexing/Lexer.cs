@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Core.Diagnostic;
 using Core.Lexing.TokenParsers;
-using Core.Logging;
 using Core.Text;
 
 namespace Core.Lexing
@@ -10,14 +10,14 @@ namespace Core.Lexing
     public class Lexer : ILexer
     {
         private readonly ITokenParser[] tokenParsers;
-        private readonly ILogger logger;
+        private readonly IDiagnosticBag diagnosticBag;
 
-        public Lexer(ITokenParser[] tokenParsers, ILogger logger)
+        public Lexer(ITokenParser[] tokenParsers, IDiagnosticBag diagnosticBag)
         {
             this.tokenParsers = tokenParsers
                 .OrderBy(parser => parser.Priority)
                 .ToArray();
-            this.logger = logger;
+            this.diagnosticBag = diagnosticBag;
         }
 
         public ImmutableArray<SyntaxToken> Tokenize(ImmutableArray<Line> lines)
@@ -55,7 +55,7 @@ namespace Core.Lexing
                 new TextLocation(line, position)
             );
                         
-            logger.Error(unknown.Location, unknown.Length, $"Unknown token: '{unknown.Text}'");
+            diagnosticBag.AddError(unknown.Location, unknown.Length, $"Unknown token: '{unknown.Text}'");
 
             return unknown;
         }

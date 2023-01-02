@@ -1,4 +1,4 @@
-﻿namespace Core.Logging
+﻿namespace Core.Diagnostic
 {
     public enum Level
     {

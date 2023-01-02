@@ -2,9 +2,9 @@
 using System.Collections.Immutable;
 using Core.Lexing;
 
-namespace Core.Logging
+namespace Core.Diagnostic
 {
-    public class Logger : ILogger
+    public class DiagnosticBag : IDiagnosticBag
     {
         private readonly List<Log> bucket = new();
 
@@ -12,7 +12,7 @@ namespace Core.Logging
 
         public bool IsEmpty => bucket.Count == 0;
 
-        public void Error(TextLocation location, int length, string message) => Report(location, length, message, Level.Error);
+        public void AddError(TextLocation location, int length, string message) => Report(location, length, message, Level.Error);
 
         public void Reset() => bucket.Clear();
 

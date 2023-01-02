@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using Core.Logging;
+using Core.Diagnostic;
 using Core.Text;
 
 namespace Core.Lexing.TokenParsers
 {
     public class StringParser : ITokenParser
     {
-        private readonly ILogger logger;
+        private readonly IDiagnosticBag diagnosticBag;
         
         private const char Limiter = '"';
         private const char EscapeCharacter = '\\';
 
-        public StringParser(ILogger logger)
+        public StringParser(IDiagnosticBag diagnosticBag)
         {
-            this.logger = logger;
+            this.diagnosticBag = diagnosticBag;
         }
         
         public int Priority => 0;
@@ -42,11 +42,11 @@ namespace Core.Lexing.TokenParsers
                 if (tokenValue is not null)
                     return new SyntaxToken(TokenTypes.String, tokenValue, location, lengthWithLimiters);
                 
-                logger.Error(location, lengthWithLimiters, "Unrecognized escape sequence");
+                diagnosticBag.AddError(location, lengthWithLimiters, "Unrecognized escape sequence");
                 return null;
             }
             
-            logger.Error(location, value.Length + 1, "Unterminated string literal");
+            diagnosticBag.AddError(location, value.Length + 1, "Unterminated string literal");
             return null;
         }
 

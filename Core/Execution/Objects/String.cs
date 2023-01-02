@@ -17,8 +17,6 @@ namespace Core.Execution.Objects
 
         public int Length => Value.Length;
 
-        public string AsEscaped => Regex.Escape($"\"{Value}\"");
-
         public Obj this[int index]
         {
             get
@@ -31,6 +29,8 @@ namespace Core.Execution.Objects
                 return new String(ToString()[index].ToString());
             }
         }
+
+        public override string ToRepresentation() => Regex.Escape($"\"{Value}\"");
 
         public override string ToString() => Value;
 
