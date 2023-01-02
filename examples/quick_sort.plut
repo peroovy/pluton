@@ -1,0 +1,25 @@
+
+def sort(array)
+{
+    if (len(array) <= 1)
+        return array;
+
+    pivot = array[0];
+    less = greater = [];
+
+    for (i = 1; i < len(array); i += 1)
+    {
+        element = array[i];
+
+        if (element <= pivot) less += [element];
+        else greater += [element];
+    }
+
+    return sort(less) + [pivot] + sort(greater);
+}
+
+array = [2, 4, -10, -3];
+sorted = sort(array);
+
+print("Array: " + str(array));
+print("Sorted: " + str(sorted));
