@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using Interpreter.Core;
+using Core;
 
 namespace Repl
 {
@@ -9,7 +9,7 @@ namespace Repl
         public static void Main(string[] args)
         {
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-            var core = InterpreterCore.Create();
+            var core = Interpreter.Create();
             
             while (true)
             {

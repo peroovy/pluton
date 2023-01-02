@@ -78,9 +78,9 @@
       <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Interpreter.Core\Interpreter.Core.csproj">
+      <ProjectReference Include="..\Core\Core.csproj">
         <Project>{f38b8541-48c9-4389-a44e-5ce3abedca93}</Project>
-        <Name>Interpreter.Core</Name>
+        <Name>Core</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
