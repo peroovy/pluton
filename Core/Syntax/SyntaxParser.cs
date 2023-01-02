@@ -64,7 +64,7 @@ namespace Core.Syntax
             if (Current.Type == expected)
                 return NextToken();
 
-            diagnosticBag.AddError(Current.Location, Current.Length, $"Expected '{expected}' but was parsed '{Current.Type}'");
+            diagnosticBag.AddError(Current.Location, Current.Length, $"Expected '{expected}'");
             
             return new SyntaxToken(expected, null, Current.Location);
         }
