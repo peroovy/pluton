@@ -10,7 +10,12 @@ namespace Core.Text
             var lines = text.Split('\n');
 
             return lines
-                .Select((value, num) => new Line(num, num == lines.Length - 1 ? value + '\0' : value))
+                .Select((line, i) =>
+                {
+                    var endLine = i == lines.Length - 1 ? '\0' : '\n';
+
+                    return new Line(i, line + endLine);
+                })
                 .ToImmutableArray();
         }
     }

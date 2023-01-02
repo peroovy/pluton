@@ -7,6 +7,8 @@
             Number = number;
             Value = value;
         }
+
+        public char this[int index] => Value[index];
         
         public int Number { get; }
         

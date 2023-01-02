@@ -124,10 +124,11 @@
         <Compile Include="Lexing\SyntaxToken.cs" />
         <Compile Include="Lexing\TokenParsers\DoubleTerminalsParser.cs" />
         <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />
+        <Compile Include="Lexing\TokenParsers\NextLineParser.cs" />
         <Compile Include="Lexing\TokenParsers\NumberParser.cs" />
         <Compile Include="Lexing\TokenParsers\SingleTerminalsParser.cs" />
         <Compile Include="Lexing\TokenParsers\StringParser.cs" />
-        <Compile Include="Lexing\TokenParsers\WhitespaceParser.cs" />
+        <Compile Include="Lexing\TokenParsers\SpaceParser.cs" />
         <Compile Include="Lexing\TokenParsers\Words\Keywords.cs" />
         <Compile Include="Lexing\TokenParsers\Words\WordParser.cs" />
         <Compile Include="Lexing\TokenTypes.cs" />

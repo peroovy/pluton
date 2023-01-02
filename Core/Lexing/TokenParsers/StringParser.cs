@@ -22,7 +22,7 @@ namespace Core.Lexing.TokenParsers
         
         public SyntaxToken TryParse(Line line, int position)
         {
-            if (line.Value[position] != Limiter)
+            if (line[position] != Limiter)
                 return null;
             
             var str = line.Value;

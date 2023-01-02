@@ -26,28 +26,34 @@ namespace Repl
 
         private static void PrintMessage(Log log)
         {
+            var location = log.Location;
+            var message = $"{log.Level}({location.Line.Number}, {location.Position + 1}): {log.Message}";
+            
             Console.ForegroundColor = ErrorColor;
-            Console.WriteLine(log.Message);
+            Console.WriteLine(message);
         }
 
         private static void PrintCode(Log log)
         {
-            var line = log.Location.Line.Value;
-            var position = log.Location.Position;
-            var length = log.LengthError;
+            var location = log.Location;
+            
+            var line = location.Line.Value;
+            var trimmedLine = line.TrimStart();
+                
+            var position = location.Position - (line.Length - trimmedLine.Length);
             
             Console.Write(new string(' ', CodeIndent));
 
             Console.ForegroundColor = CodeFontColor;
-            Console.Write(line.Substring(0, position));
+            Console.Write(trimmedLine.Substring(0, position));
             Console.ResetColor();
 
             Console.BackgroundColor = HighlightBackColor;
-            Console.Write(line.Substring(position, length));
+            Console.Write(trimmedLine.Substring(position, log.HighlightCodeLength));
             Console.ResetColor();
 
             Console.ForegroundColor = CodeFontColor;
-            Console.Write(line.Substring(position + length));
+            Console.Write(trimmedLine.Substring(position + log.HighlightCodeLength));
         }
     }
 }

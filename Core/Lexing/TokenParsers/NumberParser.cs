@@ -11,9 +11,9 @@ namespace Core.Lexing.TokenParsers
         
         public SyntaxToken TryParse(Line line, int position)
         {
-            var current = line.Value[position];
+            var current = line[position];
             var next = position + 1 < line.Length 
-                ? line.Value[position + 1]
+                ? line[position + 1]
                 : '\0';
 
             if (!(char.IsDigit(current) || current == '.' && char.IsDigit(next)))

@@ -30,10 +30,10 @@ namespace Core.Lexing.TokenParsers
         
         public SyntaxToken TryParse(Line line, int position)
         {
-            if (!terminalsTypes.TryGetValue(line.Value[position], out var type))
+            if (!terminalsTypes.TryGetValue(line[position], out var type))
                 return null;
             
-            var terminal = line.Value[position].ToString();
+            var terminal = line[position].ToString();
             
             return new SyntaxToken(type, terminal, new TextLocation(line, position));
         }

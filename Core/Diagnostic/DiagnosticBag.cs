@@ -12,15 +12,9 @@ namespace Core.Diagnostic
 
         public bool IsEmpty => bucket.Count == 0;
 
-        public void AddError(TextLocation location, int length, string message) => Report(location, length, message, Level.Error);
+        public void AddError(TextLocation location, int length, string message) =>
+            bucket.Add(new Log(Level.Error, message, location, length));
 
         public void Reset() => bucket.Clear();
-
-        private void Report(TextLocation location, int length, string message, Level level)
-        {
-            var msg = $"{level.ToString().ToUpper()}({location.Line.Number}, {location.Position}): {message}";
-            
-            bucket.Add(new Log(level, msg, location, length));
-        }
     }
 }

@@ -11,7 +11,7 @@ namespace Core.Lexing.TokenParsers.Words
         
         public SyntaxToken TryParse(Line line, int position)
         {
-            var sym = line.Value[position];
+            var sym = line[position];
             if (!char.IsLetter(sym) && sym != '_')
                 return null;
             

@@ -23,7 +23,6 @@ namespace Core.Lexing
         public ImmutableArray<SyntaxToken> Tokenize(ImmutableArray<Line> lines)
         {
             return ParseTokens(lines)
-                .Where(token => token.Type != TokenTypes.Space)
                 .ToImmutableArray();
         }
 
@@ -51,7 +50,7 @@ namespace Core.Lexing
         {
             var unknown = new SyntaxToken(
                 TokenTypes.Unknown,
-                line.Value[position].ToString(),
+                line[position].ToString(),
                 new TextLocation(line, position)
             );
                         
