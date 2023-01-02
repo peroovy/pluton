@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Ninject;
+using Ninject.Extensions.Conventions;
 
 namespace Repl
 {
@@ -18,6 +19,13 @@ namespace Repl
             var container = new StandardKernel();
 
             container.Bind<IDiagnosticPrinter>().To<DiagnosticPrinter>().InSingletonScope();
+            container.Bind<IErrorPrinter>().To<ErrorPrinter>().InSingletonScope();
+            
+            container.Bind(conf => conf
+                .FromThisAssembly()
+                .SelectAllClasses()
+                .InheritedFrom<ICommand>()
+                .BindAllInterfaces());
             
             return container.Get<Repl>();
         }

@@ -51,11 +51,6 @@ namespace Core
             return syntaxTree.Accept(Executor);
         }
 
-        public void Reset()
-        {
-            DiagnosticBag.Reset();
-        }
-
         public static Interpreter Create()
         {
             var container = CreateContainer();
