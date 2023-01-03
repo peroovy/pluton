@@ -7,7 +7,7 @@
             TypeName = GetType().Name;
         }
         
-        public string TypeName { get; }
+        public virtual string TypeName { get; }
 
         public abstract string AsDebugString { get; }
 
