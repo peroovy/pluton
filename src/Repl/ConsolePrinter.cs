@@ -25,11 +25,11 @@ public class ConsolePrinter : IConsolePrinter
 
     public void PrintInterpretationResult(Obj value)
     {
-        if (value is Null)
+        if (value is null)
             return;
         
         Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.WriteLine(value);
+        Console.WriteLine(value.AsDebugString);
         Console.ResetColor();
     }
 

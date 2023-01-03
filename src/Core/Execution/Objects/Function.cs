@@ -29,7 +29,7 @@ namespace Core.Execution.Objects
         
         public bool IsBuiltin { get; }
 
-        public override string AsDebugString() => ToString();
+        public override string AsDebugString => ToString();
 
         public override string ToString() => (IsBuiltin ? "built-in " : string.Empty) + $"function <{Name}>";
 

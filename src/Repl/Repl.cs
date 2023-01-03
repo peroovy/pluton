@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Core;
-using Core.Execution.Objects;
+using Ninject;
+using Ninject.Extensions.Conventions;
 using Array = System.Array;
 
 namespace Repl;
@@ -75,5 +76,20 @@ public class Repl
         }
 
         consolePrinter.PrintInterpretationResult(interpretation.Result);
+    }
+    
+    public static Repl Create()
+    {
+        var container = new StandardKernel();
+
+        container.Bind<IConsolePrinter>().To<ConsolePrinter>().InSingletonScope();
+            
+        container.Bind(conf => conf
+            .FromThisAssembly()
+            .SelectAllClasses()
+            .InheritedFrom<ICommand>()
+            .BindAllInterfaces());
+            
+        return container.Get<Repl>();
     }
 }

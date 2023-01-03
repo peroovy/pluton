@@ -45,6 +45,8 @@ namespace Core.Execution
 
         public Obj Execute(SyntaxTree tree)
         {
+            lastExpressionValue = null;
+            
             foreach (var member in tree.Members)
                 member.Accept(this);
             
