@@ -2,7 +2,7 @@
 
 namespace Core.Diagnostic
 {
-    public class Log
+    public struct Log
     {
         public Log(Level level, string message, TextLocation location, int highlightCodeLength)
         {

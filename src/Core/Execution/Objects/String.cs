@@ -30,7 +30,7 @@ namespace Core.Execution.Objects
             }
         }
 
-        public override string ToRepresentation() => Regex.Escape($"\"{Value}\"");
+        public override string AsDebugString() => Regex.Escape($"\"{Value}\"");
 
         public override string ToString() => Value;
 

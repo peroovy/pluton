@@ -3,7 +3,7 @@ using Core.Lexing;
 
 namespace Core.Execution.Interrupts
 {
-    public class RuntimeException : InterpreterException
+    public class RuntimeException : Exception
     {
     }
 }

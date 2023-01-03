@@ -14,7 +14,7 @@ namespace Repl
         
         public void Print(IDiagnosticBag diagnosticBag)
         {
-            foreach (var log in diagnosticBag.Bucket)
+            foreach (var log in diagnosticBag)
             {
                 PrintMessage(log);
                 PrintCode(log);

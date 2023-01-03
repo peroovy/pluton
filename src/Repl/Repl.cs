@@ -21,6 +21,7 @@ public class Repl
         
     public void Run()
     {
+        var biteCompiler = BiteCompiler.Create();
         var interpreter = Interpreter.Create();
             
         while (true)
@@ -35,7 +36,7 @@ public class Repl
             }
             else
             {
-                HandleSubmission(interpreter, line);
+                HandleSubmission(biteCompiler, interpreter, line);
             }
         }
     }
@@ -59,26 +60,27 @@ public class Repl
         command.Execute(args);
     }
 
-    private void HandleSubmission(Interpreter interpreter, string line)
+    private void HandleSubmission(BiteCompiler compiler, Interpreter interpreter, string text)
     {
-        try
+        var compilation = compiler.Compile(text);
+        if (compilation.HasErrors)
         {
-            var value = interpreter.Execute(line);
+            diagnosticPrinter.Print(compilation.Diagnostic);
+            return;
+        }
 
-            if (value is Null) 
-                return;
-            
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine(value.ToRepresentation());
-            Console.ResetColor();
-        }
-        catch (InterpreterException)
+        var interpretation = interpreter.Run(compilation.Result);
+        if (interpretation.HasErrors)
         {
-            diagnosticPrinter.Print(interpreter.DiagnosticBag);
+            diagnosticPrinter.Print(interpretation.Diagnostic);
+            return;
         }
-        finally
-        {
-            interpreter.DiagnosticBag.Reset();
-        }
+
+        var value = interpretation.Result;
+        if (value is Null)
+            return;
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.WriteLine(value);
+        Console.ResetColor();
     }
 }

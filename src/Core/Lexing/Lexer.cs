@@ -22,8 +22,10 @@ namespace Core.Lexing
 
         public ImmutableArray<SyntaxToken> Tokenize(ImmutableArray<Line> lines)
         {
-            return ParseTokens(lines)
+            var tokens = ParseTokens(lines)
                 .ToImmutableArray();
+
+            return tokens;
         }
 
         private IEnumerable<SyntaxToken> ParseTokens(ImmutableArray<Line> lines)

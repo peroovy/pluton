@@ -1,13 +1,12 @@
-﻿using Core.Diagnostic;
+﻿using System;
+using Core.Diagnostic;
 using Core.Execution;
+using Core.Execution.Interrupts;
 using Core.Execution.Objects;
 using Core.Execution.Objects.BuiltinFunctions;
 using Core.Execution.Operations.Binary;
 using Core.Execution.Operations.Unary;
-using Core.Lexing;
-using Core.Lexing.TokenParsers;
-using Core.Syntax;
-using Core.Text;
+using Core.Syntax.AST;
 using Ninject;
 using Ninject.Extensions.Conventions;
 
@@ -15,66 +14,46 @@ namespace Core
 {
     public class Interpreter
     {
-        public Interpreter(
-            ITextParser textParser, 
-            ILexer lexer, 
-            ISyntaxParser syntaxParser, 
-            IExecutor executor, 
-            IDiagnosticBag diagnosticBag)
+        private readonly IExecutor executor;
+        private readonly IDiagnosticBag diagnosticBag;
+
+        public Interpreter(IExecutor executor, IDiagnosticBag diagnosticBag)
         {
-            TextParser = textParser;
-            Lexer = lexer;
-            SyntaxParser = syntaxParser;
-            Executor = executor;
-            DiagnosticBag = diagnosticBag;
+            this.executor = executor;
+            this.diagnosticBag = diagnosticBag;
         }
-        
-        public ITextParser TextParser { get; }
-        
-        public ILexer Lexer { get; }
-        
-        public ISyntaxParser SyntaxParser { get; }
-        
-        public IExecutor Executor { get; }
-        
-        public IDiagnosticBag DiagnosticBag { get; }
 
-        public Obj Execute(string text)
+        public TranslationState<Obj> Run(SyntaxTree syntaxTree)
         {
-            var lines = TextParser.ParseLines(text);
-            var tokens = Lexer.Tokenize(lines);
-            var syntaxTree = SyntaxParser.Parse(tokens);
+            diagnosticBag.Clear();
 
-            if (!DiagnosticBag.IsEmpty)
-                throw new CompilationException();
-
-            return syntaxTree.Accept(Executor);
+            try
+            {
+                var value = syntaxTree.Accept(executor);
+                
+                return new TranslationState<Obj>(value, diagnosticBag.Copy());
+            }
+            catch (RuntimeException)
+            {
+                return new TranslationState<Obj>(null, diagnosticBag.Copy());
+            }
         }
 
         public static Interpreter Create()
         {
-            var container = CreateContainer();
+            var container = ConfigureContainer();
 
             return container.Get<Interpreter>();
         }
         
-        public static StandardKernel CreateContainer()
+        public static StandardKernel ConfigureContainer()
         {
             var container = new StandardKernel();
 
             container.Bind<IDiagnosticBag>().To<DiagnosticBag>().InSingletonScope();
-
-            container.Bind<ITextParser>().To<TextParser>().InSingletonScope();
-            container.Bind<ILexer>().To<Lexer>().InSingletonScope();
-            container.Bind<ISyntaxParser>().To<SyntaxParser>().InSingletonScope();
+            
             container.Bind<IExecutor>().To<Executor>().InSingletonScope();
-            
-            container.Bind(conf => conf
-                .FromThisAssembly()
-                .SelectAllClasses()
-                .InheritedFrom<ITokenParser>()
-                .BindAllInterfaces());
-            
+
             container.Bind(conf => conf
                 .FromThisAssembly()
                 .SelectAllClasses()

@@ -1,16 +1,16 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
 using Core.Lexing;
 
 namespace Core.Diagnostic
 {
-    public interface IDiagnosticBag
+    public interface IDiagnosticBag : IEnumerable<Log>
     {
-        ImmutableArray<Log> Bucket { get; }
-        
         bool IsEmpty { get; }
         
         void AddError(TextLocation location, int length, string message);
-
-        void Reset();
+        
+        void Clear();
+        
+        IDiagnosticBag Copy();
     }
 }

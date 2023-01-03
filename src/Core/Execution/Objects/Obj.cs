@@ -9,7 +9,7 @@
         
         public string TypeName { get; }
 
-        public abstract string ToRepresentation();
+        public abstract string AsDebugString();
 
         public abstract override string ToString();
 

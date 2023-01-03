@@ -47,7 +47,7 @@ namespace Core.Execution
         {
             foreach (var member in tree.Members)
                 member.Accept(this);
-
+            
             return lastExpressionValue;
         }
 

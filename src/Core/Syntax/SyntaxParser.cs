@@ -25,12 +25,11 @@ namespace Core.Syntax
 
         public SyntaxTree Parse(ImmutableArray<SyntaxToken> syntaxTokens)
         {
+            position = 0;
             tokens = syntaxTokens
                 .Where(token => token.Type is not (TokenTypes.Space or TokenTypes.NewLine))
                 .ToImmutableArray();
             
-            position = 0;
-
             var members = ImmutableArray.CreateBuilder<SyntaxNode>();
             while (Current.Type != TokenTypes.Eof)
             {

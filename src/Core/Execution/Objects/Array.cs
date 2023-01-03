@@ -46,7 +46,7 @@ namespace Core.Execution.Objects
             }
         }
 
-        public override string ToRepresentation() => ToString();
+        public override string AsDebugString() => ToString();
 
         public override string ToString()
         {
@@ -55,7 +55,7 @@ namespace Core.Execution.Objects
 
             for (var i = 0; i < Items.Length; i++)
             {
-                result.Append(Items[i].ToRepresentation());
+                result.Append(Items[i].AsDebugString());
 
                 if (i + 1 < Items.Length)
                     result.Append(", ");
