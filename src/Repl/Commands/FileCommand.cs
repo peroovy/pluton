@@ -1,19 +1,16 @@
 ﻿using System;
 using System.IO;
 using Core;
-using Core.Execution.Objects;
 
-namespace Repl;
+namespace Repl.Commands;
 
 public class FileCommand : ICommand
 {
-    private readonly IErrorPrinter errorPrinter;
-    private readonly IDiagnosticPrinter diagnosticPrinter;
+    private readonly IConsolePrinter consolePrinter;
 
-    public FileCommand(IErrorPrinter errorPrinter, IDiagnosticPrinter diagnosticPrinter)
+    public FileCommand(IConsolePrinter consolePrinter)
     {
-        this.errorPrinter = errorPrinter;
-        this.diagnosticPrinter = diagnosticPrinter;
+        this.consolePrinter = consolePrinter;
     }
     
     public string Name => "file";
@@ -22,7 +19,7 @@ public class FileCommand : ICommand
     {
         if (args.Length == 0)
         {
-            errorPrinter.Print("Expected path to file");
+            consolePrinter.PrintError("Expected path to file");
             return;
         }
 
@@ -37,31 +34,26 @@ public class FileCommand : ICommand
             var compilation = compiler.Compile(text);
             if (compilation.HasErrors)
             {
-                diagnosticPrinter.Print(compilation.Diagnostic);
+                consolePrinter.PrintDiagnostic(compilation.Diagnostic);
                 return;
             }
 
             var interpretation = interpreter.Run(compilation.Result);
             if (interpretation.HasErrors)
             {
-                diagnosticPrinter.Print(interpretation.Diagnostic);
+                consolePrinter.PrintDiagnostic(interpretation.Diagnostic);
                 return;
             }
-
-            var value = interpretation.Result;
-            if (value is Null)
-                return;
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine(value);
-            Console.ResetColor();
+            
+            consolePrinter.PrintInterpretationResult(interpretation.Result);
         }
         catch (ArgumentException)
         {
-            errorPrinter.Print("Bad path");
+            consolePrinter.PrintError("Bad path");
         }
         catch (FileNotFoundException)
         {
-            errorPrinter.Print("Not found file");
+            consolePrinter.PrintError("Not found file");
         }
     }
 }

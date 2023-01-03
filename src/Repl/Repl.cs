@@ -8,14 +8,12 @@ namespace Repl;
 
 public class Repl
 {
-    private readonly IErrorPrinter errorPrinter;
-    private readonly IDiagnosticPrinter diagnosticPrinter;
+    private readonly IConsolePrinter consolePrinter;
     private readonly ICommand[] commands;
 
-    public Repl(IErrorPrinter errorPrinter, IDiagnosticPrinter diagnosticPrinter, ICommand[] commands)
+    public Repl(IConsolePrinter consolePrinter, ICommand[] commands)
     {
-        this.errorPrinter = errorPrinter;
-        this.diagnosticPrinter = diagnosticPrinter;
+        this.consolePrinter = consolePrinter;
         this.commands = commands;
     }
         
@@ -49,7 +47,7 @@ public class Repl
         var command = commands.FirstOrDefault(command => command.Name == name);
         if (command is null)
         {
-            errorPrinter.Print($"Unknown command '{name}'");
+            consolePrinter.PrintError($"Unknown command '{name}'");
             return;
         }
 
@@ -65,22 +63,17 @@ public class Repl
         var compilation = compiler.Compile(text);
         if (compilation.HasErrors)
         {
-            diagnosticPrinter.Print(compilation.Diagnostic);
+            consolePrinter.PrintDiagnostic(compilation.Diagnostic);
             return;
         }
 
         var interpretation = interpreter.Run(compilation.Result);
         if (interpretation.HasErrors)
         {
-            diagnosticPrinter.Print(interpretation.Diagnostic);
+            consolePrinter.PrintDiagnostic(interpretation.Diagnostic);
             return;
         }
 
-        var value = interpretation.Result;
-        if (value is Null)
-            return;
-        Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.WriteLine(value);
-        Console.ResetColor();
+        consolePrinter.PrintInterpretationResult(interpretation.Result);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Repl;
+namespace Repl.Commands;
 
 public class ClearCommand : ICommand
 {

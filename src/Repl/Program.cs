@@ -18,8 +18,7 @@ namespace Repl
         {
             var container = new StandardKernel();
 
-            container.Bind<IDiagnosticPrinter>().To<DiagnosticPrinter>().InSingletonScope();
-            container.Bind<IErrorPrinter>().To<ErrorPrinter>().InSingletonScope();
+            container.Bind<IConsolePrinter>().To<ConsolePrinter>().InSingletonScope();
             
             container.Bind(conf => conf
                 .FromThisAssembly()
