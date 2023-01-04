@@ -25,6 +25,8 @@ public class Repl
     
     private const string CommandStart = "#";
 
+    private const int EndBlankLineCount = 3;
+
     public Repl(ICommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer)
     {
         this.commands = commands;
@@ -85,7 +87,7 @@ public class Repl
             return;
         }
 
-        printer.PrintInterpretationResult(interpretation.Result);
+        printer.PrintResult(interpretation.Result);
     }
 
     private string EditSubmission()
@@ -105,7 +107,7 @@ public class Repl
             if (info.Key == ConsoleKey.Enter)
             {
                 var text = string.Join(Environment.NewLine, submissionDocument);
-                if (IsCommand(text) || IsSubmissionComplete(text))
+                if (IsCommand(text) || IsCompleteSubmission(text))
                     return text;
                     
                 submissionDocument.InsertEmptyLine();
@@ -125,19 +127,19 @@ public class Repl
         }
     }
     
-    private bool IsSubmissionComplete(string text)
+    private bool IsCompleteSubmission(string text)
     {
         if (string.IsNullOrEmpty(text))
             return true;
 
-        var lastTwoLinesAreBlank = text
+        var lastLinesAreBlank = text
             .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
             .Reverse()
             .TakeWhile(string.IsNullOrEmpty)
-            .Take(2)
-            .Count() == 2;
+            .Take(EndBlankLineCount)
+            .Count() == EndBlankLineCount;
         
-        if (lastTwoLinesAreBlank)
+        if (lastLinesAreBlank)
             return true;
 
         var compilation = compiler.Compile(text);

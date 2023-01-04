@@ -9,5 +9,5 @@ public interface IPrinter
 
     void PrintDiagnostic(IDiagnosticBag diagnostic);
 
-    void PrintInterpretationResult(Obj value);
+    void PrintResult(Obj value);
 }

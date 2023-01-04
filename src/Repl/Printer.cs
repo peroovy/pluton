@@ -23,7 +23,7 @@ public class Printer : IPrinter
             PrintLog(log);
     }
 
-    public void PrintInterpretationResult(Obj value)
+    public void PrintResult(Obj value)
     {
         if (value is null)
             return;
