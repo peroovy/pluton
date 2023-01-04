@@ -3,7 +3,7 @@ using Core.Execution.Objects;
 
 namespace Repl;
 
-public interface IConsolePrinter
+public interface IPrinter
 {
     void PrintError(string message);
 

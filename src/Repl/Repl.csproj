@@ -73,11 +73,18 @@
         <Compile Include="Commands\ClearCommand.cs" />
         <Compile Include="Commands\FileCommand.cs" />
         <Compile Include="Commands\ICommand.cs" />
-        <Compile Include="IConsolePrinter.cs" />
+        <Compile Include="IPrinter.cs" />
+        <Compile Include="KeyHandlers\BackspaceHandler.cs" />
+        <Compile Include="KeyHandlers\DownArrowHandler.cs" />
+        <Compile Include="KeyHandlers\IKeyHandler.cs" />
+        <Compile Include="KeyHandlers\LeftArrowHandler.cs" />
+        <Compile Include="KeyHandlers\RightArrowHandler.cs" />
+        <Compile Include="KeyHandlers\TabHandler.cs" />
+        <Compile Include="KeyHandlers\UpArrowHandler.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="Repl.cs" />
-        <Compile Include="ConsolePrinter.cs" />
+        <Compile Include="Printer.cs" />
         <Compile Include="SubmissionDocument.cs" />
     </ItemGroup>
     <ItemGroup>

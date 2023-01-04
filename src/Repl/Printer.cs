@@ -4,7 +4,7 @@ using Core.Execution.Objects;
 
 namespace Repl;
 
-public class ConsolePrinter : IConsolePrinter
+public class Printer : IPrinter
 {
     private const int CodeIndent = 6;
 

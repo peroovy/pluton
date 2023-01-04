@@ -6,11 +6,11 @@ namespace Repl.Commands;
 
 public class FileCommand : ICommand
 {
-    private readonly IConsolePrinter consolePrinter;
+    private readonly IPrinter printer;
 
-    public FileCommand(IConsolePrinter consolePrinter)
+    public FileCommand(IPrinter printer)
     {
-        this.consolePrinter = consolePrinter;
+        this.printer = printer;
     }
     
     public string Name => "file";
@@ -19,7 +19,7 @@ public class FileCommand : ICommand
     {
         if (args.Length == 0)
         {
-            consolePrinter.PrintError("Expected path to file");
+            printer.PrintError("Expected path to file");
             return;
         }
 
@@ -34,26 +34,23 @@ public class FileCommand : ICommand
             var compilation = compiler.Compile(text);
             if (compilation.HasErrors)
             {
-                consolePrinter.PrintDiagnostic(compilation.Diagnostic);
+                printer.PrintDiagnostic(compilation.Diagnostic);
                 return;
             }
 
             var interpretation = interpreter.Run(compilation.Result);
-            if (interpretation.HasErrors)
-            {
-                consolePrinter.PrintDiagnostic(interpretation.Diagnostic);
+            if (!interpretation.HasErrors)
                 return;
-            }
             
-            consolePrinter.PrintInterpretationResult(interpretation.Result);
+            printer.PrintDiagnostic(interpretation.Diagnostic);
         }
         catch (ArgumentException)
         {
-            consolePrinter.PrintError("Bad path");
+            printer.PrintError("Bad path");
         }
         catch (FileNotFoundException)
         {
-            consolePrinter.PrintError("Not found file");
+            printer.PrintError("Not found file");
         }
     }
 }
