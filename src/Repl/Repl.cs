@@ -1,95 +1,91 @@
 ﻿using System;
-using System.Linq;
-using Core;
-using Ninject;
-using Ninject.Extensions.Conventions;
-using Array = System.Array;
 
 namespace Repl;
 
 public class Repl
 {
-    private readonly IConsolePrinter consolePrinter;
-    private readonly ICommand[] commands;
-
-    public Repl(IConsolePrinter consolePrinter, ICommand[] commands)
-    {
-        this.consolePrinter = consolePrinter;
-        this.commands = commands;
-    }
-        
+    private int cursorTop;
+    
+    private const string StartPrompt = ">> ";
+    private const string ContinuePrompt = ".. ";
+    private const int PromptLength = 3;
+    
     public void Run()
     {
-        var biteCompiler = BiteCompiler.Create();
-        var interpreter = Interpreter.Create();
-            
+        var submissionDocument = new SubmissionDocument();
+        submissionDocument.OnChanged += Render;
+
+        submissionDocument.InsertEmptyLine();
+        UpdateCursor(submissionDocument);
         while (true)
         {
-            Console.Write(">> ");
-
-            var line = Console.ReadLine();
-
-            if (line.StartsWith("#"))
+            var info = Console.ReadKey(true);
+            switch (info.Key)
             {
-                HandleCommand(line);
+                case ConsoleKey.Enter:
+                    submissionDocument.InsertEmptyLine();
+                    break;
+
+                case ConsoleKey.Backspace:
+                    submissionDocument.DeleteCharacter();
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    submissionDocument.CharacterIndex--;
+                    break;
+                
+                case ConsoleKey.RightArrow:
+                    submissionDocument.CharacterIndex++;
+                    break;
+                
+                case ConsoleKey.UpArrow:
+                    submissionDocument.LineIndex--;
+                    break;
+                
+                case ConsoleKey.DownArrow:
+                    submissionDocument.LineIndex++;
+                    break;
+                    
+                default:
+                {
+                    if (info.KeyChar >= ' ')
+                        submissionDocument.Insert(info.KeyChar);
+                    break;
+                }
             }
-            else
-            {
-                HandleSubmission(biteCompiler, interpreter, line);
-            }
+            
+            UpdateCursor(submissionDocument);
         }
-    }
-
-    private void HandleCommand(string line)
-    {
-        var nameAndArgs = line.Split(new[] { ' ' }, 2);
-        var name = nameAndArgs[0].Substring(1);
-
-        var command = commands.FirstOrDefault(command => command.Name == name);
-        if (command is null)
-        {
-            consolePrinter.PrintError($"Unknown command '{name}'");
-            return;
-        }
-
-        var args = nameAndArgs.Length == 2
-            ? nameAndArgs[1].Split()
-            : Array.Empty<string>();
-        
-        command.Execute(args);
-    }
-
-    private void HandleSubmission(BiteCompiler compiler, Interpreter interpreter, string text)
-    {
-        var compilation = compiler.Compile(text);
-        if (compilation.HasErrors)
-        {
-            consolePrinter.PrintDiagnostic(compilation.Diagnostic);
-            return;
-        }
-
-        var interpretation = interpreter.Run(compilation.Result);
-        if (interpretation.HasErrors)
-        {
-            consolePrinter.PrintDiagnostic(interpretation.Diagnostic);
-            return;
-        }
-
-        consolePrinter.PrintInterpretationResult(interpretation.Result);
     }
     
-    public static Repl Create()
+    private void Render(SubmissionDocument submissionDocument)
     {
-        var container = new StandardKernel();
+        Console.CursorVisible = false;
+        var lineCount = 0;
 
-        container.Bind<IConsolePrinter>().To<ConsolePrinter>().InSingletonScope();
-            
-        container.Bind(conf => conf
-            .FromThisAssembly()
-            .SelectAllClasses()
-            .InheritedFrom<ICommand>()
-            .BindAllInterfaces());
-            
-        return container.Get<Repl>();
+        foreach (var line in submissionDocument)
+        {
+            Console.SetCursorPosition(0, cursorTop + lineCount);
+
+            var prompt = lineCount == 0 ? StartPrompt : ContinuePrompt;
+            var textLength = prompt.Length + line.Length;
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write(prompt);
+            Console.ResetColor();
+
+            Console.Write(line);
+            Console.Write(new string(' ', Console.WindowWidth - textLength - 1));
+
+            lineCount++;
+        }
+        
+        Console.CursorVisible = true;
+    }
+
+    private void UpdateCursor(SubmissionDocument submissionDocument)
+    {
+        Console.SetCursorPosition(PromptLength + submissionDocument.CharacterIndex + 1,
+            cursorTop + submissionDocument.LineIndex);
     }
 }

@@ -8,7 +8,7 @@ public static class Program
     {
         CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
-        var repl = Repl.Create();
+        var repl = new Repl();
         repl.Run();
     }
 }
