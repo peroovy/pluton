@@ -52,6 +52,6 @@ namespace Core.Execution
 
         Obj Execute(VariableExpression variable);
 
-        Obj Execute(FunctionCallExpression call);
+        Obj Execute(CallExpression call);
     }
 }

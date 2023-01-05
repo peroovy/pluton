@@ -5,21 +5,21 @@ using Core.Lexing;
 
 namespace Core.Syntax.AST.Expressions
 {
-    public class FunctionCallExpression : Expression
+    public class CallExpression : Expression
     {
-        public FunctionCallExpression(
-            SyntaxToken identifier, 
+        public CallExpression(
+            Expression callableExpression, 
             SyntaxToken openParenthesis, 
             ImmutableArray<Expression> arguments, 
             SyntaxToken closeParenthesis)
         {
-            Identifier = identifier;
+            CallableExpression = callableExpression;
             OpenParenthesis = openParenthesis;
             Arguments = arguments;
             CloseParenthesis = closeParenthesis;
         }
         
-        public SyntaxToken Identifier { get; }
+        public Expression CallableExpression { get; }
         
         public SyntaxToken OpenParenthesis { get; }
         

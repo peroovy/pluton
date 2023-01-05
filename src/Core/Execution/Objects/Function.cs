@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Immutable;
+using Core.Execution.Objects.DataModel;
 
 namespace Core.Execution.Objects
 {
-    public class Function : Obj
+    public class Function : Obj, ICallable
     {
         public Function(
             string name, 
             ImmutableArray<string> positionParameters, 
             ImmutableArray<(string name, Obj value)> defaultParameters,
-            Action<FunctionCallContext> invoke, 
+            Action<CallContext> invoke, 
             bool isBuiltin)
         {
             Name = name;
@@ -23,9 +24,9 @@ namespace Core.Execution.Objects
         
         public ImmutableArray<string> PositionParameters { get; }
         
-        public ImmutableArray<(string name, Obj value)> DefaultParameters { get; }
+        public ImmutableArray<(string Name, Obj Value)> DefaultParameters { get; }
 
-        public Action<FunctionCallContext> Invoke { get; }
+        public Action<CallContext> Invoke { get; }
         
         public bool IsBuiltin { get; }
 

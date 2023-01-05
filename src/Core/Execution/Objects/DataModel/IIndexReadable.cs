@@ -1,4 +1,4 @@
-﻿namespace Core.Execution.Objects.Indexer
+﻿namespace Core.Execution.Objects.DataModel
 {
     public interface IIndexReadable
     {

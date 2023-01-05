@@ -2,7 +2,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Core.Execution.Objects.DataModel;
-using Core.Execution.Objects.Indexer;
 
 namespace Core.Execution.Objects
 {

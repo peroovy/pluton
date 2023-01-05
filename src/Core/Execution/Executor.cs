@@ -5,7 +5,7 @@ using System.Linq;
 using Core.Execution.Interrupts;
 using Core.Execution.Objects;
 using Core.Execution.Objects.BuiltinFunctions;
-using Core.Execution.Objects.Indexer;
+using Core.Execution.Objects.DataModel;
 using Core.Execution.Operations.Binary;
 using Core.Execution.Operations.Unary;
 using Core.Lexing;
@@ -20,7 +20,7 @@ namespace Core.Execution
         private readonly BinaryOperation[] binaryOperations;
         private readonly UnaryOperation[] unaryOperations;
 
-        private readonly Stack<Function> callStack = new();
+        private readonly Stack<ICallable> callStack = new();
         private readonly Stack<Statement> loopStack = new();
         private readonly Scope globalScope = new(null);
         private Scope scope;
@@ -80,7 +80,7 @@ namespace Core.Execution
                 context =>
                 {
                     var enumerator = statement.Block.Statements.GetEnumerator();
-                    while (ReferenceEquals(context.Function, callStack.Peek()) && enumerator.MoveNext())
+                    while (ReferenceEquals(context.Callable, callStack.Peek()) && enumerator.MoveNext())
                         enumerator.Current.Accept(this);
                 },
                 isBuiltin: false
@@ -339,33 +339,37 @@ namespace Core.Execution
             throw new RuntimeException(identifier.Location, $"Variable '{identifier.Text}' does not exist");
         }
 
-        public Obj Execute(FunctionCallExpression expression)
+        public Obj Execute(CallExpression expression)
         {
-            var identifier = expression.Identifier;
+            var obj = expression.CallableExpression.Accept(this);
+
+            if (obj is not ICallable callable)
+            {
+                var location = GetLocationBetweenBrackets(expression.OpenParenthesis, expression.CloseParenthesis);
+
+                throw new RuntimeException(location, $"'{obj.TypeName}' object is not callable");
+            }
+            
             var argumentsCount = expression.Arguments.Length;
-
-            if (!scope.TryLookup(identifier.Text, out var value) || value is not Function function)
-                throw new RuntimeException(identifier.Location, $"Function '{identifier.Text}' does not exist");
-
-            var positionParametersCount = function.PositionParameters.Length;
-            var defaultParametersCount = function.DefaultParameters.Length;
+            var positionParametersCount = callable.PositionParameters.Length;
+            var defaultParametersCount = callable.DefaultParameters.Length;
             
             if (argumentsCount < positionParametersCount 
                 || argumentsCount > positionParametersCount + defaultParametersCount)
             {
                 throw new RuntimeException(
                     GetLocationBetweenBrackets(expression.OpenParenthesis, expression.CloseParenthesis),
-                    $"Function '{identifier.Text}' requires {positionParametersCount} arguments but was given {argumentsCount}"
+                    $"Callable requires {positionParametersCount} position arguments but was given {argumentsCount}"
                 );
             }
             
-            var arguments = EvaluateArguments(expression, function);
-            return InvokeFunction(function, arguments);
+            var arguments = EvaluateArguments(expression, callable);
+            return InvokeCallableObject(callable, arguments);
         }
 
-        private Obj InvokeFunction(Function function, ImmutableDictionary<string, Obj> arguments)
+        private Obj InvokeCallableObject(ICallable callable, ImmutableDictionary<string, Obj> arguments)
         {
-            callStack.Push(function);
+            callStack.Push(callable);
 
             var previousScope = scope;
             scope = new Scope(globalScope);
@@ -376,7 +380,7 @@ namespace Core.Execution
             Obj returnedValue = new Null();
             try
             {
-                function.Invoke(new FunctionCallContext(function, scope));
+                callable.Invoke(new CallContext(callable, scope));
             }
             catch (ReturnInterrupt interrupt)
             {
@@ -389,24 +393,24 @@ namespace Core.Execution
             return returnedValue;
         }
 
-        private ImmutableDictionary<string, Obj> EvaluateArguments(FunctionCallExpression expression, Function function)
+        private ImmutableDictionary<string, Obj> EvaluateArguments(CallExpression expression, ICallable callable)
         {
             var result = ImmutableDictionary.CreateBuilder<string, Obj>();
             
             var arguments = expression.Arguments;
-            var positionParameters = function.PositionParameters;
-            var defaultParameters = function.DefaultParameters;
+            var positionParameters = callable.PositionParameters;
+            var defaultParameters = callable.DefaultParameters;
             
             for (var i = 0; i < positionParameters.Length; i++)
                 result[positionParameters[i]] = arguments[i].Accept(this);
 
             for (var i = 0; i < arguments.Length - positionParameters.Length; i++)
-                result[defaultParameters[i].name] = arguments[i + positionParameters.Length].Accept(this);
+                result[defaultParameters[i].Name] = arguments[i + positionParameters.Length].Accept(this);
 
             for (var i = 0; i < positionParameters.Length + defaultParameters.Length - arguments.Length; i++)
             {
                 var offset = i + arguments.Length - positionParameters.Length;
-                result[defaultParameters[offset].name] = defaultParameters[offset].value;
+                result[defaultParameters[offset].Name] = defaultParameters[offset].Value;
             }
 
             return result.ToImmutable();

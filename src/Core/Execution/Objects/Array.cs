@@ -3,7 +3,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Core.Execution.Objects.DataModel;
-using Core.Execution.Objects.Indexer;
 
 namespace Core.Execution.Objects
 {

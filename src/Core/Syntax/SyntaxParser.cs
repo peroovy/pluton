@@ -389,7 +389,7 @@ namespace Core.Syntax
 
         private Expression ParsePrimaryExpression()
         {
-            var primary = Current.Type switch
+            Expression primary = Current.Type switch
             {
                 TokenType.OpenParenthesis => ParseParenthesizedExpression(),
                 TokenType.OpenBracket => ParseArrayExpression(),
@@ -397,11 +397,17 @@ namespace Core.Syntax
                 TokenType.NullKeyword => ParseNullExpression(),
                 TokenType.Number => ParseNumberExpression(),
                 TokenType.String => ParseStringExpression(),
-                _ => ParseVariableOrCallExpression()
+                _ => ParseVariableExpression()
             };
 
-            if (Current.Type == TokenType.OpenBracket)
-                return ContinueWithIndexAccessExpression(primary);
+            switch (Current.Type)
+            {
+                case TokenType.OpenBracket:
+                    return ContinueWithIndexAccessExpression(primary);
+                
+                case TokenType.OpenParenthesis:
+                    return ContinueWithCallExpression(primary);
+            }
 
             return primary;
         }
@@ -417,6 +423,15 @@ namespace Core.Syntax
             } while (Current.Type == TokenType.OpenBracket);
 
             return parent;
+        }
+        
+        private CallExpression ContinueWithCallExpression(Expression expression)
+        {
+            var openParenthesis = MatchToken(TokenType.OpenParenthesis);
+            var arguments = ParseSeparatedExpressions(TokenType.CloseParenthesis);
+            var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
+
+            return new CallExpression(expression, openParenthesis, arguments, closeParenthesis);
         }
 
         private ParenthesizedExpression ParseParenthesizedExpression()
@@ -456,24 +471,6 @@ namespace Core.Syntax
             MatchToken(TokenType.NullKeyword);
 
             return new NullExpression();
-        }
-
-        private Expression ParseVariableOrCallExpression()
-        {
-            if (Current.Type == TokenType.Identifier && Lookahead.Type == TokenType.OpenParenthesis)
-                return ParseCallExpression();
-
-            return ParseVariableExpression();
-        }
-
-        private FunctionCallExpression ParseCallExpression()
-        {
-            var name = MatchToken(TokenType.Identifier);
-            var openParenthesis = MatchToken(TokenType.OpenParenthesis);
-            var arguments = ParseSeparatedExpressions(TokenType.CloseParenthesis);
-            var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
-
-            return new FunctionCallExpression(name, openParenthesis, arguments, closeParenthesis);
         }
 
         private VariableExpression ParseVariableExpression()

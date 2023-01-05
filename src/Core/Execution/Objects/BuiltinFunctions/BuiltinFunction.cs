@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using Core.Execution.Objects.DataModel;
 
 namespace Core.Execution.Objects.BuiltinFunctions
 {
@@ -9,7 +10,7 @@ namespace Core.Execution.Objects.BuiltinFunctions
             string name, 
             ImmutableArray<string> positionParameters, 
             ImmutableArray<(string name, Obj value)> defaultParameters, 
-            Action<FunctionCallContext> invoke) : base(name, positionParameters, defaultParameters, invoke, isBuiltin: true)
+            Action<CallContext> invoke) : base(name, positionParameters, defaultParameters, invoke, isBuiltin: true)
         {
         }
     }

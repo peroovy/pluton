@@ -70,7 +70,6 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Execution\FunctionCallContext.cs" />
         <Compile Include="Execution\Interrupts\BreakInterrupt.cs" />
         <Compile Include="Execution\Interrupts\ContinueInterrupt.cs" />
         <Compile Include="Execution\Interrupts\LoopInterrupt.cs" />
@@ -82,9 +81,11 @@
         <Compile Include="Execution\Objects\BuiltinFunctions\NumFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\PrintFunction.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\StrFunction.cs" />
+        <Compile Include="Execution\Objects\DataModel\CallContext.cs" />
+        <Compile Include="Execution\Objects\DataModel\ICallable.cs" />
         <Compile Include="Execution\Objects\DataModel\ICollection.cs" />
-        <Compile Include="Execution\Objects\Indexer\IIndexReadable.cs" />
-        <Compile Include="Execution\Objects\Indexer\IIndexSettable.cs" />
+        <Compile Include="Execution\Objects\DataModel\IIndexReadable.cs" />
+        <Compile Include="Execution\Objects\DataModel\IIndexSettable.cs" />
         <Compile Include="Execution\Objects\String.cs" />
         <Compile Include="Execution\Operations\OperationPrecedence.cs" />
         <Compile Include="Execution\RuntimeException.cs" />
@@ -142,7 +143,7 @@
         <Compile Include="Syntax\AST\Expressions\BinaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BooleanExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\IndexAccessExpression.cs" />
-        <Compile Include="Syntax\AST\Expressions\FunctionCallExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\CallExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Expression.cs" />
         <Compile Include="Syntax\AST\Expressions\ArrayExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\NullExpression.cs" />
