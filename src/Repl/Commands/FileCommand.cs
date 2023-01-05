@@ -30,6 +30,8 @@ public class FileCommand : ICommand
             
             var interpreter = Interpreter.Create();
             var interpretation = interpreter.Execute(text);
+            
+            printer.PrintBlankLine();
             printer.PrintDiagnostic(interpretation.Diagnostic);
         }
         catch (ArgumentException)

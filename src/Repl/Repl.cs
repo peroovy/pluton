@@ -73,7 +73,8 @@ public class Repl
     private void HandleSubmission(string text)
     {
         var interpretation = interpreter.Execute(text);
-        
+
+        printer.PrintBlankLine();
         printer.PrintDiagnostic(interpretation.Diagnostic);
         
         if (!interpretation.HasErrors)

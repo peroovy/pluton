@@ -33,6 +33,11 @@ public class Printer : IPrinter
         Console.ResetColor();
     }
 
+    public void PrintBlankLine()
+    {
+        Console.WriteLine();
+    }
+
     private static void PrintLog(Log log)
     {
         var formattedMessage = GetFormattedMessageFrom(log);

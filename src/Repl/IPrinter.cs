@@ -10,4 +10,6 @@ public interface IPrinter
     void PrintDiagnostic(DiagnosticBag diagnostic);
 
     void PrintResult(Obj value);
+    
+    void PrintBlankLine();
 }
