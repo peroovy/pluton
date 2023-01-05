@@ -6,7 +6,7 @@ namespace Core.Lexing.TokenParsers
 {
     public class NextLineParser : ITokenParser
     {
-        public int Priority => 0;
+        public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {

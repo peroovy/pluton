@@ -9,7 +9,7 @@ namespace Core.Lexing.TokenParsers
     {
         private const char Quote = '"';
 
-        public int Priority => 0;
+        public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {

@@ -88,6 +88,7 @@
         <Compile Include="Execution\Objects\String.cs" />
         <Compile Include="Execution\Operations\OperationPrecedence.cs" />
         <Compile Include="Execution\RuntimeException.cs" />
+        <Compile Include="Lexing\TokenParsers\Priority.cs" />
         <Compile Include="Lexing\TokenParsers\WordTerminalParser.cs" />
         <Compile Include="TranslationState.cs" />
         <Compile Include="Interpreter.cs" />

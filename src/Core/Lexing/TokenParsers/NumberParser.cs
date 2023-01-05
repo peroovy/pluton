@@ -7,7 +7,7 @@ namespace Core.Lexing.TokenParsers
     {
         private readonly Regex regex = new(@"([0-9]*[.])?[0-9]+");
 
-        public int Priority => 100;
+        public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {

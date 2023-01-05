@@ -18,7 +18,7 @@ namespace Core.Lexing.TokenParsers
             ["/="] = TokenType.SlashEquals
         };
 
-        public int Priority => 0;
+        public Priority Priority => Priority.High;
         
         public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {

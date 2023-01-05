@@ -26,7 +26,7 @@ namespace Core.Lexing.TokenParsers
             ['\0'] = TokenType.Eof
         };
 
-        public int Priority => 1;
+        public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {

@@ -8,13 +8,13 @@ namespace Core.Lexing
 {
     public class Lexer : ILexer
     {
-        private readonly ITokenParser[] tokenParsers;
+        private readonly ImmutableArray<ITokenParser> tokenParsers;
 
-        public Lexer(ITokenParser[] tokenParsers)
+        public Lexer(IEnumerable<ITokenParser> tokenParsers)
         {
             this.tokenParsers = tokenParsers
-                .OrderBy(parser => parser.Priority)
-                .ToArray();
+                .OrderByDescending(parser => parser.Priority)
+                .ToImmutableArray();
         }
         
         public TranslationState<ImmutableArray<SyntaxToken>> Tokenize(string text)

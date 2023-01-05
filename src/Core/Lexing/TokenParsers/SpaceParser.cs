@@ -5,7 +5,7 @@ namespace Core.Lexing.TokenParsers
 {
     public class SpaceParser : ITokenParser
     {
-        public int Priority => 3;
+        public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {

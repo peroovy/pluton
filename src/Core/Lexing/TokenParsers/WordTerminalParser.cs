@@ -26,7 +26,7 @@ namespace Core.Lexing.TokenParsers
             ["continue"] = TokenType.ContinueKeyword
         };
 
-        public int Priority => 1000;
+        public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {
