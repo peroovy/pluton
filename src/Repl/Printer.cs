@@ -67,6 +67,6 @@ public class Printer : IPrinter
             .ToString()
             .ToUpper();
         
-        return $"{level}({location.Line.Index}, {location.Start + 1}): {log.Message}";
+        return $"{level}({location.Line.Index + 1}, {location.Start}): {log.Message}";
     }
 }

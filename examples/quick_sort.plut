@@ -1,4 +1,35 @@
 
+def split(string, separator=" ")
+{
+    result = [];
+
+    element = "";
+    for (i = 0; i < len(string); i += 1)
+    {
+        if (string[i] != separator) element += string[i];
+        else
+        {
+            result += [element];
+            element = "";
+        }
+    }
+
+    if (len(element) > 0)
+        result += [element];
+
+    return result;
+}
+
+def map(array, function)
+{
+    result = [];
+
+    for (i = 0; i < len(array); i += 1)
+        result += [function(array[i])];
+
+    return result;
+}
+
 def sort(array)
 {
     if (len(array) <= 1)
@@ -18,8 +49,8 @@ def sort(array)
     return sort(less) + [pivot] + sort(greater);
 }
 
-array = [2, 4, -10, -3];
-sorted = sort(array);
+string = input("Enter elements separated by spaces: ");
 
-print("Array: " + str(array));
+sorted = sort(map(split(string), num));
+
 print("Sorted: " + str(sorted));
