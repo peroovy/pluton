@@ -8,23 +8,28 @@ namespace Core.Execution.Operations.Binary
 {
     public abstract class BinaryOperation
     {
-        protected abstract string OperatorMethodName { get; }
+        public abstract TokenType Operator { get; }
         
-        protected abstract TokenTypes Operator { get; }
+        public abstract OperationPrecedence Precedence { get; }
+        
+        protected abstract string MethodName { get; }
 
-        public bool IsOperator(TokenTypes operatorType) => operatorType == Operator;
+        public bool IsOperator(TokenType tokenType) => tokenType == Operator;
         
-        public BinaryOperationMethod GetMethod(Obj left, Obj right)
+        public Func<Obj> FindMethod(Obj left, Obj right)
         {
             var leftType = left.GetType();
-            var method = leftType.GetMethod(OperatorMethodName,
+            var method = leftType.GetMethod(MethodName,
                 BindingFlags.Public | BindingFlags.Static,
                 null,
                 new[] { leftType, right.GetType() },
                 Array.Empty<ParameterModifier>()
             );
-            
-            return new BinaryOperationMethod(method);
+
+            if (method is null)
+                return null;
+
+            return () => (Obj)method.Invoke(null, new object[] { left, right });
         }
     }
 }

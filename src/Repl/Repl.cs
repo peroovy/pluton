@@ -9,7 +9,6 @@ namespace Repl;
 
 public class Repl
 {
-    private readonly BiteCompiler compiler = BiteCompiler.Create();
     private readonly Interpreter interpreter = Interpreter.Create();
     
     private readonly ICommand[] commands;
@@ -73,21 +72,12 @@ public class Repl
     
     private void HandleSubmission(string text)
     {
-        var compilation = compiler.Compile(text);
-        if (compilation.HasErrors)
-        {
-            printer.PrintDiagnostic(compilation.Diagnostic);
-            return;
-        }
-
-        var interpretation = interpreter.Run(compilation.Result);
-        if (interpretation.HasErrors)
-        {
-            printer.PrintDiagnostic(interpretation.Diagnostic);
-            return;
-        }
-
-        printer.PrintResult(interpretation.Result);
+        var interpretation = interpreter.Execute(text);
+        
+        printer.PrintDiagnostic(interpretation.Diagnostic);
+        
+        if (!interpretation.HasErrors)
+            printer.PrintResult(interpretation.Result);
     }
 
     private string EditSubmission()
@@ -142,7 +132,7 @@ public class Repl
         if (lastLinesAreBlank)
             return true;
 
-        var compilation = compiler.Compile(text);
+        var compilation = interpreter.CompileBiteCode(text);
 
         return !compilation.HasErrors;
     }

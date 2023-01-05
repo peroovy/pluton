@@ -7,7 +7,7 @@ namespace Core.Execution
 {
     public class Scope
     {
-        private readonly Dictionary<string, Obj> names = new();
+        private readonly Dictionary<string, Obj> identifiers = new();
         
         public Scope(Scope parent)
         {
@@ -16,22 +16,22 @@ namespace Core.Execution
         
         public Scope Parent { get; }
 
-        public bool Contains(string name) => names.ContainsKey(name);
+        public bool Contains(string identifier) => identifiers.ContainsKey(identifier);
 
-        public Obj Assign(string name, Obj value) => names[name] = value;
+        public void Assign(string identifier, Obj value) => identifiers[identifier] = value;
 
-        public bool TryLookup(string name, out Obj value)
+        public bool TryLookup(string identifier, out Obj value)
         {
-            if (names.TryGetValue(name, out value))
+            if (identifiers.TryGetValue(identifier, out value))
                 return true;
 
-            return Parent?.TryLookup(name, out value) ?? false;
+            return Parent?.TryLookup(identifier, out value) ?? false;
         }
 
-        public Obj Lookup(string name)
+        public Obj Lookup(string identifier)
         {
-            if (!TryLookup(name, out var value))
-                throw new ArgumentException($"Unknown name '{name}'");
+            if (!TryLookup(identifier, out var value))
+                throw new ArgumentException($"Unknown identifier '{identifier}'");
 
             return value;
         }

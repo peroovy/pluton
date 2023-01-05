@@ -7,16 +7,15 @@ namespace Core.Syntax.AST
 {
     public class ExpressionStatement : Statement
     {
-
-        public ExpressionStatement(Expression expression, SyntaxToken closingToken)
+        public ExpressionStatement(Expression expression, SyntaxToken semicolon)
         {
             Expression = expression;
-            ClosingToken = closingToken;
+            Semicolon = semicolon;
         }
         
         public Expression Expression { get; }
         
-        public SyntaxToken ClosingToken { get; }
+        public SyntaxToken Semicolon { get; }
 
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }

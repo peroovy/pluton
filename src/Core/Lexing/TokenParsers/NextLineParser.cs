@@ -1,6 +1,6 @@
 ﻿using System;
 using Core.Utils;
-using Core.Utils.Text;
+using Core.Utils.Diagnostic;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -8,13 +8,13 @@ namespace Core.Lexing.TokenParsers
     {
         public int Priority => 0;
         
-        public SyntaxToken TryParse(Line line, int position)
+        public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {
             var newLine = string.Concat(line.Value.Take(position, 2));
             var location = new Location(line, position, newLine.Length);
 
             return newLine == Environment.NewLine
-                ? new SyntaxToken(TokenTypes.NewLine, newLine, location) 
+                ? new SyntaxToken(TokenType.NewLine, newLine, location) 
                 : null;
         }
     }

@@ -1,17 +1,17 @@
-﻿using Core.Utils.Text;
+﻿using Core.Utils.Diagnostic;
 
 namespace Core.Lexing
 {
     public class SyntaxToken
     {
-        public SyntaxToken(TokenTypes type, string text, Location location)
+        public SyntaxToken(TokenType type, string text, Location location)
         {
             Type = type;
             Text = text;
             Location = location;
         }
 
-        public TokenTypes Type { get; }
+        public TokenType Type { get; }
         
         public string Text { get; }
         

@@ -4,8 +4,10 @@ namespace Core.Execution.Operations.Binary
 {
     public class EqualityOperation : BinaryOperation
     {
-        protected override string OperatorMethodName => "op_Equality";
+        public override TokenType Operator => TokenType.DoubleEquals;
 
-        protected override TokenTypes Operator => TokenTypes.DoubleEquals;
+        public override OperationPrecedence Precedence => OperationPrecedence.Equality;
+
+        protected override string MethodName => "op_Equality";
     }
 }

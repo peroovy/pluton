@@ -4,8 +4,10 @@ namespace Core.Execution.Operations.Binary
 {
     public class MultiplicationOperation : BinaryOperation
     {
-        protected override string OperatorMethodName => "op_Multiply";
+        public override TokenType Operator => TokenType.Star;
 
-        protected override TokenTypes Operator => TokenTypes.Star;
+        public override OperationPrecedence Precedence => OperationPrecedence.Multiplicative;
+        
+        protected override string MethodName => "op_Multiply";
     }
 }

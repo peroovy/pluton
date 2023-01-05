@@ -1,8 +1,6 @@
-﻿using Core.Utils.Text;
-
-namespace Core.Utils.Diagnostic
+﻿namespace Core.Utils.Diagnostic
 {
-    public struct Log
+    public class Log
     {
         public Log(Level level, string message, Location location)
         {

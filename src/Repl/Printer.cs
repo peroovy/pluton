@@ -17,7 +17,7 @@ public class Printer : IPrinter
         Console.ResetColor();
     }
 
-    public void PrintDiagnostic(IDiagnosticBag diagnostic)
+    public void PrintDiagnostic(DiagnosticBag diagnostic)
     {
         foreach (var log in diagnostic)
             PrintLog(log);
@@ -25,7 +25,7 @@ public class Printer : IPrinter
 
     public void PrintResult(Obj value)
     {
-        if (value is null)
+        if (value is Null)
             return;
         
         Console.ForegroundColor = ConsoleColor.Magenta;

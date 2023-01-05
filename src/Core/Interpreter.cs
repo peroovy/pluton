@@ -1,11 +1,12 @@
 ﻿using Core.Execution;
-using Core.Execution.Interrupts;
 using Core.Execution.Objects;
 using Core.Execution.Objects.BuiltinFunctions;
 using Core.Execution.Operations.Binary;
 using Core.Execution.Operations.Unary;
+using Core.Lexing;
+using Core.Lexing.TokenParsers;
+using Core.Syntax;
 using Core.Syntax.AST;
-using Core.Utils.Diagnostic;
 using Ninject;
 using Ninject.Extensions.Conventions;
 
@@ -13,29 +14,37 @@ namespace Core
 {
     public class Interpreter
     {
+        private readonly ILexer lexer;
+        private readonly ISyntaxParser parser;
         private readonly IExecutor executor;
-        private readonly IDiagnosticBag diagnosticBag;
 
-        public Interpreter(IExecutor executor, IDiagnosticBag diagnosticBag)
+        public Interpreter(ILexer lexer, ISyntaxParser parser, IExecutor executor)
         {
+            this.lexer = lexer;
+            this.parser = parser;
             this.executor = executor;
-            this.diagnosticBag = diagnosticBag;
         }
 
-        public TranslationState<Obj> Run(SyntaxTree syntaxTree)
+        public TranslationState<SyntaxTree> CompileBiteCode(string text)
         {
-            diagnosticBag.Clear();
+            var lexing = lexer.Tokenize(text);
+            var parsing = parser.Parse(lexing.Result);
 
-            try
-            {
-                var value = syntaxTree.Accept(executor);
-                
-                return new TranslationState<Obj>(value, diagnosticBag.Copy());
-            }
-            catch (RuntimeException)
-            {
-                return new TranslationState<Obj>(null, diagnosticBag.Copy());
-            }
+            var diagnostics = lexing.Diagnostic.Concat(parsing.Diagnostic);
+
+            return new TranslationState<SyntaxTree>(parsing.Result, diagnostics);
+        }
+
+        public TranslationState<Obj> Execute(string text)
+        {
+            var compilation = CompileBiteCode(text);
+            if (compilation.HasErrors)
+                return new TranslationState<Obj>(null, compilation.Diagnostic);
+            
+            var interpretation = executor.Execute(compilation.Result);
+            var diagnostics = compilation.Diagnostic.Concat(interpretation.Diagnostic);
+
+            return new TranslationState<Obj>(interpretation.Result, diagnostics);
         }
 
         public static Interpreter Create()
@@ -49,9 +58,15 @@ namespace Core
         {
             var container = new StandardKernel();
 
-            container.Bind<IDiagnosticBag>().To<DiagnosticBag>().InSingletonScope();
-            
+            container.Bind<ILexer>().To<Lexer>().InSingletonScope();
+            container.Bind<ISyntaxParser>().To<SyntaxParser>().InSingletonScope();
             container.Bind<IExecutor>().To<Executor>().InSingletonScope();
+            
+            container.Bind(conf => conf
+                .FromThisAssembly()
+                .SelectAllClasses()
+                .InheritedFrom<ITokenParser>()
+                .BindAllInterfaces());
 
             container.Bind(conf => conf
                 .FromThisAssembly()

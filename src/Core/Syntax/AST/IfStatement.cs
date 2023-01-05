@@ -7,11 +7,11 @@ namespace Core.Syntax.AST
 {
     public class IfStatement : Statement
     {
-        public IfStatement(SyntaxToken keyword, Expression condition, Statement statement, ElseClause elseClause)
+        public IfStatement(SyntaxToken keyword, Expression condition, Statement thenStatement, ElseClause elseClause)
         {
             Keyword = keyword;
             Condition = condition;
-            Statement = statement;
+            ThenStatement = thenStatement;
             ElseClause = elseClause;
         }
         
@@ -19,7 +19,7 @@ namespace Core.Syntax.AST
         
         public Expression Condition { get; }
         
-        public Statement Statement { get; }
+        public Statement ThenStatement { get; }
         
         public ElseClause ElseClause { get; }
 

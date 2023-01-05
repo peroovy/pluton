@@ -4,8 +4,10 @@ namespace Core.Execution.Operations.Binary
 {
     public class DivisionOperation : BinaryOperation
     {
-        protected override string OperatorMethodName => "op_Division";
+        public override TokenType Operator => TokenType.Slash;
 
-        protected override TokenTypes Operator => TokenTypes.Slash;
+        public override OperationPrecedence Precedence => OperationPrecedence.Multiplicative;
+
+        protected override string MethodName => "op_Division";
     }
 }

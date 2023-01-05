@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
+using Core.Execution.Operations;
+using Core.Execution.Operations.Binary;
+using Core.Execution.Operations.Unary;
 using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
@@ -11,27 +15,46 @@ namespace Core.Syntax
 {
     public class SyntaxParser : ISyntaxParser
     {
+        private readonly Dictionary<TokenType, OperationPrecedence> binaryOperatorPrecedences;
+        private readonly Dictionary<TokenType, OperationPrecedence> unaryOperatorPrecedences;
+        private readonly Dictionary<TokenType, TokenType> compoundOperators = new()
+        {
+            [TokenType.PlusEquals] = TokenType.Plus,
+            [TokenType.MinusEquals] = TokenType.Minus,
+            [TokenType.StarEquals] = TokenType.Star,
+            [TokenType.SlashEquals] = TokenType.Slash
+        };
+
         private ImmutableArray<SyntaxToken> tokens;
+        private DiagnosticBag diagnostic;
         private int position;
 
-        private readonly IDiagnosticBag diagnosticBag;
-
+        public SyntaxParser(IEnumerable<BinaryOperation> binaryOperations, IEnumerable<UnaryOperation> unaryOperations)
+        {
+            binaryOperatorPrecedences = binaryOperations
+                .ToDictionary(operation => operation.Operator, operation => operation.Precedence);
+            
+            unaryOperatorPrecedences = unaryOperations
+                .ToDictionary(operation => operation.Operator, operation => operation.Precedence);
+        }
+        
         private SyntaxToken Current => Peek(0);
         
-        public SyntaxParser(IDiagnosticBag diagnosticBag)
-        {
-            this.diagnosticBag = diagnosticBag;
-        }
+        private SyntaxToken Lookahead => Peek(1);
 
-        public SyntaxTree Parse(ImmutableArray<SyntaxToken> syntaxTokens)
+        private bool IsCurrentIdentifierWithEquals =>
+            Current.Type == TokenType.Identifier && Lookahead.Type == TokenType.Equals;
+        
+        public TranslationState<SyntaxTree> Parse(IEnumerable<SyntaxToken> syntaxTokens)
         {
             position = 0;
+            diagnostic = new DiagnosticBag();
             tokens = syntaxTokens
-                .Where(token => token.Type is not (TokenTypes.Space or TokenTypes.NewLine))
+                .Where(token => token.Type != TokenType.Space && token.Type != TokenType.NewLine)
                 .ToImmutableArray();
             
             var members = ImmutableArray.CreateBuilder<SyntaxNode>();
-            while (Current.Type != TokenTypes.Eof)
+            while (Current.Type != TokenType.Eof)
             {
                 var startToken = Current;
                 
@@ -42,14 +65,17 @@ namespace Core.Syntax
                     NextToken();
             }
 
-            return new SyntaxTree(members.ToImmutable());
+            var syntaxTree = new SyntaxTree(members.ToImmutable());
+            return new TranslationState<SyntaxTree>(syntaxTree, diagnostic);
         }
         
         private SyntaxToken Peek(int offset)
         {
             var index = position + offset;
             
-            return index >= tokens.Length ? tokens.Last() : tokens[index];
+            return index >= tokens.Length 
+                ? tokens.Last() 
+                : tokens[index];
         }
 
         private SyntaxToken NextToken()
@@ -61,62 +87,45 @@ namespace Core.Syntax
             return current;
         }
         
-        private SyntaxToken MatchToken(TokenTypes expected)
+        private SyntaxToken MatchToken(TokenType expected)
         {
             if (Current.Type == expected)
                 return NextToken();
 
-            diagnosticBag.AddError(Current.Location, $"Expected '{expected}'");
+            diagnostic.AddError(Current.Location, $"Expected '{expected}'");
             
             return new SyntaxToken(expected, null, Current.Location);
         }
 
         private Statement ParseStatement()
         {
-            switch (Current.Type)
+            return Current.Type switch
             {
-                case TokenTypes.OpenBrace:
-                    return ParseBlockStatement();
-                
-                case TokenTypes.IfKeyword:
-                    return ParseIfStatement();
-
-                case TokenTypes.WhileKeyword:
-                    return ParseWhileStatement();
-                
-                case TokenTypes.ForKeyword:
-                    return ParseForStatement();
-                
-                case TokenTypes.DefKeyword:
-                    return ParseFunctionDeclarationStatement();
-                
-                case TokenTypes.ReturnKeyword:
-                    return ParseReturnStatement();
-                
-                case TokenTypes.BreakKeyword:
-                    return ParseBreakStatement();
-                
-                case TokenTypes.ContinueKeyword:
-                    return ParseContinueStatement();
-                
-                default:
-                    return ParseExpressionStatement();
-            }
+                TokenType.OpenBrace => ParseBlockStatement(),
+                TokenType.IfKeyword => ParseIfStatement(),
+                TokenType.WhileKeyword => ParseWhileStatement(),
+                TokenType.ForKeyword => ParseForStatement(),
+                TokenType.DefKeyword => ParseFunctionDeclarationStatement(),
+                TokenType.ReturnKeyword => ParseReturnStatement(),
+                TokenType.BreakKeyword => ParseBreakStatement(),
+                TokenType.ContinueKeyword => ParseContinueStatement(),
+                _ => ParseExpressionStatement()
+            };
         }
 
         private FunctionDeclarationStatement ParseFunctionDeclarationStatement()
         {
-            var keyword = MatchToken(TokenTypes.DefKeyword);
-            var name = MatchToken(TokenTypes.Identifier);
-            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
+            var keyword = MatchToken(TokenType.DefKeyword);
+            var identifier = MatchToken(TokenType.Identifier);
+            var openParenthesis = MatchToken(TokenType.OpenParenthesis);
             var positionParameters = ParsePositionParameters();
             var defaultParameters = ParseDefaultParameters();
-            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
-            var body = ParseBlockStatement();
+            var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
+            var block = ParseBlockStatement();
 
             return new FunctionDeclarationStatement(
-                keyword, name, openParenthesis, positionParameters, defaultParameters,
-                closeParenthesis, body
+                keyword, identifier, openParenthesis, positionParameters, defaultParameters,
+                closeParenthesis, block
             );
         }
 
@@ -124,16 +133,16 @@ namespace Core.Syntax
         {
             var parameters = ImmutableArray.CreateBuilder<SyntaxToken>();
             
-            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof
-                   && !(Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.Equals))
+            while (!IsCurrentIdentifierWithEquals 
+                   && Current.Type != TokenType.CloseParenthesis && Current.Type != TokenType.Eof)
             {
-                var parameter = MatchToken(TokenTypes.Identifier);
+                var parameter = MatchToken(TokenType.Identifier);
                 parameters.Add(parameter);
                 
-                if (Current.Type != TokenTypes.Comma)
+                if (Current.Type != TokenType.Comma)
                     break;
 
-                MatchToken(TokenTypes.Comma);
+                MatchToken(TokenType.Comma);
             }
 
             return parameters.ToImmutable();
@@ -143,20 +152,19 @@ namespace Core.Syntax
         {
             var parameters = ImmutableArray.CreateBuilder<SyntaxDefaultParameter>();
             
-            while (Current.Type is not TokenTypes.CloseParenthesis or TokenTypes.Eof
-                   && Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.Equals)
+            while (IsCurrentIdentifierWithEquals)
             {
-                var name = MatchToken(TokenTypes.Identifier);
-                var equals = MatchToken(TokenTypes.Equals);
+                var name = NextToken();
+                var equals = NextToken();
                 var expression = ParseBinaryExpression();
 
                 var parameter = new SyntaxDefaultParameter(name, equals, expression);
                 parameters.Add(parameter);
                 
-                if (Current.Type != TokenTypes.Comma)
+                if (Current.Type != TokenType.Comma)
                     break;
 
-                MatchToken(TokenTypes.Comma);
+                MatchToken(TokenType.Comma);
             }
 
             return parameters.ToImmutable();
@@ -164,39 +172,41 @@ namespace Core.Syntax
 
         private ReturnStatement ParseReturnStatement()
         {
-            var keyword = MatchToken(TokenTypes.ReturnKeyword);
-            var expression = Current.Type == TokenTypes.Semicolon ? null : ParseExpression();
-            var semicolon = MatchToken(TokenTypes.Semicolon);
+            var keyword = MatchToken(TokenType.ReturnKeyword);
+            var expression = Current.Type == TokenType.Semicolon 
+                ? null 
+                : ParseExpression();
+            var semicolon = MatchToken(TokenType.Semicolon);
 
             return new ReturnStatement(keyword, expression, semicolon);
         }
 
         private BreakStatement ParseBreakStatement()
         {
-            var keyword = MatchToken(TokenTypes.BreakKeyword);
-            var semicolon = MatchToken(TokenTypes.Semicolon);
+            var keyword = MatchToken(TokenType.BreakKeyword);
+            var semicolon = MatchToken(TokenType.Semicolon);
 
             return new BreakStatement(keyword, semicolon);
         }
         
         private ContinueStatement ParseContinueStatement()
         {
-            var keyword = MatchToken(TokenTypes.ContinueKeyword);
-            var semicolon = MatchToken(TokenTypes.Semicolon);
+            var keyword = MatchToken(TokenType.ContinueKeyword);
+            var semicolon = MatchToken(TokenType.Semicolon);
 
             return new ContinueStatement(keyword, semicolon);
         }
 
         private ForStatement ParseForStatement()
         {
-            var keyword = MatchToken(TokenTypes.ForKeyword);
-            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
-            var initializers = ParseSeparatedExpressions(TokenTypes.Semicolon);
-            var firstSemicolon = MatchToken(TokenTypes.Semicolon);
+            var keyword = MatchToken(TokenType.ForKeyword);
+            var openParenthesis = MatchToken(TokenType.OpenParenthesis);
+            var initializers = ParseSeparatedExpressions(TokenType.Semicolon);
+            var firstSemicolon = MatchToken(TokenType.Semicolon);
             var condition = ParseExpression();
-            var secondSemicolon = MatchToken(TokenTypes.Semicolon);
-            var iterators = ParseSeparatedExpressions(TokenTypes.CloseParenthesis);
-            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+            var secondSemicolon = MatchToken(TokenType.Semicolon);
+            var iterators = ParseSeparatedExpressions(TokenType.CloseParenthesis);
+            var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
             var body = ParseStatement();
 
             return new ForStatement(
@@ -214,7 +224,7 @@ namespace Core.Syntax
 
         private WhileStatement ParseWhileStatement()
         {
-            var keyword = MatchToken(TokenTypes.WhileKeyword);
+            var keyword = MatchToken(TokenType.WhileKeyword);
             var condition = ParseExpression();
             var body = ParseStatement();
 
@@ -223,31 +233,30 @@ namespace Core.Syntax
         
         private IfStatement ParseIfStatement()
         {
-            var keyword = MatchToken(TokenTypes.IfKeyword);
+            var keyword = MatchToken(TokenType.IfKeyword);
             var condition = ParseExpression();
-            var statement = ParseStatement();
-            var elseClause = ParseElseClause();
+            var thenStatement = ParseStatement();
+            var elseClause = Current.Type == TokenType.ElseKeyword
+                ? ParseElseClause()
+                : null;
 
-            return new IfStatement(keyword, condition, statement, elseClause);
+            return new IfStatement(keyword, condition, thenStatement, elseClause);
         }
 
         private ElseClause ParseElseClause()
         {
-            if (Current.Type != TokenTypes.ElseKeyword)
-                return null;
+            var keyword = MatchToken(TokenType.ElseKeyword);
+            var elseStatement = ParseStatement();
 
-            var keyword = MatchToken(TokenTypes.ElseKeyword);
-            var statement = ParseStatement();
-
-            return new ElseClause(keyword, statement);
+            return new ElseClause(keyword, elseStatement);
         }
 
         private BlockStatement ParseBlockStatement()
         {
-            var openBrace = MatchToken(TokenTypes.OpenBrace);
+            var openBrace = MatchToken(TokenType.OpenBrace);
 
             var statements = ImmutableArray.CreateBuilder<Statement>();
-            while (Current.Type != TokenTypes.CloseBrace && Current.Type != TokenTypes.Eof)
+            while (Current.Type != TokenType.CloseBrace && Current.Type != TokenType.Eof)
             {
                 var startToken = Current;
                 
@@ -258,7 +267,7 @@ namespace Core.Syntax
                     NextToken();
             }
 
-            var closeBrace = MatchToken(TokenTypes.CloseBrace);
+            var closeBrace = MatchToken(TokenType.CloseBrace);
 
             return new BlockStatement(openBrace, statements.ToImmutable(), closeBrace);
         }
@@ -266,7 +275,7 @@ namespace Core.Syntax
         private ExpressionStatement ParseExpressionStatement()
         {
             var expression = ParseExpression();
-            var semicolon = MatchToken(TokenTypes.Semicolon);
+            var semicolon = MatchToken(TokenType.Semicolon);
 
             return new ExpressionStatement(expression, semicolon);
         }
@@ -275,107 +284,96 @@ namespace Core.Syntax
         {
             var expression = ParseBinaryExpression();
 
-            switch (Current.Type)
+            if (compoundOperators.ContainsKey(Current.Type))
             {
-                case TokenTypes.Equals:
+                switch (expression)
                 {
-                    switch (expression)
-                    {
-                        case VariableExpression variableExpression:
-                            return ParseVariableAssignmentExpression(variableExpression);
+                    case VariableExpression variableExpression:
+                        return ContinueWithCompoundVariableAssignmentExpression(variableExpression);
                         
-                        case IndexAccessExpression indexAccessExpression:
-                            return ParseIndexAssignmentExpression(indexAccessExpression);
-                    }
-                    break;
-                }
-
-                case TokenTypes.PlusEquals:
-                case TokenTypes.MinusEquals:
-                case TokenTypes.StarEquals:
-                case TokenTypes.SlashEquals:
-                {
-                    switch (expression)
-                    {
-                        case VariableExpression variableExpression:
-                            return ParseCompoundVariableAssignmentExpression(variableExpression);
-                        
-                        case IndexAccessExpression indexAccessExpression:
-                            return ParseCompoundIndexAssignmentExpression(indexAccessExpression);
-                    }
-                    break;
+                    case IndexAccessExpression indexAccessExpression:
+                        return ContinueWithCompoundIndexAssignmentExpression(indexAccessExpression);
                 }
             }
-            
-            return ParseBinaryExpression(expression);
+
+            if (Current.Type == TokenType.Equals)
+            {
+                switch (expression)
+                {
+                    case VariableExpression variableExpression:
+                        return ContinueWithVariableAssignmentExpression(variableExpression);
+                        
+                    case IndexAccessExpression indexAccessExpression:
+                        return ContinueWithIndexAssignmentExpression(indexAccessExpression);
+                }
+            }
+
+            return ParseBinaryExpression(initializedLeft: expression);
         }
 
-        private IndexAssignmentExpression ParseIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
+        private IndexAssignmentExpression ContinueWithIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
         {
-            var equals = MatchToken(TokenTypes.Equals);
+            var equals = MatchToken(TokenType.Equals);
             var value = ParseExpression();
 
             return new IndexAssignmentExpression(
-                indexAccessExpression.ParentExpression, indexAccessExpression.Index, equals, value
+                indexAccessExpression.IndexedExpression, indexAccessExpression.Index, equals, value
             );
         }
 
-        private IndexAssignmentExpression ParseCompoundIndexAssignmentExpression(
-            IndexAccessExpression indexAccessExpression)
+        private IndexAssignmentExpression ContinueWithCompoundIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
         {
-            var (compoundOperator, expression) = ParseCompoundAssignmentExpression(indexAccessExpression);
+            var (compoundOperator, expression) = ContinueCompoundAssignmentExpression(indexAccessExpression);
             
             return new IndexAssignmentExpression(
-                indexAccessExpression.ParentExpression, indexAccessExpression.Index, compoundOperator, expression
+                indexAccessExpression.IndexedExpression, indexAccessExpression.Index, compoundOperator, expression
             );
         }
 
-        private VariableAssignmentExpression ParseCompoundVariableAssignmentExpression(VariableExpression variableExpression)
+        private VariableAssignmentExpression ContinueWithCompoundVariableAssignmentExpression(VariableExpression variableExpression)
         {
-            var (compoundOperator, expression) = ParseCompoundAssignmentExpression(variableExpression);
+            var (compoundOperator, expression) = ContinueCompoundAssignmentExpression(variableExpression);
             
-            return new VariableAssignmentExpression(variableExpression.Name, compoundOperator, expression);
+            return new VariableAssignmentExpression(variableExpression.Identifier, compoundOperator, expression);
         }
 
-        private (SyntaxToken compoundOperator, BinaryExpression expression) ParseCompoundAssignmentExpression(
-            Expression leftExpression)
+        private (SyntaxToken compoundOperator, BinaryExpression expression) ContinueCompoundAssignmentExpression(Expression leftExpression)
         {
             var compoundOperator = NextToken();
-            var singleOperatorType = compoundOperator.Type.TryConvertCompoundOperatorToSingle();
-            if (singleOperatorType is null)
-                throw new ArgumentException($"Unknown compound operator '{compoundOperator.Type}'");
+            var singleOperatorType = compoundOperators[compoundOperator.Type];
 
-            var singleOperator = new SyntaxToken(
-                singleOperatorType.Value, compoundOperator.Text, compoundOperator.Location
-            );
+            var singleOperator = new SyntaxToken(singleOperatorType, compoundOperator.Text, compoundOperator.Location);
             var rightExpression = ParseExpression();
 
             return (compoundOperator, new BinaryExpression(leftExpression, singleOperator, rightExpression));
         }
 
-        private VariableAssignmentExpression ParseVariableAssignmentExpression(VariableExpression variable)
+        private VariableAssignmentExpression ContinueWithVariableAssignmentExpression(VariableExpression variable)
         {
-            var equals = MatchToken(TokenTypes.Equals);
+            var equals = MatchToken(TokenType.Equals);
             var expression = ParseExpression();
 
-            return new VariableAssignmentExpression(variable.Name, equals, expression);
+            return new VariableAssignmentExpression(variable.Identifier, equals, expression);
         }
 
-        private Expression ParseBinaryExpression(Expression leftInit = null, int parentPrecedence = 0)
+        private Expression ParseBinaryExpression(
+            Expression initializedLeft = null,
+            OperationPrecedence previousPrecedence = OperationPrecedence.None)
         {
-            var unaryPrecedence = Current.Type.TryGetUnaryPrecedence();
-            var left = leftInit ?? (unaryPrecedence >= parentPrecedence
-                ? ParseUnaryExpression(unaryPrecedence.Value) 
+            var left = initializedLeft ?? (unaryOperatorPrecedences.ContainsKey(Current.Type)
+                ? ParseUnaryExpression()
                 : ParsePrimaryExpression());
 
             while (true)
             {
-                var precedence = Current.Type.TryGetBinaryOperatorPrecedence();
-                if (precedence is null || precedence <= parentPrecedence)
+                if (!binaryOperatorPrecedences.TryGetValue(Current.Type, out var precedence)
+                    || precedence <= previousPrecedence)
+                {
                     break;
+                }
 
                 var operatorToken = NextToken();
-                var right = ParseBinaryExpression(parentPrecedence: precedence.Value);
+                var right = ParseBinaryExpression(previousPrecedence: precedence);
 
                 left = new BinaryExpression(left, operatorToken, right);
             }
@@ -383,57 +381,34 @@ namespace Core.Syntax
             return left;
         }
 
-        private UnaryExpression ParseUnaryExpression(int unaryPrecedence)
+        private UnaryExpression ParseUnaryExpression()
         {
             var op = NextToken();
-            var expression = ParseBinaryExpression(parentPrecedence: unaryPrecedence);
+            var expression = ParseBinaryExpression(previousPrecedence: unaryOperatorPrecedences[op.Type]);
 
             return new UnaryExpression(op, expression);
         }
 
         private Expression ParsePrimaryExpression()
         {
-            Expression primary;
-            
-            switch (Current.Type)
+            var primary = Current.Type switch
             {
-                case TokenTypes.OpenParenthesis:
-                    primary = ParseParenthesizedExpression(); 
-                    break;
-                
-                case TokenTypes.OpenBracket:
-                    primary = ParseArrayExpression(); 
-                    break;
-                
-                case TokenTypes.TrueKeyword:
-                case TokenTypes.FalseKeyword:
-                    primary = ParseBooleanExpression();
-                    break;
-                
-                case TokenTypes.NullKeyword:
-                    primary = ParseNullExpression();
-                    break;
-                
-                case TokenTypes.Number:
-                    primary = ParseNumberExpression();
-                    break;
+                TokenType.OpenParenthesis => ParseParenthesizedExpression(),
+                TokenType.OpenBracket => ParseArrayExpression(),
+                TokenType.TrueKeyword or TokenType.FalseKeyword => ParseBooleanExpression(),
+                TokenType.NullKeyword => ParseNullExpression(),
+                TokenType.Number => ParseNumberExpression(),
+                TokenType.String => ParseStringExpression(),
+                _ => ParseVariableOrCallExpression()
+            };
 
-                case TokenTypes.String:
-                    primary = ParseStringExpression();
-                    break;
-                
-                default:
-                    primary = ParseVariableOrCallExpression();
-                    break;
-            }
-
-            if (Current.Type == TokenTypes.OpenBracket)
-                primary = ParseIndexAccessExpression(primary);
+            if (Current.Type == TokenType.OpenBracket)
+                return ContinueWithIndexAccessExpression(primary);
 
             return primary;
         }
 
-        private Expression ParseIndexAccessExpression(Expression parent)
+        private Expression ContinueWithIndexAccessExpression(Expression parent)
         {
             do
             {
@@ -441,23 +416,23 @@ namespace Core.Syntax
 
                 parent = new IndexAccessExpression(parent, index);
                 
-            } while (Current.Type == TokenTypes.OpenBracket && Current.Type != TokenTypes.Eof);
+            } while (Current.Type == TokenType.OpenBracket);
 
             return parent;
         }
 
         private ParenthesizedExpression ParseParenthesizedExpression()
         {
-            var open = MatchToken(TokenTypes.OpenParenthesis);
+            var open = MatchToken(TokenType.OpenParenthesis);
             var expression = ParseExpression();
-            var close = MatchToken(TokenTypes.CloseParenthesis);
+            var close = MatchToken(TokenType.CloseParenthesis);
 
             return new ParenthesizedExpression(open, expression, close);
         }
 
         private NumberExpression ParseNumberExpression()
         {
-            var numberToken = MatchToken(TokenTypes.Number);
+            var numberToken = MatchToken(TokenType.Number);
             var value = Convert.ToDouble(numberToken.Text, CultureInfo.InvariantCulture);
             
             return new NumberExpression(value);
@@ -465,29 +440,29 @@ namespace Core.Syntax
 
         private BooleanExpression ParseBooleanExpression()
         {
-            var value = Current.Type == TokenTypes.TrueKeyword;
-            _ = value ? MatchToken(TokenTypes.TrueKeyword) : MatchToken(TokenTypes.FalseKeyword);
+            var value = Current.Type == TokenType.TrueKeyword;
+            _ = value ? MatchToken(TokenType.TrueKeyword) : MatchToken(TokenType.FalseKeyword);
 
             return new BooleanExpression(value);
         }
 
         private StringExpression ParseStringExpression()
         {
-            var token = MatchToken(TokenTypes.String);
+            var token = MatchToken(TokenType.String);
 
             return new StringExpression(token.Text);
         }
 
         private NullExpression ParseNullExpression()
         {
-            MatchToken(TokenTypes.NullKeyword);
+            MatchToken(TokenType.NullKeyword);
 
             return new NullExpression();
         }
 
         private Expression ParseVariableOrCallExpression()
         {
-            if (Peek(0).Type == TokenTypes.Identifier && Peek(1).Type == TokenTypes.OpenParenthesis)
+            if (Current.Type == TokenType.Identifier && Lookahead.Type == TokenType.OpenParenthesis)
                 return ParseCallExpression();
 
             return ParseVariableExpression();
@@ -495,43 +470,43 @@ namespace Core.Syntax
 
         private FunctionCallExpression ParseCallExpression()
         {
-            var name = MatchToken(TokenTypes.Identifier);
-            var openParenthesis = MatchToken(TokenTypes.OpenParenthesis);
-            var arguments = ParseSeparatedExpressions(TokenTypes.CloseParenthesis);
-            var closeParenthesis = MatchToken(TokenTypes.CloseParenthesis);
+            var name = MatchToken(TokenType.Identifier);
+            var openParenthesis = MatchToken(TokenType.OpenParenthesis);
+            var arguments = ParseSeparatedExpressions(TokenType.CloseParenthesis);
+            var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
 
             return new FunctionCallExpression(name, openParenthesis, arguments, closeParenthesis);
         }
 
         private VariableExpression ParseVariableExpression()
         {
-            var name = MatchToken(TokenTypes.Identifier);
+            var name = MatchToken(TokenType.Identifier);
 
             return new VariableExpression(name);
         }
 
-        private ListExpression ParseArrayExpression()
+        private ArrayExpression ParseArrayExpression()
         {
-            var openBracket = MatchToken(TokenTypes.OpenBracket);
-            var items = ParseSeparatedExpressions(TokenTypes.CloseBracket);
-            var closeBracket = MatchToken(TokenTypes.CloseBracket);
+            var openBracket = MatchToken(TokenType.OpenBracket);
+            var items = ParseSeparatedExpressions(TokenType.CloseBracket);
+            var closeBracket = MatchToken(TokenType.CloseBracket);
 
-            return new ListExpression(openBracket, items, closeBracket);
+            return new ArrayExpression(openBracket, items, closeBracket);
         }
 
-        private ImmutableArray<Expression> ParseSeparatedExpressions(TokenTypes endLimiter)
+        private ImmutableArray<Expression> ParseSeparatedExpressions(TokenType endLimiter)
         {
             var expressions = ImmutableArray.CreateBuilder<Expression>();
             
-            while (Current.Type != endLimiter && Current.Type != TokenTypes.Eof)
+            while (Current.Type != endLimiter && Current.Type != TokenType.Eof)
             {
                 var expression = ParseExpression();
                 expressions.Add(expression);
                 
-                if (Current.Type != TokenTypes.Comma)
+                if (Current.Type != TokenType.Comma)
                     break;
 
-                MatchToken(TokenTypes.Comma);
+                MatchToken(TokenType.Comma);
             }
 
             return expressions.ToImmutable();
@@ -539,9 +514,9 @@ namespace Core.Syntax
         
         private SyntaxIndex ParseSyntaxIndex()
         {
-            var openBracket = MatchToken(TokenTypes.OpenBracket);
+            var openBracket = MatchToken(TokenType.OpenBracket);
             var index = ParseExpression();
-            var closeBracket = MatchToken(TokenTypes.CloseBracket);
+            var closeBracket = MatchToken(TokenType.CloseBracket);
 
             return new SyntaxIndex(openBracket, index, closeBracket);
         }

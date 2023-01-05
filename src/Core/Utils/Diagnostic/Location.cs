@@ -1,4 +1,4 @@
-﻿namespace Core.Utils.Text
+﻿namespace Core.Utils.Diagnostic
 {
     public struct Location
     {

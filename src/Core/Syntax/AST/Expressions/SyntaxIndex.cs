@@ -4,16 +4,16 @@ namespace Core.Syntax.AST.Expressions
 {
     public class SyntaxIndex
     {
-        public SyntaxIndex(SyntaxToken openBracket, Expression index, SyntaxToken closeBracket)
+        public SyntaxIndex(SyntaxToken openBracket, Expression value, SyntaxToken closeBracket)
         {
             OpenBracket = openBracket;
-            Index = index;
+            Value = value;
             CloseBracket = closeBracket;
         }  
         
         public SyntaxToken OpenBracket { get; }
         
-        public Expression Index { get; }
+        public Expression Value { get; }
         
         public SyntaxToken CloseBracket { get; }
     }

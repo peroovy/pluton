@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
 using Core.Lexing;
 using Core.Syntax.AST;
 
@@ -6,6 +6,6 @@ namespace Core.Syntax
 {
     public interface ISyntaxParser
     {
-        SyntaxTree Parse(ImmutableArray<SyntaxToken> tokens);
+        TranslationState<SyntaxTree> Parse(IEnumerable<SyntaxToken> tokens);
     }
 }

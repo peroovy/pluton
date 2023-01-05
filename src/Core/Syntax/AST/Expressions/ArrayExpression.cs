@@ -5,9 +5,9 @@ using Core.Lexing;
 
 namespace Core.Syntax.AST.Expressions
 {
-    public class ListExpression : Expression
+    public class ArrayExpression : Expression
     {
-        public ListExpression(SyntaxToken openBracket, ImmutableArray<Expression> items, SyntaxToken closeBracket)
+        public ArrayExpression(SyntaxToken openBracket, ImmutableArray<Expression> items, SyntaxToken closeBracket)
         {
             OpenBracket = openBracket;
             Items = items;

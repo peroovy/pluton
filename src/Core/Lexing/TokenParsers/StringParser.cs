@@ -2,49 +2,41 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Core.Utils.Diagnostic;
-using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
     public class StringParser : ITokenParser
     {
-        private readonly IDiagnosticBag diagnosticBag;
-        
-        private const char Limiter = '"';
+        private const char Quote = '"';
 
-        public StringParser(IDiagnosticBag diagnosticBag)
-        {
-            this.diagnosticBag = diagnosticBag;
-        }
-        
         public int Priority => 0;
         
-        public SyntaxToken TryParse(Line line, int position)
+        public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {
-            if (line[position] != Limiter)
+            if (line[position] != Quote)
                 return null;
             
             var str = line.Value;
 
             var stringValue = new StringBuilder();
-            for (var i = position + 1; i < str.Length && str[i] != Limiter; i++)
+            for (var i = position + 1; i < str.Length && str[i] != Quote; i++)
                 stringValue.Append(str[i]);
             
             var endLimiterPosition = position + stringValue.Length + 1;
-            if (endLimiterPosition < str.Length && str[endLimiterPosition] == Limiter)
+            if (endLimiterPosition < str.Length && str[endLimiterPosition] == Quote)
             {
                 var lengthWithLimiters = stringValue.Length + 2;
                 var tokenValue = ConvertEscapedCharacters(stringValue.ToString());
                 var location = new Location(line, position, lengthWithLimiters);
                 
                 if (tokenValue is not null)
-                    return new SyntaxToken(TokenTypes.String, tokenValue, location);
+                    return new SyntaxToken(TokenType.String, tokenValue, location);
                 
-                diagnosticBag.AddError(location, "Unrecognized escape sequence");
+                diagnostic.AddError(location, "Unrecognized escape sequence");
                 return null;
             }
-            
-            diagnosticBag.AddError(new Location(line, position, stringValue.Length + 1), "Unterminated string literal");
+
+            diagnostic.AddError(new Location(line, position, stringValue.Length + 1), "Unterminated string literal");
             return null;
         }
 

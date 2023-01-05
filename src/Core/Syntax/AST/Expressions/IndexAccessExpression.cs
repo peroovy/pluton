@@ -5,13 +5,13 @@ namespace Core.Syntax.AST.Expressions
 {
     public class IndexAccessExpression : Expression
     {
-        public IndexAccessExpression(Expression parentExpression, SyntaxIndex index)
+        public IndexAccessExpression(Expression indexedExpression, SyntaxIndex index)
         {
-            ParentExpression = parentExpression;
+            IndexedExpression = indexedExpression;
             Index = index;
         }
         
-        public Expression ParentExpression { get; }
+        public Expression IndexedExpression { get; }
         
         public SyntaxIndex Index { get; }
         

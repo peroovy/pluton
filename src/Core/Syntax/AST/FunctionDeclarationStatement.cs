@@ -10,25 +10,25 @@ namespace Core.Syntax.AST
     {
         public FunctionDeclarationStatement(
             SyntaxToken keyword, 
-            SyntaxToken name, 
+            SyntaxToken identifier, 
             SyntaxToken openParenthesis, 
             ImmutableArray<SyntaxToken> positionParameters,
             ImmutableArray<SyntaxDefaultParameter> defaultParameters,
             SyntaxToken closeParenthesis, 
-            BlockStatement body)
+            BlockStatement block)
         {
             Keyword = keyword;
-            Name = name;
+            Identifier = identifier;
             OpenParenthesis = openParenthesis;
             PositionParameters = positionParameters;
             DefaultParameters = defaultParameters;
             CloseParenthesis = closeParenthesis;
-            Body = body;
+            Block = block;
         }
         
         public SyntaxToken Keyword { get; }
         
-        public SyntaxToken Name { get; }
+        public SyntaxToken Identifier { get; }
         
         public SyntaxToken OpenParenthesis { get; }
         
@@ -38,7 +38,7 @@ namespace Core.Syntax.AST
 
         public SyntaxToken CloseParenthesis { get; }
         
-        public BlockStatement Body { get; }
+        public BlockStatement Block { get; }
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }

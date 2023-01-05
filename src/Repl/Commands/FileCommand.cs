@@ -23,25 +23,13 @@ public class FileCommand : ICommand
             return;
         }
 
-        var compiler = BiteCompiler.Create();
-        var interpreter = Interpreter.Create();
-
         try
         {
             var absolutePath = Path.GetFullPath(args[0]);
             var text = File.ReadAllText(absolutePath);
-
-            var compilation = compiler.Compile(text);
-            if (compilation.HasErrors)
-            {
-                printer.PrintDiagnostic(compilation.Diagnostic);
-                return;
-            }
-
-            var interpretation = interpreter.Run(compilation.Result);
-            if (!interpretation.HasErrors)
-                return;
             
+            var interpreter = Interpreter.Create();
+            var interpretation = interpreter.Execute(text);
             printer.PrintDiagnostic(interpretation.Diagnostic);
         }
         catch (ArgumentException)

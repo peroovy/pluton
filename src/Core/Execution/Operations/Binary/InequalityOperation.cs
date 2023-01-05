@@ -4,8 +4,10 @@ namespace Core.Execution.Operations.Binary
 {
     public class InequalityOperation : BinaryOperation
     {
-        protected override string OperatorMethodName => "op_Inequality";
+        public override TokenType Operator => TokenType.ExclamationMarkEquals;
 
-        protected override TokenTypes Operator => TokenTypes.ExclamationMarkEquals;
+        public override OperationPrecedence Precedence => OperationPrecedence.Equality;
+
+        protected override string MethodName => "op_Inequality";
     }
 }

@@ -4,8 +4,10 @@ namespace Core.Execution.Operations.Binary
 {
     public class SubtractionOperation : BinaryOperation
     {
-        protected override string OperatorMethodName => "op_Subtraction";
+        public override TokenType Operator => TokenType.Minus;
 
-        protected override TokenTypes Operator => TokenTypes.Minus;
+        public override OperationPrecedence Precedence => OperationPrecedence.Additive;
+        
+        protected override string MethodName => "op_Subtraction";
     }
 }

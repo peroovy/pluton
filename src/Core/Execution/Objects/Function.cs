@@ -9,13 +9,13 @@ namespace Core.Execution.Objects
             string name, 
             ImmutableArray<string> positionParameters, 
             ImmutableArray<(string name, Obj value)> defaultParameters,
-            Action<FunctionCallContext> call, 
+            Action<FunctionCallContext> invoke, 
             bool isBuiltin)
         {
             Name = name;
             PositionParameters = positionParameters;
             DefaultParameters = defaultParameters;
-            Call = call;
+            Invoke = invoke;
             IsBuiltin = isBuiltin;
         }
 
@@ -25,7 +25,7 @@ namespace Core.Execution.Objects
         
         public ImmutableArray<(string name, Obj value)> DefaultParameters { get; }
 
-        public Action<FunctionCallContext> Call { get; }
+        public Action<FunctionCallContext> Invoke { get; }
         
         public bool IsBuiltin { get; }
 
@@ -39,7 +39,7 @@ namespace Core.Execution.Objects
 
         public override bool Equals(object obj) => obj is Function function && Equals(function);
 
-        public override int GetHashCode() => Call.GetHashCode();
+        public override int GetHashCode() => Invoke.GetHashCode();
 
         private bool Equals(Function other) => ReferenceEquals(this, other);
 

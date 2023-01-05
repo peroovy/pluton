@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Core.Execution.Interrupts
+﻿namespace Core.Execution.Interrupts
 {
-    public class BreakInterrupt : Exception {}
+    public class BreakInterrupt : LoopInterrupt {}
 }

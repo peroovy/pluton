@@ -7,15 +7,19 @@ namespace Core.Syntax.AST.Expressions
 {
     public class FunctionCallExpression : Expression
     {
-        public FunctionCallExpression(SyntaxToken name, SyntaxToken openParenthesis, ImmutableArray<Expression> arguments, SyntaxToken closeParenthesis)
+        public FunctionCallExpression(
+            SyntaxToken identifier, 
+            SyntaxToken openParenthesis, 
+            ImmutableArray<Expression> arguments, 
+            SyntaxToken closeParenthesis)
         {
-            Name = name;
+            Identifier = identifier;
             OpenParenthesis = openParenthesis;
             Arguments = arguments;
             CloseParenthesis = closeParenthesis;
         }
         
-        public SyntaxToken Name { get; }
+        public SyntaxToken Identifier { get; }
         
         public SyntaxToken OpenParenthesis { get; }
         

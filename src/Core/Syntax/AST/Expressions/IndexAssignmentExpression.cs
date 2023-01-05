@@ -7,22 +7,22 @@ namespace Core.Syntax.AST.Expressions
     public class IndexAssignmentExpression : Expression
     {
         public IndexAssignmentExpression(
-            Expression expression, 
+            Expression indexedExpression, 
             SyntaxIndex index, 
-            SyntaxToken operatorToken, 
+            SyntaxToken equalsToken, 
             Expression value)
         {
-            Expression = expression;
+            IndexedExpression = indexedExpression;
             Index = index;
-            OperatorToken = operatorToken;
+            EqualsToken = equalsToken;
             Value = value;
         }
         
-        public Expression Expression { get; }
+        public Expression IndexedExpression { get; }
         
         public SyntaxIndex Index { get; }
         
-        public SyntaxToken OperatorToken { get; }
+        public SyntaxToken EqualsToken { get; }
 
         public Expression Value { get; }
 

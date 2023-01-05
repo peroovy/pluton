@@ -4,8 +4,8 @@ namespace Core.Execution.Operations.Unary
 {
     public class UnaryPlusOperation : UnaryOperation
     {
-        protected override string OperatorMethodName => "op_UnaryPlus";
+        protected override string MethodName => "op_UnaryPlus";
 
-        protected override TokenTypes Operator => TokenTypes.Plus;
+        public override TokenType Operator => TokenType.Plus;
     }
 }

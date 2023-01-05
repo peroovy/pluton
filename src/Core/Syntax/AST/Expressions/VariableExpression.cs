@@ -6,12 +6,12 @@ namespace Core.Syntax.AST.Expressions
 {
     public class VariableExpression : Expression
     {
-        public VariableExpression(SyntaxToken name)
+        public VariableExpression(SyntaxToken identifier)
         {
-            Name = name;
+            Identifier = identifier;
         }
         
-        public SyntaxToken Name { get; }
+        public SyntaxToken Identifier { get; }
 
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }

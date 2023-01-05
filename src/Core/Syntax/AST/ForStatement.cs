@@ -12,9 +12,9 @@ namespace Core.Syntax.AST
             SyntaxToken keyword, 
             SyntaxToken openParenthesis, 
             ImmutableArray<Expression> initializers,
-            SyntaxToken firstSectionSeparator,
+            SyntaxToken firstSemicolon,
             Expression condition,
-            SyntaxToken secondSectionSeparator,
+            SyntaxToken secondSemicolon,
             ImmutableArray<Expression> iterators,
             SyntaxToken closeParenthesis,
             Statement body)
@@ -22,9 +22,9 @@ namespace Core.Syntax.AST
             Keyword = keyword;
             OpenParenthesis = openParenthesis;
             Initializers = initializers;
-            FirstSectionSeparator = firstSectionSeparator;
+            FirstSemicolon = firstSemicolon;
             Condition = condition;
-            SecondSectionSeparator = secondSectionSeparator;
+            SecondSemicolon = secondSemicolon;
             Iterators = iterators;
             CloseParenthesis = closeParenthesis;
             Body = body;
@@ -36,11 +36,11 @@ namespace Core.Syntax.AST
         
         public ImmutableArray<Expression> Initializers { get; }
         
-        public SyntaxToken FirstSectionSeparator { get; }
+        public SyntaxToken FirstSemicolon { get; }
         
         public Expression Condition { get; }
         
-        public SyntaxToken SecondSectionSeparator { get; }
+        public SyntaxToken SecondSemicolon { get; }
         
         public ImmutableArray<Expression> Iterators { get; }
         

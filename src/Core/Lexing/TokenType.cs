@@ -1,6 +1,6 @@
 ﻿namespace Core.Lexing
 {
-    public enum TokenTypes
+    public enum TokenType
     {
         Unknown,
         

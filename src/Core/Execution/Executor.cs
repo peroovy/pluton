@@ -12,7 +12,6 @@ using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
 using Core.Utils.Diagnostic;
-using Core.Utils.Text;
 
 namespace Core.Execution
 {
@@ -20,7 +19,6 @@ namespace Core.Execution
     {
         private readonly BinaryOperation[] binaryOperations;
         private readonly UnaryOperation[] unaryOperations;
-        private readonly IDiagnosticBag diagnosticBag;
 
         private readonly Stack<Function> callStack = new();
         private readonly Stack<Statement> loopStack = new();
@@ -32,27 +30,35 @@ namespace Core.Execution
         public Executor(
             BinaryOperation[] binaryOperations, 
             UnaryOperation[] unaryOperations, 
-            BuiltinFunction[] builtinFunctions, 
-            IDiagnosticBag diagnosticBag)
+            BuiltinFunction[] builtinFunctions)
         {
             this.binaryOperations = binaryOperations;
             this.unaryOperations = unaryOperations;
-            this.diagnosticBag = diagnosticBag;
-
+            
             foreach (var function in builtinFunctions)
                 globalScope.Assign(function.Name, function);
 
             scope = globalScope;
         }
 
-        public Obj Execute(SyntaxTree tree)
+        public TranslationState<Obj> Execute(SyntaxTree tree)
         {
-            lastExpressionValue = null;
+            var diagnostic = new DiagnosticBag();
+            lastExpressionValue = new Null();
             
-            foreach (var member in tree.Members)
-                member.Accept(this);
-            
-            return lastExpressionValue;
+            try
+            {
+                foreach (var member in tree.Members)
+                    member.Accept(this);
+
+                return new TranslationState<Obj>(lastExpressionValue, diagnostic);
+            }
+            catch (RuntimeException exception)
+            {
+                diagnostic.AddError(exception.Location, exception.Message);
+                
+                return new TranslationState<Obj>(null, diagnostic);
+            }
         }
 
         public Obj Execute(FunctionDeclarationStatement statement)
@@ -68,12 +74,12 @@ namespace Core.Execution
                 .ToImmutableArray();
 
             var function = new Function(
-                statement.Name.Text,
+                statement.Identifier.Text,
                 positions,
                 defaults,
                 context =>
                 {
-                    var enumerator = statement.Body.Statements.GetEnumerator();
+                    var enumerator = statement.Block.Statements.GetEnumerator();
                     while (ReferenceEquals(context.Function, callStack.Peek()) && enumerator.MoveNext())
                         enumerator.Current.Accept(this);
                 },
@@ -87,44 +93,43 @@ namespace Core.Execution
 
         public Obj Execute(ReturnStatement statement)
         {
-            if (callStack.Count > 0)
+            if (callStack.Count == 0)
             {
-                var value = statement.Expression?.Accept(this) ?? new Null();
-
-                throw new ReturnInterrupt(value);
+                throw new RuntimeException(
+                    statement.Keyword.Location,
+                    "The return statement can be only into function block"
+                );
             }
-
-            diagnosticBag.AddError(statement.Keyword.Location, "The return statement can be only into function block");
-            
-            throw new RuntimeException();
+                
+            var value = statement.Expression?.Accept(this) ?? new Null();
+            throw new ReturnInterrupt(value);
         }
 
         public Obj Execute(BreakStatement statement)
         {
-            if (loopStack.Count > 0)
-                throw new BreakInterrupt();
-            
-            diagnosticBag.AddError(statement.Keyword.Location, "The break statement is only valid inside loop");
+            TryThrowLoopInterrupt(
+                new BreakInterrupt(),
+                statement.Keyword, 
+                "The break statement is only valid inside loop"
+            );
 
-            throw new RuntimeException();
+            return null;
         }
         
         public Obj Execute(ContinueStatement statement)
         {
-            if (loopStack.Count > 0) 
-                throw new ContinueInterrupt();
-            
-            diagnosticBag.AddError(statement.Keyword.Location, "The continue statement is only valid inside loop");
+            TryThrowLoopInterrupt(
+                new ContinueInterrupt(),
+                statement.Keyword,
+                "The continue statement is only valid inside loop"
+            );
 
-            throw new RuntimeException();
+            return null;
         }
 
         public Obj Execute(ForStatement statement)
         {
             loopStack.Push(statement);
-            
-            var previousScope = scope;
-            scope = new Scope(previousScope);
             
             foreach (var initializer in statement.Initializers)
                 initializer.Accept(this);
@@ -147,9 +152,8 @@ namespace Core.Execution
                     iterator.Accept(this);
             }
 
-            scope = previousScope;
-
             loopStack.Pop();
+            
             return null;
         }
 
@@ -181,7 +185,7 @@ namespace Core.Execution
         {
             if (statement.Condition.Accept(this).ToBoolean().Value)
             {
-                statement.Statement.Accept(this);
+                statement.ThenStatement.Accept(this);
             }
             else
             {
@@ -220,7 +224,7 @@ namespace Core.Execution
 
         public Obj Execute(VariableAssignmentExpression assignment)
         {
-            var name = assignment.Variable.Text;
+            var name = assignment.Identifier.Text;
             var value = assignment.Expression.Accept(this);
 
             if (!TryAssignUp(name, value))
@@ -232,16 +236,12 @@ namespace Core.Execution
         public Obj Execute(IndexAssignmentExpression assignment)
         {
             var errorLocation = GetLocationBetweenBrackets(assignment.Index.OpenBracket, assignment.Index.CloseBracket);
-            var obj = assignment.Expression.Accept(this);
+            var obj = assignment.IndexedExpression.Accept(this);
             
             if (obj is not IIndexSettable settable)
-            {
-                diagnosticBag.AddError(errorLocation, $"Type '{obj.TypeName}' is not settable by index");
+                throw new RuntimeException(errorLocation, $"Type '{obj.TypeName}' is not settable by index");
 
-                throw new RuntimeException();
-            }
-
-            var index = GetIndex(assignment.Index);
+            var index = GetIndexValue(assignment.Index);
             var value = assignment.Value.Accept(this);
 
             try
@@ -250,37 +250,29 @@ namespace Core.Execution
             }
             catch (IndexOutOfRangeException)
             {
-                diagnosticBag.AddError(errorLocation, "The index was outside the bounds of the list");
-
-                throw new RuntimeException();
+                throw new RuntimeException(errorLocation, "The index was outside the bounds of the collection");
             }
         }
 
         public Obj Execute(ParenthesizedExpression expression) => expression.InnerExpression.Accept(this);
 
-        public Obj Execute(IndexAccessExpression indexAccess)
+        public Obj Execute(IndexAccessExpression expression)
         {
-            var errorLocation = GetLocationBetweenBrackets(indexAccess.Index.OpenBracket, indexAccess.Index.CloseBracket);
-            var parent = indexAccess.ParentExpression.Accept(this);
+            var errorLocation = GetLocationBetweenBrackets(expression.Index.OpenBracket, expression.Index.CloseBracket);
+            var parent = expression.IndexedExpression.Accept(this);
 
             if (parent is not IIndexReadable readable)
-            {
-                diagnosticBag.AddError(errorLocation, $"Type '{parent.TypeName}' is not readable by index");
-
-                throw new RuntimeException();
-            }
-
-            var index = GetIndex(indexAccess.Index);
-
+                throw new RuntimeException(errorLocation, $"Type '{parent.TypeName}' is not readable by index");
+            
             try
             {
+                var index = GetIndexValue(expression.Index);
+
                 return readable[index];
             }
             catch (IndexOutOfRangeException)
             {
-                diagnosticBag.AddError(errorLocation, "The index was outside the bounds of the list");
-
-                throw new RuntimeException();
+                throw new RuntimeException(errorLocation, "The index was outside the bounds of the collection");
             }
         }
 
@@ -292,17 +284,15 @@ namespace Core.Execution
             var right = binary.Right.Accept(this);
             var method = binaryOperations
                 .Single(op => op.IsOperator(opToken.Type))
-                .GetMethod(left, right);
+                .FindMethod(left, right);
 
-            if (!method.IsUnknown) 
-                return method.Invoke(left, right);
+            if (method is not null) 
+                return method.Invoke();
 
-            diagnosticBag.AddError(
+            throw new RuntimeException(
                 opToken.Location,
                 $"The binary operator '{opToken.Text}' is not defined for '{left.TypeName}' and '{right.TypeName}' types"
             );
-
-            throw new RuntimeException();
         }
 
         public Obj Execute(UnaryExpression unary)
@@ -311,17 +301,15 @@ namespace Core.Execution
             var operand = unary.Operand.Accept(this);
             var method = unaryOperations
                 .Single(op => op.IsOperator(opToken.Type))
-                .GetMethod(operand);
+                .FindMethod(operand);
 
-            if (!method.IsUnknown) 
-                return method.Invoke(operand);
+            if (method is not null) 
+                return method.Invoke();
 
-            diagnosticBag.AddError(
+            throw new RuntimeException(
                 opToken.Location,
                 $"The unary operator '{opToken.Text}' is not defined for '{operand.TypeName}' type"
             );
-                
-            throw new RuntimeException();
         }
 
         public Obj Execute(NumberExpression number) => new Number(number.Value);
@@ -330,9 +318,9 @@ namespace Core.Execution
 
         public Obj Execute(StringExpression str) => new Objects.String(str.Value);
         
-        public Obj Execute(ListExpression list)
+        public Obj Execute(ArrayExpression array)
         {
-            var items = list.Items
+            var items = array.Items
                 .Select(expression => expression.Accept(this))
                 .ToImmutableArray();
 
@@ -343,33 +331,39 @@ namespace Core.Execution
 
         public Obj Execute(VariableExpression variable)
         {
-            var name = variable.Name;
+            var identifier = variable.Identifier;
             
-            if (scope.TryLookup(name.Text, out var value))
+            if (scope.TryLookup(identifier.Text, out var value))
                 return value;
 
-            diagnosticBag.AddError(name.Location, $"Variable '{name.Text}' does not exist");
-
-            throw new RuntimeException();
+            throw new RuntimeException(identifier.Location, $"Variable '{identifier.Text}' does not exist");
         }
 
         public Obj Execute(FunctionCallExpression expression)
         {
-            var name = expression.Name;
+            var identifier = expression.Identifier;
+            var argumentsCount = expression.Arguments.Length;
 
-            if (scope.TryLookup(name.Text, out var value) && value is Function function)
+            if (!scope.TryLookup(identifier.Text, out var value) || value is not Function function)
+                throw new RuntimeException(identifier.Location, $"Function '{identifier.Text}' does not exist");
+
+            var positionParametersCount = function.PositionParameters.Length;
+            var defaultParametersCount = function.DefaultParameters.Length;
+            
+            if (argumentsCount < positionParametersCount 
+                || argumentsCount > positionParametersCount + defaultParametersCount)
             {
-                var arguments = EvaluateArguments(expression, function);
-                
-                return CallFunction(function, arguments);
+                throw new RuntimeException(
+                    GetLocationBetweenBrackets(expression.OpenParenthesis, expression.CloseParenthesis),
+                    $"Function '{identifier.Text}' requires {positionParametersCount} arguments but was given {argumentsCount}"
+                );
             }
             
-            diagnosticBag.AddError(name.Location,$"Function '{name.Text}' does not exist");
-
-            throw new RuntimeException();
+            var arguments = EvaluateArguments(expression, function);
+            return InvokeFunction(function, arguments);
         }
 
-        private Obj CallFunction(Function function, ImmutableDictionary<string, Obj> arguments)
+        private Obj InvokeFunction(Function function, ImmutableDictionary<string, Obj> arguments)
         {
             callStack.Push(function);
 
@@ -382,7 +376,7 @@ namespace Core.Execution
             Obj returnedValue = new Null();
             try
             {
-                function.Call(new FunctionCallContext(function, scope));
+                function.Invoke(new FunctionCallContext(function, scope));
             }
             catch (ReturnInterrupt interrupt)
             {
@@ -397,58 +391,39 @@ namespace Core.Execution
 
         private ImmutableDictionary<string, Obj> EvaluateArguments(FunctionCallExpression expression, Function function)
         {
-            var evaluatedArguments = ImmutableDictionary.CreateBuilder<string, Obj>();
+            var result = ImmutableDictionary.CreateBuilder<string, Obj>();
             
             var arguments = expression.Arguments;
-            var positions = function.PositionParameters;
-            var defaults = function.DefaultParameters;
-
-            var expectedLength = positions.Length + defaults.Length;
-            if (!(arguments.Length >= positions.Length && arguments.Length <= expectedLength))
-            {
-                var errorLocation = GetLocationBetweenBrackets(expression.OpenParenthesis, expression.CloseParenthesis);
-                var name = expression.Name.Text;
-
-                diagnosticBag.AddError(
-                    errorLocation,
-                    $"Function '{name}' requires {expectedLength} arguments but was given {arguments.Length}"
-                );
-
-                throw new RuntimeException();
-            }
+            var positionParameters = function.PositionParameters;
+            var defaultParameters = function.DefaultParameters;
             
-            for (var i = 0; i < positions.Length; i++)
-                evaluatedArguments[positions[i]] = arguments[i].Accept(this);
+            for (var i = 0; i < positionParameters.Length; i++)
+                result[positionParameters[i]] = arguments[i].Accept(this);
 
-            for (var i = 0; i < arguments.Length - positions.Length; i++)
-                evaluatedArguments[defaults[i].name] = arguments[i + positions.Length].Accept(this);
+            for (var i = 0; i < arguments.Length - positionParameters.Length; i++)
+                result[defaultParameters[i].name] = arguments[i + positionParameters.Length].Accept(this);
 
-            for (var i = 0; i < positions.Length + defaults.Length - arguments.Length; i++)
+            for (var i = 0; i < positionParameters.Length + defaultParameters.Length - arguments.Length; i++)
             {
-                var offset = i + arguments.Length - positions.Length;
-                evaluatedArguments[defaults[offset].name] = defaults[offset].value;
+                var offset = i + arguments.Length - positionParameters.Length;
+                result[defaultParameters[offset].name] = defaultParameters[offset].value;
             }
 
-            return evaluatedArguments.ToImmutable();
+            return result.ToImmutable();
         }
 
-        private int GetIndex(SyntaxIndex syntaxIndex)
+        private int GetIndexValue(SyntaxIndex syntaxIndex)
         {
             var errorLocation = GetLocationBetweenBrackets(syntaxIndex.OpenBracket, syntaxIndex.CloseBracket);
-            var index = syntaxIndex.Index.Accept(this);
+            var index = syntaxIndex.Value.Accept(this);
             
             if (index is not Number number)
-            {
-                diagnosticBag.AddError(errorLocation, $"Expected number value but was '{index.TypeName}' type");
+                throw new RuntimeException(errorLocation, $"Expected number value but was '{index.TypeName}' type");
 
-                throw new RuntimeException();
-            }
-
-            if (number.IsInteger) 
-                return (int)number.Value;
+            if (!number.IsInteger)
+                throw new RuntimeException(errorLocation, "Expected integer value");
             
-            diagnosticBag.AddError(errorLocation, "Expected integer value");
-            throw new RuntimeException();
+            return (int)number.Value;
         }
 
         private bool TryAssignUp(string name, Obj value)
@@ -466,6 +441,14 @@ namespace Core.Execution
             } while (current is not null);
 
             return false;
+        }
+        
+        private void TryThrowLoopInterrupt(LoopInterrupt interrupt, SyntaxToken keyword, string errorMessage)
+        {
+            if (loopStack.Count > 0) 
+                throw interrupt;
+            
+            throw new RuntimeException(keyword.Location, errorMessage);
         }
 
         private static Location GetLocationBetweenBrackets(SyntaxToken open, SyntaxToken close)

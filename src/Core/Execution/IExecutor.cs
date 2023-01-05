@@ -6,7 +6,7 @@ namespace Core.Execution
 {
     public interface IExecutor
     {
-        Obj Execute(SyntaxTree tree);
+        TranslationState<Obj> Execute(SyntaxTree tree);
         
         Obj Execute(FunctionDeclarationStatement statement);
 
@@ -46,7 +46,7 @@ namespace Core.Execution
 
         Obj Execute(StringExpression str);
 
-        Obj Execute(ListExpression list);
+        Obj Execute(ArrayExpression array);
 
         Obj Execute(NullExpression expression);
 

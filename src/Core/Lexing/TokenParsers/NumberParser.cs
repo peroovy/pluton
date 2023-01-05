@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using Core.Utils.Text;
+using Core.Utils.Diagnostic;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -9,12 +9,10 @@ namespace Core.Lexing.TokenParsers
 
         public int Priority => 100;
         
-        public SyntaxToken TryParse(Line line, int position)
+        public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
         {
             var current = line[position];
-            var next = position + 1 < line.Length 
-                ? line[position + 1]
-                : '\0';
+            var next = position + 1 < line.Length ? line[position + 1] : '\0';
 
             if (!(char.IsDigit(current) || current == '.' && char.IsDigit(next)))
                 return null;
@@ -24,7 +22,7 @@ namespace Core.Lexing.TokenParsers
                 .ToString();
 
             var location = new Location(line, position, value.Length);
-            return new SyntaxToken(TokenTypes.Number, value, location);
+            return new SyntaxToken(TokenType.Number, value, location);
         }
     }
 }

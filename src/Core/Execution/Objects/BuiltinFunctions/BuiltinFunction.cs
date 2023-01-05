@@ -9,7 +9,7 @@ namespace Core.Execution.Objects.BuiltinFunctions
             string name, 
             ImmutableArray<string> positionParameters, 
             ImmutableArray<(string name, Obj value)> defaultParameters, 
-            Action<FunctionCallContext> call) : base(name, positionParameters, defaultParameters, call, isBuiltin: true)
+            Action<FunctionCallContext> invoke) : base(name, positionParameters, defaultParameters, invoke, isBuiltin: true)
         {
         }
     }

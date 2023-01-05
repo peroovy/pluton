@@ -6,16 +6,16 @@ namespace Core.Syntax.AST.Expressions
 {
     public class VariableAssignmentExpression : Expression
     {
-        public VariableAssignmentExpression(SyntaxToken variable, SyntaxToken operatorToken, Expression expression)
+        public VariableAssignmentExpression(SyntaxToken identifier, SyntaxToken equalsToken, Expression expression)
         {
-            Variable = variable;
-            OperatorToken = operatorToken;
+            Identifier = identifier;
+            EqualsToken = equalsToken;
             Expression = expression;
         }
         
-        public SyntaxToken Variable { get; }
+        public SyntaxToken Identifier { get; }
         
-        public SyntaxToken OperatorToken { get; }
+        public SyntaxToken EqualsToken { get; }
         
         public Expression Expression { get; }
 

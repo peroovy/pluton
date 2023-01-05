@@ -4,8 +4,10 @@ namespace Core.Execution.Operations.Binary
 {
     public class ModulusOperation : BinaryOperation
     {
-        protected override string OperatorMethodName => "op_Modulus";
+        public override TokenType Operator => TokenType.Percent;
 
-        protected override TokenTypes Operator => TokenTypes.Percent;
+        public override OperationPrecedence Precedence => OperationPrecedence.Multiplicative;
+        
+        protected override string MethodName => "op_Modulus";
     }
 }

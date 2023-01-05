@@ -5,7 +5,7 @@ namespace Core
 {
     public class TranslationState<T>
     {
-        public TranslationState(T result, IDiagnosticBag diagnostic)
+        public TranslationState(T result, DiagnosticBag diagnostic)
         {
             Result = result;
             Diagnostic = diagnostic;
@@ -13,7 +13,7 @@ namespace Core
         
         public T Result { get; }
         
-        public IDiagnosticBag Diagnostic { get; }
+        public DiagnosticBag Diagnostic { get; }
 
         public bool HasErrors => Diagnostic.Any(log => log.Level == Level.Error);
     }

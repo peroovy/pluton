@@ -8,23 +8,28 @@ namespace Core.Execution.Operations.Unary
 {
     public abstract class UnaryOperation
     {
-        protected abstract string OperatorMethodName { get; }
-        
-        protected abstract TokenTypes Operator { get; }
+        public abstract TokenType Operator { get; }
 
-        public bool IsOperator(TokenTypes operatorType) => operatorType == Operator;
+        public virtual OperationPrecedence Precedence => OperationPrecedence.Unary;
+
+        protected abstract string MethodName { get; }
         
-        public UnaryOperationMethod GetMethod(Obj operand)
+        public bool IsOperator(TokenType tokenType) => tokenType == Operator;
+        
+        public Func<Obj> FindMethod(Obj operand)
         {
             var type = operand.GetType();
-            var method = type.GetMethod(OperatorMethodName,
+            var method = type.GetMethod(MethodName,
                 BindingFlags.Public | BindingFlags.Static,
                 null,
                 new[] { type },
                 Array.Empty<ParameterModifier>()
             );
+
+            if (method is null)
+                return null;
             
-            return new UnaryOperationMethod(method);
+            return () => (Obj)method.Invoke(null, new object[] { operand });
         }
     }
 }
