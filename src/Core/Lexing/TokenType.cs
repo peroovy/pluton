@@ -48,6 +48,7 @@
         MinusEquals,
         StarEquals,
         SlashEquals,
+        PercentEquals,
         ExclamationMarkEquals,
         Percent,
 

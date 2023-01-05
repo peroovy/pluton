@@ -17,22 +17,20 @@ namespace Core.Syntax
     {
         private readonly Dictionary<TokenType, OperationPrecedence> binaryOperatorPrecedences;
         private readonly Dictionary<TokenType, OperationPrecedence> unaryOperatorPrecedences;
-        private readonly Dictionary<TokenType, TokenType> compoundOperators = new()
-        {
-            [TokenType.PlusEquals] = TokenType.Plus,
-            [TokenType.MinusEquals] = TokenType.Minus,
-            [TokenType.StarEquals] = TokenType.Star,
-            [TokenType.SlashEquals] = TokenType.Slash
-        };
+        private readonly Dictionary<TokenType, TokenType> compoundOperators;
 
         private ImmutableArray<SyntaxToken> tokens;
         private DiagnosticBag diagnostic;
         private int position;
 
-        public SyntaxParser(IEnumerable<BinaryOperation> binaryOperations, IEnumerable<UnaryOperation> unaryOperations)
+        public SyntaxParser(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations)
         {
             binaryOperatorPrecedences = binaryOperations
                 .ToDictionary(operation => operation.Operator, operation => operation.Precedence);
+
+            compoundOperators = binaryOperations
+                .Where(operation => operation.CompoundAssignmentOperator is not null)
+                .ToDictionary(operation => operation.CompoundAssignmentOperator.Value, operation => operation.Operator);
             
             unaryOperatorPrecedences = unaryOperations
                 .ToDictionary(operation => operation.Operator, operation => operation.Precedence);

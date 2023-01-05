@@ -6,6 +6,8 @@ namespace Core.Execution.Operations.Binary
     {
         public override TokenType Operator => TokenType.LeftArrowEquals;
 
+        public override TokenType? CompoundAssignmentOperator => null;
+
         public override OperationPrecedence Precedence => OperationPrecedence.Relational;
         
         protected override string MethodName => "op_LessThanOrEqual";

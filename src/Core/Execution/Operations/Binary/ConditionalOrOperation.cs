@@ -6,6 +6,8 @@ namespace Core.Execution.Operations.Binary
     {
         public override TokenType Operator => TokenType.OrKeyword;
 
+        public override TokenType? CompoundAssignmentOperator => null;
+
         public override OperationPrecedence Precedence => OperationPrecedence.ConditionalOr;
         
         protected override string MethodName => "op_BitwiseOr";

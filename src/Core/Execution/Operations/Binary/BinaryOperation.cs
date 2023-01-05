@@ -10,6 +10,8 @@ namespace Core.Execution.Operations.Binary
     {
         public abstract TokenType Operator { get; }
         
+        public abstract TokenType? CompoundAssignmentOperator { get; }
+        
         public abstract OperationPrecedence Precedence { get; }
         
         protected abstract string MethodName { get; }

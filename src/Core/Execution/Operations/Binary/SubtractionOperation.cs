@@ -6,6 +6,8 @@ namespace Core.Execution.Operations.Binary
     {
         public override TokenType Operator => TokenType.Minus;
 
+        public override TokenType? CompoundAssignmentOperator => TokenType.MinusEquals;
+
         public override OperationPrecedence Precedence => OperationPrecedence.Additive;
         
         protected override string MethodName => "op_Subtraction";

@@ -6,6 +6,8 @@ namespace Core.Execution.Operations.Binary
     {
         public override TokenType Operator => TokenType.Percent;
 
+        public override TokenType? CompoundAssignmentOperator => TokenType.PercentEquals;
+
         public override OperationPrecedence Precedence => OperationPrecedence.Multiplicative;
         
         protected override string MethodName => "op_Modulus";
