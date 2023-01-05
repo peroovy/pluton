@@ -1,4 +1,5 @@
-﻿using Core.Text;
+﻿using Core.Utils;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -11,8 +12,8 @@ namespace Core.Lexing.TokenParsers
             if (!char.IsWhiteSpace(line[position]))
                 return null;
             
-            var location = new TextLocation(line, position);
-            var value = string.Concat(line.Value.TakeWhileFrom(char.IsWhiteSpace, position));
+            var value = string.Concat(line.Value.TakeWhile(char.IsWhiteSpace, position));
+            var location = new Location(line, position, value.Length);
 
             return new SyntaxToken(TokenTypes.Space, value, location);
         }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Core.Text
+namespace Core.Utils.Text
 {
     public interface ITextParser
     {

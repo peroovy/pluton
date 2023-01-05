@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Core.Lexing;
+using Core.Utils.Text;
 
-namespace Core.Diagnostic
+namespace Core.Utils.Diagnostic
 {
     public class DiagnosticBag : IDiagnosticBag
     {
@@ -21,23 +21,12 @@ namespace Core.Diagnostic
 
         public bool IsEmpty => bucket.Count == 0;
 
-        public void AddError(TextLocation location, int length, string message) =>
-            bucket.Add(new Log(Level.Error, message, location, length));
+        public void AddError(Location location, string message) 
+            => bucket.Add(new Log(Level.Error, message, location));
 
         public void Clear() => bucket.Clear();
 
         public IDiagnosticBag Copy() => new DiagnosticBag(bucket.ToList());
-
-        public void Reset() => bucket.Clear();
-
-        public DiagnosticBag Concat(DiagnosticBag other)
-        {
-            var concatenatedBucket = bucket
-                .Concat(other.bucket)
-                .ToList();
-
-            return new DiagnosticBag(concatenatedBucket);
-        }
 
         public IEnumerator<Log> GetEnumerator() => bucket.GetEnumerator();
 

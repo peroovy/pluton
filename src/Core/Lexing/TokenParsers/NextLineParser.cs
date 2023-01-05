@@ -1,4 +1,6 @@
-﻿using Core.Text;
+﻿using System;
+using Core.Utils;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -8,17 +10,12 @@ namespace Core.Lexing.TokenParsers
         
         public SyntaxToken TryParse(Line line, int position)
         {
-            var r = line[position];
-            var n = position + 1 < line.Length ? line[position + 1] : '\0';
-            var location = new TextLocation(line, position); 
+            var newLine = string.Concat(line.Value.Take(position, 2));
+            var location = new Location(line, position, newLine.Length);
 
-            if (r == '\r' && n == '\n')
-                return new SyntaxToken(TokenTypes.NewLine, $"{r}{n}", location);
-
-            if (r == '\n')
-                return new SyntaxToken(TokenTypes.NewLine, r.ToString(), location);
-
-            return null;
+            return newLine == Environment.NewLine
+                ? new SyntaxToken(TokenTypes.NewLine, newLine, location) 
+                : null;
         }
     }
 }

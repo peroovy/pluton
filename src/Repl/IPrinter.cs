@@ -1,5 +1,5 @@
-﻿using Core.Diagnostic;
-using Core.Execution.Objects;
+﻿using Core.Execution.Objects;
+using Core.Utils.Diagnostic;
 
 namespace Repl;
 

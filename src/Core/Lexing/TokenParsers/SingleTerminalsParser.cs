@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Core.Text;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -34,8 +34,9 @@ namespace Core.Lexing.TokenParsers
                 return null;
             
             var terminal = line[position].ToString();
+            var location = new Location(line, position, terminal.Length);
             
-            return new SyntaxToken(type, terminal, new TextLocation(line, position));
+            return new SyntaxToken(type, terminal, location);
         }
     }
 }

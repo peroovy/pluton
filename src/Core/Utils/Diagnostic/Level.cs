@@ -1,4 +1,4 @@
-﻿namespace Core.Diagnostic
+﻿namespace Core.Utils.Diagnostic
 {
     public enum Level
     {

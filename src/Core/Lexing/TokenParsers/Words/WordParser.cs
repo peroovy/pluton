@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-using Core.Text;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers.Words
 {
@@ -20,8 +20,9 @@ namespace Core.Lexing.TokenParsers.Words
                 .ToString();
             
             var type = value.TryGetKeywordType() ?? TokenTypes.Identifier;
+            var location = new Location(line, position, value.Length);
 
-            return new SyntaxToken(type, value, new TextLocation(line, position));
+            return new SyntaxToken(type, value, location);
         }
     }
 }

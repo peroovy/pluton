@@ -1,9 +1,9 @@
-﻿using Core.Diagnostic;
-using Core.Lexing;
+﻿using Core.Lexing;
 using Core.Lexing.TokenParsers;
 using Core.Syntax;
 using Core.Syntax.AST;
-using Core.Text;
+using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 using Ninject;
 using Ninject.Extensions.Conventions;
 

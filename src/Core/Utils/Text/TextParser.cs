@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 
-namespace Core.Text
+namespace Core.Utils.Text
 {
     public class TextParser : ITextParser
     {

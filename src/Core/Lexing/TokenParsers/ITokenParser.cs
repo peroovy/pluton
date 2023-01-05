@@ -1,4 +1,4 @@
-﻿using Core.Text;
+﻿using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {

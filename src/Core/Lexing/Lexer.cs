@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Core.Diagnostic;
 using Core.Lexing.TokenParsers;
-using Core.Text;
+using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing
 {
@@ -41,7 +41,7 @@ namespace Core.Lexing
                         .FirstOrDefault(token => token is not null);
 
                     token ??= ParseUnknownToken(line, position);
-                    position += token.Length;
+                    position += token.Location.Length;
 
                     yield return token;
                 }
@@ -50,15 +50,13 @@ namespace Core.Lexing
 
         private SyntaxToken ParseUnknownToken(Line line, int position)
         {
-            var unknown = new SyntaxToken(
-                TokenTypes.Unknown,
-                line[position].ToString(),
-                new TextLocation(line, position)
-            );
+            var terminal = line[position].ToString();
+            var location = new Location(line, position, terminal.Length);
+            var token = new SyntaxToken(TokenTypes.Unknown, terminal, location);
                         
-            diagnosticBag.AddError(unknown.Location, unknown.Length, $"Unknown token: '{unknown.Text}'");
+            diagnosticBag.AddError(token.Location, $"Unknown token: '{token.Text}'");
 
-            return unknown;
+            return token;
         }
     }
 }

@@ -2,10 +2,10 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using Core.Diagnostic;
 using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
+using Core.Utils.Diagnostic;
 
 namespace Core.Syntax
 {
@@ -66,7 +66,7 @@ namespace Core.Syntax
             if (Current.Type == expected)
                 return NextToken();
 
-            diagnosticBag.AddError(Current.Location, Current.Length, $"Expected '{expected}'");
+            diagnosticBag.AddError(Current.Location, $"Expected '{expected}'");
             
             return new SyntaxToken(expected, null, Current.Location);
         }

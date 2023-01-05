@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using Core.Text;
+using Core.Utils.Text;
 
 namespace Core.Lexing
 {

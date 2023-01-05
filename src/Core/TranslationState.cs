@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Core.Diagnostic;
+using Core.Utils.Diagnostic;
 
 namespace Core
 {

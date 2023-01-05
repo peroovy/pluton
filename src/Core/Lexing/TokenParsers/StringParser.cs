@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
-using Core.Diagnostic;
-using Core.Text;
+using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -11,7 +11,6 @@ namespace Core.Lexing.TokenParsers
         private readonly IDiagnosticBag diagnosticBag;
         
         private const char Limiter = '"';
-        private const char EscapeCharacter = '\\';
 
         public StringParser(IDiagnosticBag diagnosticBag)
         {
@@ -27,26 +26,25 @@ namespace Core.Lexing.TokenParsers
             
             var str = line.Value;
 
-            var value = new StringBuilder();
+            var stringValue = new StringBuilder();
             for (var i = position + 1; i < str.Length && str[i] != Limiter; i++)
-                value.Append(str[i]);
+                stringValue.Append(str[i]);
             
-            var location = new TextLocation(line, position);
-            var endLimiterPosition = position + value.Length + 1;
-
+            var endLimiterPosition = position + stringValue.Length + 1;
             if (endLimiterPosition < str.Length && str[endLimiterPosition] == Limiter)
             {
-                var lengthWithLimiters = value.Length + 2;
-                var tokenValue = ConvertEscapedCharacters(value.ToString());
+                var lengthWithLimiters = stringValue.Length + 2;
+                var tokenValue = ConvertEscapedCharacters(stringValue.ToString());
+                var location = new Location(line, position, lengthWithLimiters);
                 
                 if (tokenValue is not null)
-                    return new SyntaxToken(TokenTypes.String, tokenValue, location, lengthWithLimiters);
+                    return new SyntaxToken(TokenTypes.String, tokenValue, location);
                 
-                diagnosticBag.AddError(location, lengthWithLimiters, "Unrecognized escape sequence");
+                diagnosticBag.AddError(location, "Unrecognized escape sequence");
                 return null;
             }
             
-            diagnosticBag.AddError(location, value.Length + 1, "Unterminated string literal");
+            diagnosticBag.AddError(new Location(line, position, stringValue.Length + 1), "Unterminated string literal");
             return null;
         }
 

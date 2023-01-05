@@ -1,16 +1,16 @@
-﻿namespace Core.Text
+﻿namespace Core.Utils.Text
 {
     public class Line
     {
-        public Line(int number, string value)
+        public Line(int index, string value)
         {
-            Number = number;
+            Index = index;
             Value = value;
         }
 
         public char this[int index] => Value[index];
         
-        public int Number { get; }
+        public int Index { get; }
         
         public string Value { get; }
 

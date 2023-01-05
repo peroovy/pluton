@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using Core.Text;
+using Core.Utils;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -21,10 +22,11 @@ namespace Core.Lexing.TokenParsers
         
         public SyntaxToken TryParse(Line line, int position)
         {
-            var terminal = string.Concat(line.Value.TakeFrom(position, 2));
+            var terminal = string.Concat(line.Value.Take(position, 2));
+            var location = new Location(line, position, terminal.Length);
 
             return terminalsTypes.TryGetValue(terminal, out var type) 
-                ? new SyntaxToken(type, terminal, new TextLocation(line, position)) 
+                ? new SyntaxToken(type, terminal, location) 
                 : null;
         }
     }

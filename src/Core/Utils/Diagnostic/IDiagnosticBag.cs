@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using Core.Lexing;
+using Core.Utils.Text;
 
-namespace Core.Diagnostic
+namespace Core.Utils.Diagnostic
 {
     public interface IDiagnosticBag : IEnumerable<Log>
     {
         bool IsEmpty { get; }
         
-        void AddError(TextLocation location, int length, string message);
+        void AddError(Location location, string message);
         
         void Clear();
         
