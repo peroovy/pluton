@@ -53,15 +53,23 @@ namespace Core.Syntax
                 .ToImmutableArray();
             
             var members = ImmutableArray.CreateBuilder<SyntaxNode>();
-            while (Current.Type != TokenType.Eof)
-            {
-                var startToken = Current;
-                
-                var member = ParseStatement();
-                members.Add(member);
 
-                if (Current == startToken)
-                    NextToken();
+            try
+            {
+                while (Current.Type != TokenType.Eof)
+                {
+                    var startToken = Current;
+                
+                    var member = ParseStatement();
+                    members.Add(member);
+
+                    if (Current == startToken)
+                        NextToken();
+                }
+            }
+            catch (InvalidSyntaxException exception)
+            {
+                diagnosticBag.AddError(exception.Location, exception.Message);
             }
 
             var syntaxTree = new SyntaxTree(members.ToImmutable());
@@ -91,9 +99,7 @@ namespace Core.Syntax
             if (Current.Type == expected)
                 return NextToken();
 
-            diagnosticBag.AddError(Current.Location, $"Expected '{expected}'");
-            
-            return new SyntaxToken(expected, null, Current.Location);
+            throw new InvalidSyntaxException(Current.Location, expected);
         }
 
         private Statement ParseStatement()
@@ -411,7 +417,8 @@ namespace Core.Syntax
                 TokenType.NullKeyword => ParseNullExpression(),
                 TokenType.Number => ParseNumberExpression(),
                 TokenType.String => ParseStringExpression(),
-                _ => ParseVariableExpression()
+                TokenType.Identifier => ParseVariableExpression(),
+                _ => throw new InvalidSyntaxException(Current.Location)
             };
 
             switch (Current.Type)
