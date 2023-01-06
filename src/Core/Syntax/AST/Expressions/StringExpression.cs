@@ -1,16 +1,15 @@
 ﻿using Core.Execution;
 using Core.Execution.Objects;
+using Core.Lexing;
+using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
-    public class StringExpression : Expression
+    public class StringExpression : LiteralExpression
     {
-        public StringExpression(string value)
+        public StringExpression(SourceText sourceText, SyntaxToken token) : base(sourceText, token)
         {
-            Value = value;
         }
-        
-        public string Value { get; }
 
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }

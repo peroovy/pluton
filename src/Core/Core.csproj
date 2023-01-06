@@ -91,6 +91,7 @@
         <Compile Include="Execution\RuntimeException.cs" />
         <Compile Include="Lexing\TokenParsers\Priority.cs" />
         <Compile Include="Lexing\TokenParsers\WordTerminalParser.cs" />
+        <Compile Include="Syntax\AST\Expressions\LiteralExpression.cs" />
         <Compile Include="TranslationState.cs" />
         <Compile Include="Interpreter.cs" />
         <Compile Include="Execution\Executor.cs" />
@@ -138,7 +139,7 @@
         <Compile Include="Syntax\AST\ElseClause.cs" />
         <Compile Include="Syntax\AST\ExpressionStatement.cs" />
         <Compile Include="Syntax\AST\Expressions\IndexAssignmentExpression.cs" />
-        <Compile Include="Syntax\AST\Expressions\SyntaxIndex.cs" />
+        <Compile Include="Syntax\AST\Expressions\Index.cs" />
         <Compile Include="Syntax\AST\Expressions\VariableAssignmentExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BinaryExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\BooleanExpression.cs" />
@@ -157,7 +158,7 @@
         <Compile Include="Syntax\AST\IfStatement.cs" />
         <Compile Include="Syntax\AST\ReturnStatement.cs" />
         <Compile Include="Syntax\AST\Statement.cs" />
-        <Compile Include="Syntax\AST\SyntaxDefaultParameter.cs" />
+        <Compile Include="Syntax\AST\DefaultParameter.cs" />
         <Compile Include="Syntax\AST\SyntaxNode.cs" />
         <Compile Include="Syntax\AST\SyntaxTree.cs" />
         <Compile Include="Syntax\AST\WhileStatement.cs" />

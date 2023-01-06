@@ -2,11 +2,12 @@
 {
     public class Line
     {
-        public Line(SourceText text, int start, int length)
+        public Line(SourceText text, int start, int length, int lineBreakLength)
         {
             Text = text;
             Start = start;
             Length = length;
+            LineBreakLength = lineBreakLength;
         }
 
         public SourceText Text { get; }
@@ -15,10 +16,12 @@
         
         public int Length { get; }
 
-        public string ToString(int start) => ToString().Substring(start);
+        public int LengthWithLineBreak => Length + LineBreakLength;
 
-        public string ToString(int start, int length) => ToString().Substring(start, length);
+        public int End => Start + Length;
 
-        public override string ToString() => Text.Value.Substring(Start, Length);
+        public int EndWithLineBreak => Start + LengthWithLineBreak;
+
+        public int LineBreakLength { get; }
     }
 }

@@ -12,6 +12,8 @@ namespace Core.Execution.Objects
         
         public double Value { get; }
 
+        public int AsInteger => (int)Value;
+
         public bool IsInteger => Math.Abs(Math.Round(Value) - Value) < double.Epsilon;
 
         public override string AsDebugString => ToString();

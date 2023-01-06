@@ -7,6 +7,7 @@ using Core.Lexing;
 using Core.Lexing.TokenParsers;
 using Core.Syntax;
 using Core.Syntax.AST;
+using Core.Utils.Text;
 using Ninject;
 using Ninject.Extensions.Conventions;
 
@@ -27,8 +28,9 @@ namespace Core
 
         public TranslationState<SyntaxTree> CompileBiteCode(string text)
         {
-            var lexing = lexer.Tokenize(text);
-            var parsing = parser.Parse(lexing.Result);
+            var sourceText = new SourceText(text);
+            var lexing = lexer.Tokenize(sourceText);
+            var parsing = parser.Parse(sourceText, lexing.Result);
 
             var diagnostics = lexing.DiagnosticBag.Concat(parsing.DiagnosticBag);
 

@@ -38,7 +38,11 @@ namespace Core.Utils.Text
 
             return left - 1;
         }
-        
+
+        public string ToString(int start) => Value.Substring(start);
+
+        public string ToString(int start, int length) => Value.Substring(start, length);
+
         private ImmutableArray<Line> ParseLines(string text)
         {
             var lineStart = 0;
@@ -54,7 +58,7 @@ namespace Core.Utils.Text
                     continue;
                 }
 
-                var line = new Line(this, lineStart, position - lineStart);
+                var line = new Line(this, lineStart, position - lineStart, lineBreakLength);
                 lines.Add(line);
 
                 lineStart = position += lineBreakLength;
@@ -62,7 +66,7 @@ namespace Core.Utils.Text
 
             if (position >= lineStart)
             {
-                var line = new Line(this, lineStart, position - lineStart);
+                var line = new Line(this, lineStart, position - lineStart, 0);
                 lines.Add(line);
             }
 

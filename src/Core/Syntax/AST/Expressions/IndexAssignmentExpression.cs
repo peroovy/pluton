@@ -1,16 +1,19 @@
-﻿using Core.Execution;
+﻿using System.Collections.Generic;
+using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
+using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class IndexAssignmentExpression : Expression
     {
         public IndexAssignmentExpression(
+            SourceText sourceText,
             Expression indexedExpression, 
-            SyntaxIndex index, 
+            Index index, 
             SyntaxToken equalsToken, 
-            Expression value)
+            Expression value) : base(sourceText)
         {
             IndexedExpression = indexedExpression;
             Index = index;
@@ -20,12 +23,20 @@ namespace Core.Syntax.AST.Expressions
         
         public Expression IndexedExpression { get; }
         
-        public SyntaxIndex Index { get; }
+        public Index Index { get; }
         
         public SyntaxToken EqualsToken { get; }
 
         public Expression Value { get; }
 
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        
+        public override IEnumerable<Location> GetChildrenLocations()
+        {
+            yield return IndexedExpression.Location;
+            yield return Index.Location;
+            yield return EqualsToken.Location;
+            yield return Value.Location;
+        }
     }
 }

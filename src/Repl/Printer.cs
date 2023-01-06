@@ -6,7 +6,7 @@ namespace Repl;
 
 public class Printer : IPrinter
 {
-    private static readonly string CodeIndent = new string(' ', 6);
+    private static readonly string CodeIndent = new(' ', 6);
 
     private const ConsoleColor ErrorFontColor = ConsoleColor.DarkRed;
 
@@ -41,27 +41,27 @@ public class Printer : IPrinter
     private static void PrintDiagnostic(Diagnostic diagnostic)
     {
         var sourceText = diagnostic.Location.SourceText;
-        var location = diagnostic.Location;
+        var diagnosticSpan = diagnostic.Location.Span;
 
-        var lineIndex = sourceText.GetLineIndex(location.Start);
+        var lineIndex = sourceText.GetLineIndex(diagnosticSpan.Start);
         var line = sourceText.Lines[lineIndex];
-        var characterIndex = location.Start - line.Start;
+        var characterIndexInLine = diagnosticSpan.Start - line.Start;
         var level = diagnostic.Level
             .ToString()
             .ToUpper();
-        var formattedMessage = $"{level}({lineIndex + 1}, {characterIndex}): {diagnostic.Message}";
+        var formattedMessage = $"{level}({lineIndex + 1}, {characterIndexInLine}): {diagnostic.Message}";
         
         Console.ForegroundColor = ErrorFontColor;
         Console.WriteLine(formattedMessage);
         
         Console.ResetColor();
         Console.Write(CodeIndent);
-        Console.Write(line.ToString(0, characterIndex));
+        Console.Write(sourceText.ToString(line.Start, diagnosticSpan.Start - line.Start));
 
         Console.BackgroundColor = ConsoleColor.DarkRed;
-        Console.Write(line.ToString(characterIndex, location.Length));
+        Console.Write(sourceText.ToString(diagnosticSpan.Start, diagnosticSpan.Length));
         
         Console.ResetColor();
-        Console.WriteLine(line.ToString(characterIndex + location.Length));
+        Console.WriteLine(sourceText.ToString(diagnosticSpan.End, line.End - diagnosticSpan.End + 1));
     }
 }

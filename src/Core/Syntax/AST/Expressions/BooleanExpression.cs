@@ -1,16 +1,15 @@
 ﻿using Core.Execution;
 using Core.Execution.Objects;
+using Core.Lexing;
+using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
-    public class BooleanExpression : Expression
+    public class BooleanExpression : LiteralExpression
     {
-        public BooleanExpression(bool value)
+        public BooleanExpression(SourceText sourceText, SyntaxToken token) : base(sourceText, token)
         {
-            Value = value;
         }
-        
-        public bool Value { get; }
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }

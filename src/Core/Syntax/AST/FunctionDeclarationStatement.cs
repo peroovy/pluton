@@ -1,21 +1,23 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Syntax.AST.Expressions;
+using Core.Utils.Text;
 
 namespace Core.Syntax.AST
 {
     public class FunctionDeclarationStatement : Statement
     {
         public FunctionDeclarationStatement(
+            SourceText sourceText,
             SyntaxToken keyword, 
             SyntaxToken identifier, 
             SyntaxToken openParenthesis, 
             ImmutableArray<SyntaxToken> positionParameters,
-            ImmutableArray<SyntaxDefaultParameter> defaultParameters,
+            ImmutableArray<DefaultParameter> defaultParameters,
             SyntaxToken closeParenthesis, 
-            BlockStatement block)
+            BlockStatement block) : base(sourceText)
         {
             Keyword = keyword;
             Identifier = identifier;
@@ -34,12 +36,28 @@ namespace Core.Syntax.AST
         
         public ImmutableArray<SyntaxToken> PositionParameters { get; }
         
-        public ImmutableArray<SyntaxDefaultParameter> DefaultParameters { get; }
+        public ImmutableArray<DefaultParameter> DefaultParameters { get; }
 
         public SyntaxToken CloseParenthesis { get; }
         
         public BlockStatement Block { get; }
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        
+        public override IEnumerable<Location> GetChildrenLocations()
+        {
+            yield return Keyword.Location;
+            yield return Identifier.Location;
+            yield return OpenParenthesis.Location;
+
+            foreach (var parameter in PositionParameters)
+                yield return parameter.Location;
+
+            foreach (var parameter in DefaultParameters)
+                yield return parameter.Location;
+
+            yield return CloseParenthesis.Location;
+            yield return Block.Location;
+        }
     }
 }

@@ -1,4 +1,11 @@
-﻿namespace Core.Syntax.AST.Expressions
+﻿using Core.Utils.Text;
+
+namespace Core.Syntax.AST.Expressions
 {
-    public abstract class Expression : SyntaxNode {}
+    public abstract class Expression : SyntaxNode
+    {
+        protected Expression(SourceText sourceText) : base(sourceText)
+        {
+        }
+    }
 }

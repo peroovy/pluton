@@ -5,17 +5,17 @@ using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
-    public class NextLineParser : ITokenParser
+    public class LineBreakParser : ITokenParser
     {
         public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(SourceText text, int position, DiagnosticBag diagnostic)
         {
-            var newLine = string.Concat(text.Value.Take(position, 2));
-            var location = new Location(text, position, newLine.Length);
+            var lineBreak = string.Concat(text.Value.Take(position, 2));
+            var location = new Location(text, position, lineBreak.Length);
 
-            return newLine == Environment.NewLine
-                ? new SyntaxToken(TokenType.LineBreak, newLine, location) 
+            return lineBreak == Environment.NewLine
+                ? new SyntaxToken(TokenType.LineBreak, lineBreak, location) 
                 : null;
         }
     }

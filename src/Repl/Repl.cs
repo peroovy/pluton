@@ -38,16 +38,12 @@ public class Repl
         while (true)
         {
             var text = EditSubmission();
-            Console.WriteLine();
             
-            if (IsCommand(text))
-            {
-                HandleCommand(text);
-            }
-            else
-            {
-                HandleSubmission(text);
-            }
+            if (!string.IsNullOrEmpty(text))
+                Console.WriteLine();
+            
+            if (IsCommand(text)) HandleCommand(text);
+            else HandleSubmission(text);
         }
     }
 

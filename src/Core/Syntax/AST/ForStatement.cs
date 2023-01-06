@@ -1,14 +1,17 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
 using Core.Syntax.AST.Expressions;
+using Core.Utils.Text;
 
 namespace Core.Syntax.AST
 {
     public class ForStatement : Statement
     {
         public ForStatement(
+            SourceText sourceText,
             SyntaxToken keyword, 
             SyntaxToken openParenthesis, 
             ImmutableArray<Expression> initializers,
@@ -17,7 +20,7 @@ namespace Core.Syntax.AST
             SyntaxToken secondSemicolon,
             ImmutableArray<Expression> iterators,
             SyntaxToken closeParenthesis,
-            Statement body)
+            Statement body) : base(sourceText)
         {
             Keyword = keyword;
             OpenParenthesis = openParenthesis;
@@ -49,5 +52,24 @@ namespace Core.Syntax.AST
         public Statement Body { get; }
 
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        
+        public override IEnumerable<Location> GetChildrenLocations()
+        {
+            yield return Keyword.Location;
+            yield return OpenParenthesis.Location;
+
+            foreach (var initializer in Initializers)
+                yield return initializer.Location;
+
+            yield return FirstSemicolon.Location;
+            yield return Condition.Location;
+            yield return SecondSemicolon.Location;
+
+            foreach (var iterator in Iterators)
+                yield return iterator.Location;
+
+            yield return CloseParenthesis.Location;
+            yield return Body.Location;
+        }
     }
 }

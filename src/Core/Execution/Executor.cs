@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Core.Execution.Interrupts;
 using Core.Execution.Objects;
@@ -90,6 +91,11 @@ namespace Core.Execution
             scope.Assign(function.Name, function);
 
             return null;
+        }
+
+        public Obj Execute(DefaultParameter parameter)
+        {
+            throw new NotImplementedException();
         }
 
         public Obj Execute(ReturnStatement statement)
@@ -236,22 +242,25 @@ namespace Core.Execution
 
         public Obj Execute(IndexAssignmentExpression assignment)
         {
-            var errorLocation = GetLocationBetweenBrackets(assignment.Index.OpenBracket, assignment.Index.CloseBracket);
-            var obj = assignment.IndexedExpression.Accept(this);
-            
-            if (obj is not IIndexSettable settable)
-                throw new RuntimeException(errorLocation, $"Type '{obj.TypeName}' is not settable by index");
+            var indexedExpression = assignment.IndexedExpression;
+            var obj = indexedExpression.Accept(this);
 
-            var index = GetIndexValue(assignment.Index);
+            if (obj is not IIndexSettable settable)
+                throw new RuntimeException(indexedExpression.Location, $"Type '{obj.TypeName}' is not settable by index");
+
+            var indexValue = (Number)assignment.Index.Accept(this);
             var value = assignment.Value.Accept(this);
 
             try
             {
-                return settable[index] = value;
+                return settable[indexValue.AsInteger] = value;
             }
             catch (IndexOutOfRangeException)
             {
-                throw new RuntimeException(errorLocation, "The index was outside the bounds of the collection");
+                var betweenBrackets = GetLocationBetweenBrackets(
+                    assignment.Index.OpenBracket, assignment.Index.CloseBracket
+                );
+                throw new RuntimeException(betweenBrackets, "The index was outside the bounds of the collection");
             }
         }
 
@@ -259,22 +268,38 @@ namespace Core.Execution
 
         public Obj Execute(IndexAccessExpression expression)
         {
-            var errorLocation = GetLocationBetweenBrackets(expression.Index.OpenBracket, expression.Index.CloseBracket);
-            var parent = expression.IndexedExpression.Accept(this);
+            var indexedExpression = expression.IndexedExpression;
+            var obj = indexedExpression.Accept(this);
 
-            if (parent is not IIndexReadable readable)
-                throw new RuntimeException(errorLocation, $"Type '{parent.TypeName}' is not readable by index");
-            
+            if (obj is not IIndexReadable readable)
+                throw new RuntimeException(indexedExpression.Location, $"Type '{obj.TypeName}' is not readable by index");
+
+            var indexValue = (Number)expression.Index.Accept(this);
             try
             {
-                var index = GetIndexValue(expression.Index);
-
-                return readable[index];
+                return readable[indexValue.AsInteger];
             }
             catch (IndexOutOfRangeException)
             {
-                throw new RuntimeException(errorLocation, "The index was outside the bounds of the collection");
+                var betweenBrackets = GetLocationBetweenBrackets(
+                    expression.Index.OpenBracket, expression.Index.CloseBracket
+                );
+                throw new RuntimeException(betweenBrackets, "The index was outside the bounds of the collection");
             }
+        }
+
+        public Obj Execute(Index index)
+        {
+            var expression = index.Expression;
+            var value = expression.Accept(this);
+            
+            if (value is not Number number)
+                throw new RuntimeException(expression.Location, $"Expected number value but was '{value.TypeName}' type");
+
+            if (!number.IsInteger)
+                throw new RuntimeException(expression.Location, "Expected integer value");
+            
+            return number;
         }
 
         public Obj Execute(BinaryExpression binary)
@@ -313,11 +338,26 @@ namespace Core.Execution
             );
         }
 
-        public Obj Execute(NumberExpression number) => new Number(number.Value);
+        public Obj Execute(NumberExpression number)
+        {
+            var value = Convert.ToDouble(number.Token.Text, CultureInfo.InvariantCulture);
 
-        public Obj Execute(BooleanExpression boolean) => new Objects.Boolean(boolean.Value);
+            return new Number(value);
+        }
 
-        public Obj Execute(StringExpression str) => new Objects.String(str.Value);
+        public Obj Execute(BooleanExpression boolean)
+        {
+            var value = boolean.Token.Type switch
+            {
+                TokenType.TrueKeyword => true,
+                TokenType.FalseKeyword => false,
+                _ => throw new ArgumentException($"Bad boolean token {boolean}")
+            };
+
+            return new Objects.Boolean(value);
+        }
+
+        public Obj Execute(StringExpression str) => new Objects.String(str.Token.Text);
         
         public Obj Execute(ArrayExpression array)
         {
@@ -332,7 +372,7 @@ namespace Core.Execution
 
         public Obj Execute(VariableExpression variable)
         {
-            var identifier = variable.Identifier;
+            var identifier = variable.Token;
             
             if (scope.TryLookup(identifier.Text, out var value))
                 return value;
@@ -342,14 +382,11 @@ namespace Core.Execution
 
         public Obj Execute(CallExpression expression)
         {
-            var obj = expression.CallableExpression.Accept(this);
+            var callableExpression = expression.CallableExpression;
+            var obj = callableExpression.Accept(this);
 
             if (obj is not ICallable callable)
-            {
-                var location = GetLocationBetweenBrackets(expression.OpenParenthesis, expression.CloseParenthesis);
-
-                throw new RuntimeException(location, $"'{obj.TypeName}' object is not callable");
-            }
+                throw new RuntimeException(callableExpression.Location, $"'{obj.TypeName}' object is not callable");
             
             var argumentsCount = expression.Arguments.Length;
             var positionParametersCount = callable.PositionParameters.Length;
@@ -360,7 +397,7 @@ namespace Core.Execution
             {
                 throw new RuntimeException(
                     GetLocationBetweenBrackets(expression.OpenParenthesis, expression.CloseParenthesis),
-                    $"Callable requires {positionParametersCount} position arguments but was given {argumentsCount}"
+                    $"Callable '{callableExpression}' requires {positionParametersCount} position arguments but was given {argumentsCount}"
                 );
             }
             
@@ -417,20 +454,6 @@ namespace Core.Execution
             return result.ToImmutable();
         }
 
-        private int GetIndexValue(SyntaxIndex syntaxIndex)
-        {
-            var errorLocation = GetLocationBetweenBrackets(syntaxIndex.OpenBracket, syntaxIndex.CloseBracket);
-            var index = syntaxIndex.Value.Accept(this);
-            
-            if (index is not Number number)
-                throw new RuntimeException(errorLocation, $"Expected number value but was '{index.TypeName}' type");
-
-            if (!number.IsInteger)
-                throw new RuntimeException(errorLocation, "Expected integer value");
-            
-            return (int)number.Value;
-        }
-
         private bool TryAssignUp(string name, Obj value)
         {
             var current = scope;
@@ -460,8 +483,8 @@ namespace Core.Execution
         {
             return new Location(
                 open.Location.SourceText,
-                open.Location.Start,
-                close.Location.Start - open.Location.Start + 1
+                open.Location.Span.Start,
+                close.Location.Span.Start - open.Location.Span.Start + 1
             );
         }
     }

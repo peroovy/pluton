@@ -18,11 +18,10 @@ namespace Core.Lexing
                 .ToImmutableArray();
         }
         
-        public TranslationState<ImmutableArray<SyntaxToken>> Tokenize(string text)
+        public TranslationState<ImmutableArray<SyntaxToken>> Tokenize(SourceText sourceText)
         {
             var tokens = ImmutableArray.CreateBuilder<SyntaxToken>();
             var diagnosticBag = new DiagnosticBag();
-            var sourceText = new SourceText(text);
 
             var position = 0;
             while (position < sourceText.Length)
@@ -32,7 +31,7 @@ namespace Core.Lexing
                     .FirstOrDefault(token => token is not null);
 
                 token ??= ParseUnknownToken(sourceText, position, diagnosticBag);
-                position += token.Location.Length;
+                position += token.Location.Span.Length;
 
                 tokens.Add(token);
             }

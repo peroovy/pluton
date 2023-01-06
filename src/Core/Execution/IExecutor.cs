@@ -9,6 +9,8 @@ namespace Core.Execution
         TranslationState<Obj> Execute(SyntaxTree tree);
         
         Obj Execute(FunctionDeclarationStatement statement);
+        
+        Obj Execute(DefaultParameter parameter);
 
         Obj Execute(ReturnStatement statement);
 
@@ -36,6 +38,8 @@ namespace Core.Execution
 
         Obj Execute(IndexAccessExpression expression);
         
+        Obj Execute(Index index);
+
         Obj Execute(BinaryExpression binary);
 
         Obj Execute(UnaryExpression unary);
