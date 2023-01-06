@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Core.Execution.Operations;
@@ -415,7 +416,7 @@ namespace Core.Syntax
 
         private Expression ParsePrimaryExpression()
         {
-            Expression primary = Current.Type switch
+            Expression primaryExpression = Current.Type switch
             {
                 TokenType.OpenParenthesis => ParseParenthesizedExpression(),
                 TokenType.OpenBracket => ParseArrayExpression(),
@@ -426,30 +427,30 @@ namespace Core.Syntax
                 TokenType.Identifier => ParseVariableExpression(),
                 _ => throw new InvalidSyntaxException(Current.Location)
             };
-
-            switch (Current.Type)
+            
+            while (Current.Type != TokenType.Eof)
             {
-                case TokenType.OpenBracket:
-                    return ContinueWithIndexAccessExpression(primary);
-                
-                case TokenType.OpenParenthesis:
-                    return ContinueWithCallExpression(primary);
+                var continuedExpression = Current.Type switch
+                {
+                    TokenType.OpenBracket => ContinueWithIndexAccessExpression(primaryExpression),
+                    TokenType.OpenParenthesis => ContinueWithCallExpression(primaryExpression),
+                    _ => null
+                };
+
+                if (continuedExpression is null)
+                    break;
+
+                primaryExpression = continuedExpression;
             }
 
-            return primary;
+            return primaryExpression;
         }
 
         private Expression ContinueWithIndexAccessExpression(Expression parent)
         {
-            do
-            {
-                var index = ParseSyntaxIndex();
+            var index = ParseSyntaxIndex();
 
-                parent = new IndexAccessExpression(sourceText, parent, index);
-                
-            } while (Current.Type == TokenType.OpenBracket);
-
-            return parent;
+            return new IndexAccessExpression(sourceText, parent, index);
         }
         
         private CallExpression ContinueWithCallExpression(Expression expression)
