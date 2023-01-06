@@ -10,19 +10,30 @@ namespace Core.Syntax.AST
     public class IfStatement : Statement
     {
         public IfStatement(
-            SourceText sourceText, SyntaxToken keyword, Expression condition, Statement thenStatement, ElseClause elseClause)
+            SourceText sourceText,
+            SyntaxToken keyword, 
+            SyntaxToken openParenthesis,
+            Expression condition, 
+            SyntaxToken closeParenthesis,
+            Statement thenStatement, ElseClause elseClause)
             : base(sourceText)
         {
             Keyword = keyword;
+            OpenParenthesis = openParenthesis;
             Condition = condition;
+            CloseParenthesis = closeParenthesis;
             ThenStatement = thenStatement;
             ElseClause = elseClause;
         }
         
         public SyntaxToken Keyword { get; }
         
+        public SyntaxToken OpenParenthesis { get; }
+
         public Expression Condition { get; }
         
+        public SyntaxToken CloseParenthesis { get; }
+
         public Statement ThenStatement { get; }
         
         public ElseClause ElseClause { get; }
@@ -32,7 +43,9 @@ namespace Core.Syntax.AST
         public override IEnumerable<Location> GetChildrenLocations()
         {
             yield return Keyword.Location;
+            yield return OpenParenthesis.Location;
             yield return Condition.Location;
+            yield return CloseParenthesis.Location;
             yield return ThenStatement.Location;
             yield return ElseClause.Location;
         }

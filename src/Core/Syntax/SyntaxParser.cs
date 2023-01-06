@@ -237,22 +237,28 @@ namespace Core.Syntax
         private WhileStatement ParseWhileStatement()
         {
             var keyword = MatchToken(TokenType.WhileKeyword);
+            var openParenthesis = MatchToken(TokenType.OpenParenthesis);
             var condition = ParseExpression();
+            var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
             var body = ParseStatement();
 
-            return new WhileStatement(sourceText, keyword, condition, body);
+            return new WhileStatement(sourceText, keyword, openParenthesis, condition, closeParenthesis, body);
         }
         
         private IfStatement ParseIfStatement()
         {
             var keyword = MatchToken(TokenType.IfKeyword);
+            var openParenthesis = MatchToken(TokenType.OpenParenthesis);
             var condition = ParseExpression();
+            var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
             var thenStatement = ParseStatement();
             var elseClause = Current.Type == TokenType.ElseKeyword
                 ? ParseElseClause()
                 : null;
 
-            return new IfStatement(sourceText, keyword, condition, thenStatement, elseClause);
+            return new IfStatement(
+                sourceText, keyword, openParenthesis, condition, closeParenthesis, thenStatement, elseClause
+            );
         }
 
         private ElseClause ParseElseClause()
