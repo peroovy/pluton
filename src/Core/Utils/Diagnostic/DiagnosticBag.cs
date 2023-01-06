@@ -1,28 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Utils.Text;
 
 namespace Core.Utils.Diagnostic
 {
-    public class DiagnosticBag : IEnumerable<Log>
+    public class DiagnosticBag : IEnumerable<Diagnostic>
     {
-        private readonly List<Log> bucket;
+        private readonly List<Diagnostic> bucket;
 
         public DiagnosticBag()
         {
-            bucket = new List<Log>();
+            bucket = new List<Diagnostic>();
         }
 
-        private DiagnosticBag(List<Log> bucket)
+        private DiagnosticBag(List<Diagnostic> bucket)
         {
             this.bucket = bucket;
         }
 
-        public bool IsEmpty => bucket.Count == 0;
-
-        public void AddError(Location location, string message) => bucket.Add(new Log(Level.Error, message, location));
-
-        public void Clear() => bucket.Clear();
+        public void AddError(Location location, string message) =>
+            bucket.Add(new Diagnostic(Level.Error, message, location));
 
         public DiagnosticBag Concat(DiagnosticBag other)
         {
@@ -33,7 +31,7 @@ namespace Core.Utils.Diagnostic
             return new DiagnosticBag(concatenatedBucket);
         }
 
-        public IEnumerator<Log> GetEnumerator() => bucket.GetEnumerator();
+        public IEnumerator<Diagnostic> GetEnumerator() => bucket.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

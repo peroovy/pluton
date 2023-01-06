@@ -5,16 +5,16 @@ namespace Core
 {
     public class TranslationState<T>
     {
-        public TranslationState(T result, DiagnosticBag diagnostic)
+        public TranslationState(T result, DiagnosticBag diagnosticBag)
         {
             Result = result;
-            Diagnostic = diagnostic;
+            DiagnosticBag = diagnosticBag;
         }
         
         public T Result { get; }
         
-        public DiagnosticBag Diagnostic { get; }
+        public DiagnosticBag DiagnosticBag { get; }
 
-        public bool HasErrors => Diagnostic.Any(log => log.Level == Level.Error);
+        public bool HasErrors => DiagnosticBag.Any(log => log.Level == Level.Error);
     }
 }

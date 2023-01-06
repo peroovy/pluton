@@ -7,7 +7,7 @@ public interface IPrinter
 {
     void PrintError(string message);
 
-    void PrintDiagnostic(DiagnosticBag diagnostic);
+    void PrintDiagnostic(DiagnosticBag diagnosticBag);
 
     void PrintResult(Obj value);
     

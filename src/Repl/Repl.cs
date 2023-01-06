@@ -74,11 +74,12 @@ public class Repl
     {
         var interpretation = interpreter.Execute(text);
 
-        printer.PrintBlankLine();
-        printer.PrintDiagnostic(interpretation.Diagnostic);
+        printer.PrintDiagnostic(interpretation.DiagnosticBag);
         
         if (!interpretation.HasErrors)
             printer.PrintResult(interpretation.Result);
+        
+        printer.PrintBlankLine();
     }
 
     private string EditSubmission()

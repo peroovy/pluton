@@ -1,8 +1,10 @@
-﻿namespace Core.Utils.Diagnostic
+﻿using Core.Utils.Text;
+
+namespace Core.Utils.Diagnostic
 {
-    public class Log
+    public class Diagnostic
     {
-        public Log(Level level, string message, Location location)
+        public Diagnostic(Level level, string message, Location location)
         {
             Level = level;
             Message = message;

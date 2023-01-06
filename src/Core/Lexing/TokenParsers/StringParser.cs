@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -11,23 +12,21 @@ namespace Core.Lexing.TokenParsers
 
         public Priority Priority => Priority.Low;
         
-        public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
+        public SyntaxToken TryParse(SourceText text, int position, DiagnosticBag diagnostic)
         {
-            if (line[position] != Quote)
+            if (text[position] != Quote)
                 return null;
             
-            var str = line.Value;
-
             var stringValue = new StringBuilder();
-            for (var i = position + 1; i < str.Length && str[i] != Quote; i++)
-                stringValue.Append(str[i]);
+            for (var i = position + 1; i < text.Length && text[i] != Quote; i++)
+                stringValue.Append(text[i]);
             
             var endLimiterPosition = position + stringValue.Length + 1;
-            if (endLimiterPosition < str.Length && str[endLimiterPosition] == Quote)
+            if (endLimiterPosition < text.Length && text[endLimiterPosition] == Quote)
             {
                 var lengthWithLimiters = stringValue.Length + 2;
                 var tokenValue = ConvertEscapedCharacters(stringValue.ToString());
-                var location = new Location(line, position, lengthWithLimiters);
+                var location = new Location(text, position, lengthWithLimiters);
                 
                 if (tokenValue is not null)
                     return new SyntaxToken(TokenType.String, tokenValue, location);
@@ -36,7 +35,8 @@ namespace Core.Lexing.TokenParsers
                 return null;
             }
 
-            diagnostic.AddError(new Location(line, position, stringValue.Length + 1), "Unterminated string literal");
+            diagnostic.AddError(new Location(text, position, stringValue.Length + 1), "Unterminated string literal");
+            
             return null;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Execution
 {

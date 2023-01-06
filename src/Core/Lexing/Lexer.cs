@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Core.Lexing.TokenParsers;
 using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing
 {
@@ -19,51 +20,35 @@ namespace Core.Lexing
         
         public TranslationState<ImmutableArray<SyntaxToken>> Tokenize(string text)
         {
-            var diagnostic = new DiagnosticBag();
             var tokens = ImmutableArray.CreateBuilder<SyntaxToken>();
-            
-            foreach (var line in GetLines(text))
+            var diagnosticBag = new DiagnosticBag();
+            var sourceText = new SourceText(text);
+
+            var position = 0;
+            while (position < sourceText.Length)
             {
-                var position = 0;
-                
-                while (position < line.Length)
-                {
-                    var token = tokenParsers
-                        .Select(parser => parser.TryParse(line, position, diagnostic))
-                        .FirstOrDefault(token => token is not null);
+                var token = tokenParsers
+                    .Select(parser => parser.TryParse(sourceText, position, diagnosticBag))
+                    .FirstOrDefault(token => token is not null);
 
-                    token ??= ParseUnknownToken(line, position, diagnostic);
-                    position += token.Location.Length;
+                token ??= ParseUnknownToken(sourceText, position, diagnosticBag);
+                position += token.Location.Length;
 
-                    tokens.Add(token);
-                }
+                tokens.Add(token);
             }
 
-            return new TranslationState<ImmutableArray<SyntaxToken>>(tokens.ToImmutable(), diagnostic);
+            return new TranslationState<ImmutableArray<SyntaxToken>>(tokens.ToImmutable(), diagnosticBag);
         }
 
-        private static SyntaxToken ParseUnknownToken(Line line, int position, DiagnosticBag diagnostic)
+        private static SyntaxToken ParseUnknownToken(SourceText text, int position, DiagnosticBag diagnostic)
         {
-            var terminal = line[position].ToString();
-            var location = new Location(line, position, terminal.Length);
-            var token = new SyntaxToken(TokenType.Unknown, terminal, location);
+            var character = text[position].ToString();
+            var location = new Location(text, position, character.Length);
+            var token = new SyntaxToken(TokenType.Unknown, character, location);
                         
             diagnostic.AddError(token.Location, $"Unknown token '{token.Text}'");
 
             return token;
-        }
-        
-        private static IEnumerable<Line> GetLines(string text)
-        {
-            var lines = text.Split('\n');
-
-            return lines
-                .Select((line, i) =>
-                {
-                    var endLine = i == lines.Length - 1 ? '\0' : '\n';
-
-                    return new Line(i, line + endLine);
-                });
         }
     }
 }

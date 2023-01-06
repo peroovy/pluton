@@ -1,4 +1,5 @@
 ﻿using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing
 {

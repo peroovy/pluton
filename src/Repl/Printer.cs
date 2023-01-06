@@ -6,7 +6,7 @@ namespace Repl;
 
 public class Printer : IPrinter
 {
-    private const int CodeIndent = 6;
+    private static readonly string CodeIndent = new string(' ', 6);
 
     private const ConsoleColor ErrorFontColor = ConsoleColor.DarkRed;
 
@@ -17,10 +17,10 @@ public class Printer : IPrinter
         Console.ResetColor();
     }
 
-    public void PrintDiagnostic(DiagnosticBag diagnostic)
+    public void PrintDiagnostic(DiagnosticBag diagnosticBag)
     {
-        foreach (var log in diagnostic)
-            PrintLog(log);
+        foreach (var diagnostic in diagnosticBag)
+            PrintDiagnostic(diagnostic);
     }
 
     public void PrintResult(Obj value)
@@ -38,35 +38,30 @@ public class Printer : IPrinter
         Console.WriteLine();
     }
 
-    private static void PrintLog(Log log)
+    private static void PrintDiagnostic(Diagnostic diagnostic)
     {
-        var formattedMessage = GetFormattedMessageFrom(log);
+        var sourceText = diagnostic.Location.SourceText;
+        var location = diagnostic.Location;
+
+        var lineIndex = sourceText.GetLineIndex(location.Start);
+        var line = sourceText.Lines[lineIndex];
+        var characterIndex = location.Start - line.Start;
+        var level = diagnostic.Level
+            .ToString()
+            .ToUpper();
+        var formattedMessage = $"{level}({lineIndex + 1}, {characterIndex}): {diagnostic.Message}";
         
-        var codeLine = log.Location.Line.Value;
-        var trimmedCode = codeLine.TrimStart();
-        var highlightStart = log.Location.Start - (codeLine.Length - trimmedCode.Length);
-            
         Console.ForegroundColor = ErrorFontColor;
         Console.WriteLine(formattedMessage);
         
         Console.ResetColor();
-        Console.Write(new string(' ', CodeIndent));
-        Console.Write(trimmedCode.Substring(0, highlightStart));
+        Console.Write(CodeIndent);
+        Console.Write(line.ToString(0, characterIndex));
 
         Console.BackgroundColor = ConsoleColor.DarkRed;
-        Console.Write(trimmedCode.Substring(highlightStart, log.Location.Length));
+        Console.Write(line.ToString(characterIndex, location.Length));
         
         Console.ResetColor();
-        Console.WriteLine(trimmedCode.Substring(highlightStart + log.Location.Length));
-    }
-
-    private static string GetFormattedMessageFrom(Log log)
-    {
-        var location = log.Location;
-        var level = log.Level
-            .ToString()
-            .ToUpper();
-        
-        return $"{level}({location.Line.Index + 1}, {location.Start}): {log.Message}";
+        Console.WriteLine(line.ToString(characterIndex + location.Length));
     }
 }

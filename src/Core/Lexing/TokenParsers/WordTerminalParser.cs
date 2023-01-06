@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -28,20 +29,20 @@ namespace Core.Lexing.TokenParsers
 
         public Priority Priority => Priority.Low;
         
-        public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
+        public SyntaxToken TryParse(SourceText text, int position, DiagnosticBag diagnostic)
         {
-            var sym = line[position];
+            var sym = text[position];
             if (!char.IsLetter(sym) && sym != '_')
                 return null;
             
             var value = regex
-                .Match(line.Value, position)
+                .Match(text.Value, position)
                 .ToString();
             
             var type = Keywords.TryGetValue(value, out var keywordType) 
                 ? keywordType
                 : TokenType.Identifier;
-            var location = new Location(line, position, value.Length);
+            var location = new Location(text, position, value.Length);
 
             return new SyntaxToken(type, value, location);
         }

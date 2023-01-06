@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -28,13 +29,13 @@ namespace Core.Lexing.TokenParsers
 
         public Priority Priority => Priority.Low;
         
-        public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
+        public SyntaxToken TryParse(SourceText text, int position, DiagnosticBag diagnostic)
         {
-            if (!terminalsTypes.TryGetValue(line[position], out var type))
+            if (!terminalsTypes.TryGetValue(text[position], out var type))
                 return null;
             
-            var terminal = line[position].ToString();
-            var location = new Location(line, position, terminal.Length);
+            var terminal = text[position].ToString();
+            var location = new Location(text, position, terminal.Length);
             
             return new SyntaxToken(type, terminal, location);
         }

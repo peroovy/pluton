@@ -20,7 +20,7 @@ namespace Core.Syntax
         private readonly Dictionary<TokenType, TokenType> compoundOperators;
 
         private ImmutableArray<SyntaxToken> tokens;
-        private DiagnosticBag diagnostic;
+        private DiagnosticBag diagnosticBag;
         private int position;
 
         public SyntaxParser(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations)
@@ -46,9 +46,9 @@ namespace Core.Syntax
         public TranslationState<SyntaxTree> Parse(IEnumerable<SyntaxToken> syntaxTokens)
         {
             position = 0;
-            diagnostic = new DiagnosticBag();
+            diagnosticBag = new DiagnosticBag();
             tokens = syntaxTokens
-                .Where(token => token.Type != TokenType.Space && token.Type != TokenType.NewLine)
+                .Where(token => token.Type != TokenType.Space && token.Type != TokenType.LineBreak)
                 .ToImmutableArray();
             
             var members = ImmutableArray.CreateBuilder<SyntaxNode>();
@@ -64,7 +64,7 @@ namespace Core.Syntax
             }
 
             var syntaxTree = new SyntaxTree(members.ToImmutable());
-            return new TranslationState<SyntaxTree>(syntaxTree, diagnostic);
+            return new TranslationState<SyntaxTree>(syntaxTree, diagnosticBag);
         }
         
         private SyntaxToken Peek(int offset)
@@ -90,7 +90,7 @@ namespace Core.Syntax
             if (Current.Type == expected)
                 return NextToken();
 
-            diagnostic.AddError(Current.Location, $"Expected '{expected}'");
+            diagnosticBag.AddError(Current.Location, $"Expected '{expected}'");
             
             return new SyntaxToken(expected, null, Current.Location);
         }

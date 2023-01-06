@@ -1,5 +1,6 @@
 ﻿using Core.Utils;
 using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -7,13 +8,13 @@ namespace Core.Lexing.TokenParsers
     {
         public Priority Priority => Priority.Low;
         
-        public SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic)
+        public SyntaxToken TryParse(SourceText text, int position, DiagnosticBag diagnostic)
         {
-            if (!char.IsWhiteSpace(line[position]))
+            if (!char.IsWhiteSpace(text[position]))
                 return null;
             
-            var value = string.Concat(line.Value.TakeWhile(char.IsWhiteSpace, position));
-            var location = new Location(line, position, value.Length);
+            var value = string.Concat(text.Value.TakeWhile(char.IsWhiteSpace, position));
+            var location = new Location(text, position, value.Length);
 
             return new SyntaxToken(TokenType.Space, value, location);
         }

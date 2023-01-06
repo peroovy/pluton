@@ -1,4 +1,5 @@
 ﻿using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Lexing.TokenParsers
 {
@@ -6,6 +7,6 @@ namespace Core.Lexing.TokenParsers
     {
         public Priority Priority { get; }
 
-        SyntaxToken TryParse(Line line, int position, DiagnosticBag diagnostic);
+        SyntaxToken TryParse(SourceText text, int position, DiagnosticBag diagnostic);
     }
 }

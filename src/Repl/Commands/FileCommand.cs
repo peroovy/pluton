@@ -32,7 +32,7 @@ public class FileCommand : ICommand
             var interpretation = interpreter.Execute(text);
             
             printer.PrintBlankLine();
-            printer.PrintDiagnostic(interpretation.Diagnostic);
+            printer.PrintDiagnostic(interpretation.DiagnosticBag);
         }
         catch (ArgumentException)
         {

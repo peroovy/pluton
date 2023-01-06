@@ -12,6 +12,7 @@ using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
 using Core.Utils.Diagnostic;
+using Core.Utils.Text;
 
 namespace Core.Execution
 {
@@ -43,7 +44,7 @@ namespace Core.Execution
 
         public TranslationState<Obj> Execute(SyntaxTree tree)
         {
-            var diagnostic = new DiagnosticBag();
+            var diagnosticBag = new DiagnosticBag();
             lastExpressionValue = new Null();
             
             try
@@ -51,13 +52,13 @@ namespace Core.Execution
                 foreach (var member in tree.Members)
                     member.Accept(this);
 
-                return new TranslationState<Obj>(lastExpressionValue, diagnostic);
+                return new TranslationState<Obj>(lastExpressionValue, diagnosticBag);
             }
             catch (RuntimeException exception)
             {
-                diagnostic.AddError(exception.Location, exception.Message);
+                diagnosticBag.AddError(exception.Location, exception.Message);
                 
-                return new TranslationState<Obj>(null, diagnostic);
+                return new TranslationState<Obj>(null, diagnosticBag);
             }
         }
 
@@ -458,7 +459,7 @@ namespace Core.Execution
         private static Location GetLocationBetweenBrackets(SyntaxToken open, SyntaxToken close)
         {
             return new Location(
-                open.Location.Line,
+                open.Location.SourceText,
                 open.Location.Start,
                 close.Location.Start - open.Location.Start + 1
             );

@@ -23,7 +23,7 @@
         ContinueKeyword,
         NotKeyword,
 
-        NewLine,
+        LineBreak,
         Space,
         Semicolon,
         Comma,

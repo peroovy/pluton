@@ -30,7 +30,7 @@ namespace Core
             var lexing = lexer.Tokenize(text);
             var parsing = parser.Parse(lexing.Result);
 
-            var diagnostics = lexing.Diagnostic.Concat(parsing.Diagnostic);
+            var diagnostics = lexing.DiagnosticBag.Concat(parsing.DiagnosticBag);
 
             return new TranslationState<SyntaxTree>(parsing.Result, diagnostics);
         }
@@ -39,10 +39,10 @@ namespace Core
         {
             var compilation = CompileBiteCode(text);
             if (compilation.HasErrors)
-                return new TranslationState<Obj>(null, compilation.Diagnostic);
+                return new TranslationState<Obj>(null, compilation.DiagnosticBag);
             
             var interpretation = executor.Execute(compilation.Result);
-            var diagnostics = compilation.Diagnostic.Concat(interpretation.Diagnostic);
+            var diagnostics = compilation.DiagnosticBag.Concat(interpretation.DiagnosticBag);
 
             return new TranslationState<Obj>(interpretation.Result, diagnostics);
         }

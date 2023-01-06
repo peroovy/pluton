@@ -43,7 +43,7 @@ def sort(array)
         element = array[i];
 
         if (element <= pivot) less += [element];
-        else greater += [element];
+        else greater += [element]
     }
 
     return sort(less) + [pivot] + sort(greater);

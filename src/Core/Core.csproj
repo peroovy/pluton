@@ -125,7 +125,7 @@
         <Compile Include="Lexing\SyntaxToken.cs" />
         <Compile Include="Lexing\TokenParsers\DoubleTerminalParser.cs" />
         <Compile Include="Lexing\TokenParsers\ITokenParser.cs" />
-        <Compile Include="Lexing\TokenParsers\NextLineParser.cs" />
+        <Compile Include="Lexing\TokenParsers\LineBreakParser.cs" />
         <Compile Include="Lexing\TokenParsers\NumberParser.cs" />
         <Compile Include="Lexing\TokenParsers\SingleTerminalParser.cs" />
         <Compile Include="Lexing\TokenParsers\StringParser.cs" />
@@ -165,10 +165,11 @@
         <Compile Include="Syntax\SyntaxParser.cs" />
         <Compile Include="Utils\Diagnostic\DiagnosticBag.cs" />
         <Compile Include="Utils\Diagnostic\Level.cs" />
-        <Compile Include="Utils\Diagnostic\Line.cs" />
-        <Compile Include="Utils\Diagnostic\Location.cs" />
-        <Compile Include="Utils\Diagnostic\Log.cs" />
+        <Compile Include="Utils\Diagnostic\Diagnostic.cs" />
         <Compile Include="Utils\StringExtensions.cs" />
+        <Compile Include="Utils\Text\Line.cs" />
+        <Compile Include="Utils\Text\Location.cs" />
+        <Compile Include="Utils\Text\SourceText.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="App.config" />
