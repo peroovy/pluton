@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Core.Execution;
 using Core.Execution.Objects;
+using Core.Lexing;
 using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
@@ -17,13 +18,11 @@ namespace Core.Syntax.AST.Expressions
         public Expression IndexedExpression { get; }
         
         public Index Index { get; }
+
+        public override SyntaxToken FirstChild => IndexedExpression.FirstChild;
+
+        public override SyntaxToken LastChild => Index.LastChild;
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
-        
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return IndexedExpression.Location;
-            yield return Index.Location;
-        }
     }
 }

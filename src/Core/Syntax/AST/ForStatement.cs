@@ -51,25 +51,10 @@ namespace Core.Syntax.AST
 
         public Statement Body { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => Keyword;
+
+        public override SyntaxToken LastChild => Body.LastChild;
         
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Keyword.Location;
-            yield return OpenParenthesis.Location;
-
-            foreach (var initializer in Initializers)
-                yield return initializer.Location;
-
-            yield return FirstSemicolon.Location;
-            yield return Condition.Location;
-            yield return SecondSemicolon.Location;
-
-            foreach (var iterator in Iterators)
-                yield return iterator.Location;
-
-            yield return CloseParenthesis.Location;
-            yield return Body.Location;
-        }
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

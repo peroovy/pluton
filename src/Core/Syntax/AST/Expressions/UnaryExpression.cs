@@ -18,13 +18,11 @@ namespace Core.Syntax.AST.Expressions
         public SyntaxToken OperatorToken { get; }
         
         public Expression Operand { get; }
+
+        public override SyntaxToken FirstChild => OperatorToken;
+
+        public override SyntaxToken LastChild => Operand.LastChild;
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
-        
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return OperatorToken.Location;
-            yield return Operand.Location;
-        }
     }
 }

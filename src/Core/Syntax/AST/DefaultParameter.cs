@@ -23,13 +23,10 @@ namespace Core.Syntax.AST
         
         public Expression Expression { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => Name;
 
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Name.Location;
-            yield return EqualsToken.Location;
-            yield return Expression.Location;
-        }
+        public override SyntaxToken LastChild => Expression.LastChild;
+        
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

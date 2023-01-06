@@ -22,14 +22,11 @@ namespace Core.Syntax.AST.Expressions
         public Expression InnerExpression { get; }
         
         public SyntaxToken CloseParenthesis { get; }
+
+        public override SyntaxToken FirstChild => OpenParenthesis;
+
+        public override SyntaxToken LastChild => CloseParenthesis;
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
-        
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return OpenParenthesis.Location;
-            yield return InnerExpression.Location;
-            yield return CloseParenthesis.Location;
-        }
     }
 }

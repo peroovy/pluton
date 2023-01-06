@@ -41,23 +41,11 @@ namespace Core.Syntax.AST
         public SyntaxToken CloseParenthesis { get; }
         
         public BlockStatement Block { get; }
+
+        public override SyntaxToken FirstChild => Keyword;
+
+        public override SyntaxToken LastChild => Block.LastChild;
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
-        
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Keyword.Location;
-            yield return Identifier.Location;
-            yield return OpenParenthesis.Location;
-
-            foreach (var parameter in PositionParameters)
-                yield return parameter.Location;
-
-            foreach (var parameter in DefaultParameters)
-                yield return parameter.Location;
-
-            yield return CloseParenthesis.Location;
-            yield return Block.Location;
-        }
     }
 }

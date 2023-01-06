@@ -22,17 +22,11 @@ namespace Core.Syntax.AST
         public Expression Expression { get; }
         
         public SyntaxToken Semicolon { get; }
+
+        public override SyntaxToken FirstChild => Keyword;
+
+        public override SyntaxToken LastChild => Semicolon;
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
-        
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Keyword.Location;
-            
-            if (Expression is not null)
-                yield return Expression.Location;
-            
-            yield return Semicolon.Location;
-        }
     }
 }

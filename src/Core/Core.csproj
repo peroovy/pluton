@@ -172,6 +172,7 @@
         <Compile Include="Utils\Text\Line.cs" />
         <Compile Include="Utils\Text\Location.cs" />
         <Compile Include="Utils\Text\SourceText.cs" />
+        <Compile Include="Utils\Text\TextSpan.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Include="App.config" />

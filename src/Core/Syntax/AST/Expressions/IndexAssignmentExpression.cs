@@ -29,14 +29,10 @@ namespace Core.Syntax.AST.Expressions
 
         public Expression Value { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => IndexedExpression.FirstChild;
+
+        public override SyntaxToken LastChild => Value.LastChild;
         
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return IndexedExpression.Location;
-            yield return Index.Location;
-            yield return EqualsToken.Location;
-            yield return Value.Location;
-        }
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

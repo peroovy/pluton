@@ -18,12 +18,10 @@ namespace Core.Syntax.AST
         
         public SyntaxToken Semicolon { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => Keyword;
+
+        public override SyntaxToken LastChild => Semicolon;
         
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Keyword.Location;
-            yield return Semicolon.Location;
-        }
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

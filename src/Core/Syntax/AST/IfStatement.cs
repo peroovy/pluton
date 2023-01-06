@@ -38,16 +38,10 @@ namespace Core.Syntax.AST
         
         public ElseClause ElseClause { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => Keyword;
+
+        public override SyntaxToken LastChild => ElseClause.LastChild;
         
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Keyword.Location;
-            yield return OpenParenthesis.Location;
-            yield return Condition.Location;
-            yield return CloseParenthesis.Location;
-            yield return ThenStatement.Location;
-            yield return ElseClause.Location;
-        }
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

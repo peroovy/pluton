@@ -22,13 +22,10 @@ namespace Core.Syntax.AST.Expressions
         
         public Expression Right { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => Left.FirstChild;
+
+        public override SyntaxToken LastChild => Right.LastChild;
         
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Left.Location;
-            yield return OperatorToken.Location;
-            yield return Right.Location;
-        }
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

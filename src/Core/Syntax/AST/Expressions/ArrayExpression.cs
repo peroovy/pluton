@@ -23,16 +23,10 @@ namespace Core.Syntax.AST.Expressions
         
         public SyntaxToken CloseBracket { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => OpenBracket;
         
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return OpenBracket.Location;
-
-            foreach (var item in Items)
-                yield return item.Location;
-
-            yield return CloseBracket.Location;
-        }
+        public override SyntaxToken LastChild => CloseBracket;
+        
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

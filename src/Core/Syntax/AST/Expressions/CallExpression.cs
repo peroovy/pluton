@@ -29,18 +29,11 @@ namespace Core.Syntax.AST.Expressions
         public ImmutableArray<Expression> Arguments { get; }
         
         public SyntaxToken CloseParenthesis { get; }
+
+        public override SyntaxToken FirstChild => CallableExpression.FirstChild;
+
+        public override SyntaxToken LastChild => CloseParenthesis;
         
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
-        
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return CallableExpression.Location;
-            yield return OpenParenthesis.Location;
-
-            foreach (var argument in Arguments)
-                yield return argument.Location;
-
-            yield return CloseParenthesis.Location;
-        }
     }
 }

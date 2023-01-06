@@ -10,12 +10,11 @@ namespace Core.Syntax.AST.Expressions
         {
             Token = token;
         }
-        
-        public SyntaxToken Token { get; }
 
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return Token.Location;
-        }
+        public override SyntaxToken FirstChild => Token;
+
+        public override SyntaxToken LastChild => Token;
+
+        public SyntaxToken Token { get; }
     }
 }

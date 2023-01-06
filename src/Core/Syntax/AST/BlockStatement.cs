@@ -24,16 +24,10 @@ namespace Core.Syntax.AST
         
         public SyntaxToken CloseBrace { get; }
 
-        public override Obj Accept(IExecutor executor) => executor.Execute(this);
+        public override SyntaxToken FirstChild => OpenBrace;
+
+        public override SyntaxToken LastChild => CloseBrace;
         
-        public override IEnumerable<Location> GetChildrenLocations()
-        {
-            yield return OpenBrace.Location;
-
-            foreach (var statement in Statements)
-                yield return statement.Location;
-
-            yield return CloseBrace.Location;
-        }
+        public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }
