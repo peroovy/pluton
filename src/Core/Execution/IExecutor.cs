@@ -10,8 +10,6 @@ namespace Core.Execution
         
         Obj Execute(FunctionDeclarationStatement statement);
         
-        Obj Execute(DefaultParameter parameter);
-
         Obj Execute(ReturnStatement statement);
 
         Obj Execute(BreakStatement statement);

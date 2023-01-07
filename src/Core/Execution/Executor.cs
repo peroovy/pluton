@@ -93,11 +93,6 @@ namespace Core.Execution
             return null;
         }
 
-        public Obj Execute(DefaultParameter parameter)
-        {
-            throw new NotImplementedException();
-        }
-
         public Obj Execute(ReturnStatement statement)
         {
             if (callStack.Count == 0)

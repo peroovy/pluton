@@ -170,7 +170,7 @@ namespace Core.Syntax
                 var equals = NextToken();
                 var expression = ParseBinaryExpression();
 
-                var parameter = new DefaultParameter(sourceText, name, equals, expression);
+                var parameter = new DefaultParameter(name, equals, expression);
                 parameters.Add(parameter);
                 
                 if (Current.Type != TokenType.Comma)
