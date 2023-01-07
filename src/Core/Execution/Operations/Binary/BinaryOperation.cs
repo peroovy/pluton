@@ -8,6 +8,8 @@ namespace Core.Execution.Operations.Binary
 {
     public abstract class BinaryOperation
     {
+        private static Type objType = typeof(Obj);
+        
         public abstract TokenType Operator { get; }
         
         public abstract TokenType? CompoundAssignmentOperator { get; }
@@ -20,18 +22,22 @@ namespace Core.Execution.Operations.Binary
         
         public Func<Obj> FindMethod(Obj left, Obj right)
         {
-            var leftType = left.GetType();
-            var method = leftType.GetMethod(MethodName,
-                BindingFlags.Public | BindingFlags.Static,
-                null,
-                new[] { leftType, right.GetType() },
-                Array.Empty<ParameterModifier>()
-            );
+            var method = FindMethod(left.GetType(), right.GetType()) ?? FindMethod(objType, objType);
 
             if (method is null)
                 return null;
 
             return () => (Obj)method.Invoke(null, new object[] { left, right });
+        }
+
+        private MethodInfo FindMethod(Type leftType, Type rightType)
+        {
+            return leftType.GetMethod(MethodName,
+                BindingFlags.Public | BindingFlags.Static,
+                null,
+                new[] { leftType, rightType },
+                Array.Empty<ParameterModifier>()
+            );
         }
     }
 }
