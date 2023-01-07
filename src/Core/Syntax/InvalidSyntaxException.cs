@@ -6,12 +6,17 @@ namespace Core.Syntax
 {
     public class InvalidSyntaxException : Exception
     {
+        public InvalidSyntaxException(Location location) : base("Invalid syntax")
+        {
+            Location = location;
+        }
+        
         public InvalidSyntaxException(Location location, TokenType expected) : base($"Expected '{expected}'")
         {
             Location = location;
         }
 
-        public InvalidSyntaxException(Location location) : base("Invalid syntax")
+        public InvalidSyntaxException(Location location, string message) : base(message)
         {
             Location = location;
         }

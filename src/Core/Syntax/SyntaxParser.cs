@@ -320,8 +320,7 @@ namespace Core.Syntax
             {
                 VariableExpression toVariable => ContinueWithCompoundVariableAssignmentExpression(toVariable),
                 IndexAccessExpression toIndex => ContinueWithCompoundIndexAssignmentExpression(toIndex),
-                _ => throw new NotSupportedException(
-                    $"Not possible to assign a value to '{to.GetType().Name}' expression")
+                _ => throw new InvalidSyntaxException(to.Location, "Cannot assign to the expression")
             };
         }
 
@@ -331,8 +330,7 @@ namespace Core.Syntax
             {
                 VariableExpression toVariable => ContinueWithVariableAssignmentExpression(toVariable),
                 IndexAccessExpression toIndex => ContinueWithIndexAssignmentExpression(toIndex),
-                _ => throw new NotSupportedException(
-                    $"Not possible to assign a value to '{to.GetType().Name}' expression")
+                _ => throw new InvalidSyntaxException(to.Location, "Cannot assign to the expression")
             };
         }
 
