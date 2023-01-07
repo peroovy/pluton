@@ -17,7 +17,7 @@ namespace Core.Syntax
     {
         private readonly Dictionary<TokenType, OperationPrecedence> binaryOperatorPrecedences;
         private readonly Dictionary<TokenType, OperationPrecedence> unaryOperatorPrecedences;
-        private readonly Dictionary<TokenType, TokenType> compoundOperators;
+        private readonly Dictionary<TokenType, TokenType> compoundAssignmentOperators;
 
         private ImmutableArray<SyntaxToken> tokens;
         private DiagnosticBag diagnosticBag;
@@ -29,7 +29,7 @@ namespace Core.Syntax
             binaryOperatorPrecedences = binaryOperations
                 .ToDictionary(operation => operation.Operator, operation => operation.Precedence);
 
-            compoundOperators = binaryOperations
+            compoundAssignmentOperators = binaryOperations
                 .Where(operation => operation.CompoundAssignmentOperator is not null)
                 .ToDictionary(operation => operation.CompoundAssignmentOperator.Value, operation => operation.Operator);
             
@@ -303,31 +303,47 @@ namespace Core.Syntax
         {
             var expression = ParseBinaryExpression();
 
-            if (compoundOperators.ContainsKey(Current.Type))
-            {
-                switch (expression)
-                {
-                    case VariableExpression variableExpression:
-                        return ContinueWithCompoundVariableAssignmentExpression(variableExpression);
-                        
-                    case IndexAccessExpression indexAccessExpression:
-                        return ContinueWithCompoundIndexAssignmentExpression(indexAccessExpression);
-                }
-            }
+            if (compoundAssignmentOperators.ContainsKey(Current.Type))
+                return ContinueWithCompoundAssignmentExpression(expression);
 
-            if (Current.Type == TokenType.Equals)
+            return Current.Type switch
             {
-                switch (expression)
-                {
-                    case VariableExpression variableExpression:
-                        return ContinueWithVariableAssignmentExpression(variableExpression);
-                        
-                    case IndexAccessExpression indexAccessExpression:
-                        return ContinueWithIndexAssignmentExpression(indexAccessExpression);
-                }
-            }
+                TokenType.Equals => ContinueWithAssignmentExpression(expression),
+                TokenType.QuestionMark => ContinueWithTernaryExpression(expression),
+                _ => ParseBinaryExpression(initializedLeft: expression)
+            };
+        }
 
-            return ParseBinaryExpression(initializedLeft: expression);
+        private Expression ContinueWithCompoundAssignmentExpression(Expression to)
+        {
+            return to switch
+            {
+                VariableExpression toVariable => ContinueWithCompoundVariableAssignmentExpression(toVariable),
+                IndexAccessExpression toIndex => ContinueWithCompoundIndexAssignmentExpression(toIndex),
+                _ => throw new NotSupportedException(
+                    $"Not possible to assign a value to '{to.GetType().Name}' expression")
+            };
+        }
+
+        private Expression ContinueWithAssignmentExpression(Expression to)
+        {
+            return to switch
+            {
+                VariableExpression toVariable => ContinueWithVariableAssignmentExpression(toVariable),
+                IndexAccessExpression toIndex => ContinueWithIndexAssignmentExpression(toIndex),
+                _ => throw new NotSupportedException(
+                    $"Not possible to assign a value to '{to.GetType().Name}' expression")
+            };
+        }
+
+        private TernaryExpression ContinueWithTernaryExpression(Expression condition)
+        {
+            var questionMark = MatchToken(TokenType.QuestionMark);
+            var thenExpression = ParseExpression();
+            var colon = MatchToken(TokenType.Colon);
+            var elseExpression = ParseExpression();
+
+            return new TernaryExpression(sourceText, condition, questionMark, thenExpression, colon, elseExpression);
         }
 
         private IndexAssignmentExpression ContinueWithIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
@@ -365,7 +381,7 @@ namespace Core.Syntax
         private (SyntaxToken compoundOperator, BinaryExpression expression) ContinueCompoundAssignmentExpression(Expression leftExpression)
         {
             var compoundOperator = NextToken();
-            var singleOperatorType = compoundOperators[compoundOperator.Type];
+            var singleOperatorType = compoundAssignmentOperators[compoundOperator.Type];
 
             var singleOperator = new SyntaxToken(singleOperatorType, compoundOperator.Text, compoundOperator.Location);
             var rightExpression = ParseExpression();

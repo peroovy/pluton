@@ -27,6 +27,8 @@
         Space,
         Semicolon,
         Comma,
+        QuestionMark,
+        Colon,
 
         Plus,
         Minus,

@@ -400,6 +400,13 @@ namespace Core.Execution
             return InvokeCallableObject(callable, arguments);
         }
 
+        public Obj Execute(TernaryExpression expression)
+        {
+            return expression.Condition.Accept(this).ToBoolean().Value
+                ? expression.ThenExpression.Accept(this)
+                : expression.ElseExpression.Accept(this);
+        }
+
         private Obj InvokeCallableObject(ICallable callable, ImmutableDictionary<string, Obj> arguments)
         {
             callStack.Push(callable);

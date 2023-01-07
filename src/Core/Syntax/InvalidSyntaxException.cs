@@ -6,8 +6,7 @@ namespace Core.Syntax
 {
     public class InvalidSyntaxException : Exception
     {
-        public InvalidSyntaxException(Location location, TokenType expected) 
-            : base($"Expected {expected}")
+        public InvalidSyntaxException(Location location, TokenType expected) : base($"Expected '{expected}'")
         {
             Location = location;
         }

@@ -55,5 +55,7 @@ namespace Core.Execution
         Obj Execute(VariableExpression variable);
 
         Obj Execute(CallExpression call);
+        
+        Obj Execute(TernaryExpression expression);
     }
 }

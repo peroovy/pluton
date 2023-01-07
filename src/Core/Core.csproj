@@ -92,6 +92,7 @@
         <Compile Include="Lexing\TokenParsers\Priority.cs" />
         <Compile Include="Lexing\TokenParsers\WordTerminalParser.cs" />
         <Compile Include="Syntax\AST\Expressions\LiteralExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\TernaryExpression.cs" />
         <Compile Include="Syntax\InvalidSyntaxException.cs" />
         <Compile Include="TranslationState.cs" />
         <Compile Include="Interpreter.cs" />
