@@ -1,4 +1,5 @@
 ﻿using System;
+using Repl.Utils;
 
 namespace Repl.KeyHandlers;
 
@@ -8,6 +9,6 @@ public class BackspaceHandler : IKeyHandler
     
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
-        submissionDocument.DeleteCharacter();
+        submissionDocument.Remove();
     }
 }

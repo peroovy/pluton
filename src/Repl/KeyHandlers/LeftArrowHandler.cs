@@ -1,4 +1,5 @@
 ﻿using System;
+using Repl.Utils;
 
 namespace Repl.KeyHandlers;
 
@@ -8,7 +9,6 @@ public class LeftArrowHandler : IKeyHandler
     
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
-        if (submissionDocument.CharacterLeftIndex > -1)
-            submissionDocument.CharacterLeftIndex--;
+        submissionDocument.MoveBack();
     }
 }

@@ -5,6 +5,7 @@ using Ninject;
 using Ninject.Extensions.Conventions;
 using Repl.Commands;
 using Repl.KeyHandlers;
+using Repl.Utils;
 
 namespace Repl;
 
@@ -15,6 +16,7 @@ public class Repl
     private readonly ICommand[] commands;
     private readonly IKeyHandler[] keyHandlers;
     private readonly IPrinter printer;
+    private readonly SubmissionHistory submissionHistory;
 
     private int cursorTop;
     private int lastRenderedLineCount;
@@ -25,13 +27,14 @@ public class Repl
     
     private const string CommandStart = "#";
 
-    private const int EndBlankLineCount = 3;
+    private const int BlankLineCountInEndSubmission = 3;
 
-    public Repl(ICommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer)
+    public Repl(ICommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer, SubmissionHistory submissionHistory)
     {
         this.commands = commands;
         this.keyHandlers = keyHandlers;
         this.printer = printer;
+        this.submissionHistory = submissionHistory;
     }
 
     public void Run()
@@ -87,8 +90,8 @@ public class Repl
         
         var submissionDocument = new SubmissionDocument();
         submissionDocument.OnChanged += Render;
-
-        submissionDocument.InsertEmptyLine();
+        
+        Render(submissionDocument);
         UpdateCursor(submissionDocument);
         
         while (true)
@@ -97,11 +100,17 @@ public class Repl
 
             if (info.Key == ConsoleKey.Enter)
             {
-                var text = string.Join(Environment.NewLine, submissionDocument);
-                if (IsCommand(text) || IsCompleteSubmission(text))
-                    return text;
+                if (IsCompleteSubmission(submissionDocument))
+                {
+                    submissionDocument.OnChanged -= Render;
                     
-                submissionDocument.InsertEmptyLine();
+                    if (!submissionDocument.IsEmpty)
+                        submissionHistory.Add(submissionDocument);
+                    
+                    return submissionDocument.ToString();
+                }
+                    
+                submissionDocument.AddNewLine();
             }
 
             var keyHandler = keyHandlers.FirstOrDefault(handler => handler.Key == info.Key);
@@ -118,22 +127,21 @@ public class Repl
         }
     }
     
-    private bool IsCompleteSubmission(string text)
+    private bool IsCompleteSubmission(SubmissionDocument document)
     {
-        if (string.IsNullOrEmpty(text))
+        if (document is null || document.IsEmpty)
             return true;
 
-        var lastLinesAreBlank = text
-            .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+        var lastLinesAreBlank = document
             .Reverse()
-            .TakeWhile(string.IsNullOrEmpty)
-            .Take(EndBlankLineCount)
-            .Count() == EndBlankLineCount;
+            .TakeWhile(SubmissionDocument.IsBlankLine)
+            .Take(BlankLineCountInEndSubmission)
+            .Count() == BlankLineCountInEndSubmission;
         
         if (lastLinesAreBlank)
             return true;
 
-        var compilation = interpreter.CompileBiteCode(text);
+        var compilation = interpreter.CompileBiteCode(document.ToString());
 
         return !compilation.HasErrors;
     }
@@ -177,8 +185,10 @@ public class Repl
 
     private void UpdateCursor(SubmissionDocument submissionDocument)
     {
-        Console.SetCursorPosition(PromptLength + submissionDocument.CharacterLeftIndex + 1,
-            cursorTop + submissionDocument.LineIndex);
+        Console.SetCursorPosition(
+            PromptLength + submissionDocument.CharacterIndex,
+            cursorTop + submissionDocument.LineIndex
+        );
     }
 
     public static Repl Create()
@@ -186,6 +196,7 @@ public class Repl
         var container = new StandardKernel();
 
         container.Bind<IPrinter>().To<Printer>().InSingletonScope();
+        container.Bind<SubmissionHistory>().ToSelf().InSingletonScope();
             
         container.Bind(conf => conf
             .FromThisAssembly()

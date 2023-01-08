@@ -1,4 +1,4 @@
-﻿namespace Repl;
+﻿namespace Repl.Utils;
 
 public static class StringExtensions
 {
