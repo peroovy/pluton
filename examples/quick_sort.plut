@@ -20,16 +20,6 @@ def split(string, separator=" ")
     return result;
 }
 
-def map(array, function)
-{
-    result = [];
-
-    for (i = 0; i < len(array); i += 1)
-        result += [function(array[i])];
-
-    return result;
-}
-
 def sort(array)
 {
     if (len(array) <= 1)
@@ -51,6 +41,6 @@ def sort(array)
 
 string = input("Enter elements separated by spaces: ");
 
-sorted = sort(map(split(string), num));
+sorted = sort(split(string));
 
 print("Sorted: " + str(sorted));
