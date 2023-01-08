@@ -98,44 +98,51 @@ public class Repl
             if (info.Key == ConsoleKey.Enter)
             {
                 if (IsCompleteSubmission(submissionDocument))
-                {
-                    submissionDocument.OnChanged -= Render;
-                    
-                    if (!submissionDocument.IsEmpty)
-                    {
-                        Console.SetCursorPosition(0, cursorTop + submissionDocument.LineCount);
-                        submissionHistory.Add(submissionDocument);
-                    }
-                        
-                    return submissionDocument.ToString();
-                }
+                    return HandleSubmissionComplete(submissionDocument);
                     
                 submissionDocument.AddNewLine();
             }
 
-            var keyHandler = keyHandlers.FirstOrDefault(handler =>
-            {
-                var result = handler.Key == info.Key;
-
-                if (handler.Modifiers != default)
-                    result = result && (handler.Modifiers & info.Modifiers) > 0;
-
-                return result;
-            });
-
-            if (keyHandler is not null)
-            {
-                keyHandler.Handle(info, submissionDocument);
-            }
-            else if (info.KeyChar >= ' ')
-            {
-                submissionDocument.Insert(info.KeyChar);
-            }
-            
+            HandleTyping(info, submissionDocument);
             UpdateCursor(submissionDocument);
         }
     }
-    
+
+    private string HandleSubmissionComplete(SubmissionDocument submissionDocument)
+    {
+        submissionDocument.OnChanged -= Render;
+
+        if (!submissionDocument.IsEmpty)
+        {
+            Console.SetCursorPosition(0, cursorTop + submissionDocument.LineCount);
+            submissionHistory.Add(submissionDocument);
+        }
+
+        return submissionDocument.ToString();
+    }
+
+    private void HandleTyping(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
+    {
+        var keyHandler = keyHandlers.FirstOrDefault(handler =>
+        {
+            var result = handler.Key == info.Key;
+
+            if (handler.Modifiers != default)
+                result = result && (handler.Modifiers & info.Modifiers) > 0;
+
+            return result;
+        });
+
+        if (keyHandler is not null)
+        {
+            keyHandler.Handle(info, submissionDocument);
+        }
+        else if (info.KeyChar >= ' ')
+        {
+            submissionDocument.Insert(info.KeyChar);
+        }
+    }
+
     private bool IsCompleteSubmission(SubmissionDocument document)
     {
         if (document is null || document.IsEmpty)
