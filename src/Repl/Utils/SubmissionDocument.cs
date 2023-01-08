@@ -127,7 +127,7 @@ public class SubmissionDocument : IEnumerable<string>
         OnChanged?.Invoke(this);
     }
 
-    public void Remove()
+    public void RemoveLeft()
     {
         if (CharacterIndex == 0)
         {
@@ -145,6 +145,26 @@ public class SubmissionDocument : IEnumerable<string>
         }
         
         lines[LineIndex] = lines[LineIndex].Remove(--CharacterIndex, 1);
+        
+        OnChanged?.Invoke(this);
+    }
+
+    public void RemoveRight()
+    {
+        if (CharacterIndex == CurrentLine.Length - 1)
+        {
+            if (LineIndex == lines.Count - 1)
+                return;
+
+            var movedLine = lines[LineIndex + 1];
+            lines.RemoveAt(LineIndex + 1);
+
+            lines[LineIndex] = CurrentLine.Substring(0, CurrentLine.Length - 1) + movedLine;
+        }
+        else
+        {
+            lines[LineIndex] = lines[LineIndex].Remove(CharacterIndex, 1);
+        }
         
         OnChanged?.Invoke(this);
     }

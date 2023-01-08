@@ -3,14 +3,14 @@ using Repl.Utils;
 
 namespace Repl.KeyHandlers;
 
-public class RemovingCharacterLeftHandler : IKeyHandler
+public class RemovingCharacterRightHandler : IKeyHandler
 {
-    public ConsoleKey Key => ConsoleKey.Backspace;
+    public ConsoleKey Key => ConsoleKey.Delete;
 
     public ConsoleModifiers Modifiers => default;
-
+    
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
-        submissionDocument.RemoveLeft();
+        submissionDocument.RemoveRight();
     }
 }

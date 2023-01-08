@@ -84,6 +84,7 @@
         <Compile Include="KeyHandlers\MovingNextSubmissionHistoryHandler.cs" />
         <Compile Include="KeyHandlers\MovingBackSubmissionHistoryHandler.cs" />
         <Compile Include="KeyHandlers\MovingRightCursorHandler.cs" />
+        <Compile Include="KeyHandlers\RemovingCharacterRightHandler.cs" />
         <Compile Include="KeyHandlers\TabulationHandler.cs" />
         <Compile Include="KeyHandlers\MovingUpCursorHandler.cs" />
         <Compile Include="Program.cs" />

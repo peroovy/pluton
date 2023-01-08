@@ -24,6 +24,7 @@ Enter to execute a submission.
 Arrows (↑ and ↓) to navigate within a multi-line submission.
 PageUp and PageDown to navigate through submission history.
 Backspace to remove the character on the left.
+Delete to remove the character on the right.
 Ctrl+Backspace to delete the entered submission.");
         
         Console.WriteLine();
