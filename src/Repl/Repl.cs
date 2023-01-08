@@ -25,7 +25,7 @@ public class Repl
     private const string ContinuePrompt = ".. ";
     private const int PromptLength = 3;
     
-    private const string CommandStart = "#";
+    private const string CommandFirstCharacter = "#";
 
     private const int BlankLineCountInEndSubmission = 3;
 
@@ -132,6 +132,11 @@ public class Repl
         if (document is null || document.IsEmpty)
             return true;
 
+        var text = document.ToString();
+        
+        if (IsCommand(text))
+            return true;
+
         var lastLinesAreBlank = document
             .Reverse()
             .TakeWhile(SubmissionDocument.IsBlankLine)
@@ -141,7 +146,7 @@ public class Repl
         if (lastLinesAreBlank)
             return true;
 
-        var compilation = interpreter.CompileBiteCode(document.ToString());
+        var compilation = interpreter.CompileBiteCode(text);
 
         return !compilation.HasErrors;
     }
@@ -213,5 +218,5 @@ public class Repl
         return container.Get<Repl>();
     }
     
-    private static bool IsCommand(string text) => text.StartsWith(CommandStart);
+    private static bool IsCommand(string text) => text.StartsWith(CommandFirstCharacter);
 }
