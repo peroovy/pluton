@@ -111,7 +111,16 @@ public class Repl
                 submissionDocument.AddNewLine();
             }
 
-            var keyHandler = keyHandlers.FirstOrDefault(handler => handler.Key == info.Key);
+            var keyHandler = keyHandlers.FirstOrDefault(handler =>
+            {
+                var result = handler.Key == info.Key;
+
+                if (handler.Modifiers != default)
+                    result = result && (handler.Modifiers & info.Modifiers) > 0;
+
+                return result;
+            });
+
             if (keyHandler is not null)
             {
                 keyHandler.Handle(info, submissionDocument);

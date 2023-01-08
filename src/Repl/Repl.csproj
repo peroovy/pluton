@@ -76,6 +76,7 @@
         <Compile Include="Commands\HelpCommand.cs" />
         <Compile Include="Commands\ICommand.cs" />
         <Compile Include="IPrinter.cs" />
+        <Compile Include="KeyHandlers\DeletingEnteredSubmissionHandler.cs" />
         <Compile Include="KeyHandlers\RemovingCharacterLeftHandler.cs" />
         <Compile Include="KeyHandlers\MovingDownCursorHandler.cs" />
         <Compile Include="KeyHandlers\IKeyHandler.cs" />

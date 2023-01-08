@@ -13,7 +13,9 @@ public class MovingBackSubmissionHistoryHandler : IKeyHandler
     }
     
     public ConsoleKey Key => ConsoleKey.PageUp;
-    
+
+    public ConsoleModifiers Modifiers => default;
+
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
         if (submissionHistory.IsEmpty)

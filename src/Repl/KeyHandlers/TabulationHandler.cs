@@ -9,6 +9,8 @@ public class TabulationHandler : IKeyHandler
 
     public ConsoleKey Key => ConsoleKey.Tab;
 
+    public ConsoleModifiers Modifiers => default;
+
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
         var tab = new string(' ', TabWidth);

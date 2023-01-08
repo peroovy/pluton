@@ -13,7 +13,9 @@ public class MovingNextSubmissionHistoryHandler : IKeyHandler
     }
     
     public ConsoleKey Key => ConsoleKey.PageDown;
-    
+
+    public ConsoleModifiers Modifiers => default;
+
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
         if (submissionHistory.IsEmpty)
