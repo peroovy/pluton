@@ -3,16 +3,16 @@ using Repl.Utils;
 
 namespace Repl.KeyHandlers;
 
-public class PageDownHandler : IKeyHandler
+public class MovingBackSubmissionHistoryHandler : IKeyHandler
 {
     private readonly SubmissionHistory submissionHistory;
 
-    public PageDownHandler(SubmissionHistory submissionHistory)
+    public MovingBackSubmissionHistoryHandler(SubmissionHistory submissionHistory)
     {
         this.submissionHistory = submissionHistory;
     }
     
-    public ConsoleKey Key => ConsoleKey.PageDown;
+    public ConsoleKey Key => ConsoleKey.PageUp;
     
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
@@ -21,6 +21,6 @@ public class PageDownHandler : IKeyHandler
         
         submissionDocument.Clear();
         submissionDocument.Insert(submissionHistory.Current);
-        submissionHistory.MoveNext();
+        submissionHistory.MoveBack();
     }
 }

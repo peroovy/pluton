@@ -3,12 +3,12 @@ using Repl.Utils;
 
 namespace Repl.KeyHandlers;
 
-public class LeftArrowHandler : IKeyHandler
+public class MovingRightCursorHandler : IKeyHandler
 {
-    public ConsoleKey Key => ConsoleKey.LeftArrow;
+    public ConsoleKey Key => ConsoleKey.RightArrow;
     
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
-        submissionDocument.MoveBack();
+        submissionDocument.MoveNext();
     }
 }

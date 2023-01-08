@@ -3,7 +3,7 @@ using Repl.Utils;
 
 namespace Repl.KeyHandlers;
 
-public class TabHandler : IKeyHandler
+public class TabulationHandler : IKeyHandler
 {
     private const int TabWidth = 4;
 

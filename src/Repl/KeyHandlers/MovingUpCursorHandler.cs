@@ -3,12 +3,12 @@ using Repl.Utils;
 
 namespace Repl.KeyHandlers;
 
-public class BackspaceHandler : IKeyHandler
+public class MovingUpCursorHandler : IKeyHandler
 {
-    public ConsoleKey Key => ConsoleKey.Backspace;
+    public ConsoleKey Key => ConsoleKey.UpArrow;
     
     public void Handle(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
     {
-        submissionDocument.Remove();
+        submissionDocument.MoveToPreviousLine();
     }
 }
