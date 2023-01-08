@@ -1,19 +1,17 @@
 ﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class TernaryExpression : Expression
     {
         public TernaryExpression(
-            SourceText sourceText, 
             Expression condition,
             SyntaxToken questionMark,
             Expression thenExpression,
             SyntaxToken colon,
-            Expression elseExpression) : base(sourceText)
+            Expression elseExpression)
         {
             Condition = condition;
             QuestionMark = questionMark;

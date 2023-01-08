@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
 using Core.Utils.Text;
@@ -8,7 +7,7 @@ namespace Core.Syntax.AST
 {
     public class ElseClause : Statement
     {
-        public ElseClause(SourceText sourceText, SyntaxToken keyword, Statement statement) : base(sourceText)
+        public ElseClause(SyntaxToken keyword, Statement statement)
         {
             Keyword = keyword;
             Statement = statement;

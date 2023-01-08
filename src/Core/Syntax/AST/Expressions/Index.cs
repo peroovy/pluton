@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class Index : SyntaxNode
     {
-        public Index(SourceText sourceText, SyntaxToken openBracket, Expression expression, SyntaxToken closeBracket)
-            : base(sourceText)
+        public Index(SyntaxToken openBracket, Expression expression, SyntaxToken closeBracket)
         {
             OpenBracket = openBracket;
             Expression = expression;

@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST
 {
     public class BreakStatement : Statement
     {
-        public BreakStatement(SourceText sourceText, SyntaxToken keyword, SyntaxToken semicolon) : base(sourceText)
+        public BreakStatement(SyntaxToken keyword, SyntaxToken semicolon)
         {
             Keyword = keyword;
             Semicolon = semicolon;

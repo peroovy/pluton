@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class IndexAssignmentExpression : Expression
     {
         public IndexAssignmentExpression(
-            SourceText sourceText,
             Expression indexedExpression, 
             Index index, 
             SyntaxToken equalsToken, 
-            Expression value) : base(sourceText)
+            Expression value)
         {
             IndexedExpression = indexedExpression;
             Index = index;

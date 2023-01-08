@@ -1,16 +1,12 @@
-using System.Collections.Generic;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class VariableAssignmentExpression : Expression
     {
-        public VariableAssignmentExpression(
-            SourceText sourceText, SyntaxToken identifier, SyntaxToken equalsToken, Expression expression)
-            : base(sourceText)
+        public VariableAssignmentExpression(SyntaxToken identifier, SyntaxToken equalsToken, Expression expression)
         {
             Identifier = identifier;
             EqualsToken = equalsToken;
