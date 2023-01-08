@@ -14,7 +14,9 @@ public class FileCommand : ICommand
     }
     
     public string Name => "file";
-    
+
+    public string Description => "Execute a program from a file";
+
     public void Execute(string[] args)
     {
         if (args.Length == 0)

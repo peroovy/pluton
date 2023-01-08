@@ -3,6 +3,7 @@ using System.Linq;
 using Core;
 using Ninject;
 using Ninject.Extensions.Conventions;
+using Repl.Commands;
 using Repl.KeyHandlers;
 
 namespace Repl;
@@ -35,6 +36,8 @@ public class Repl
 
     public void Run()
     {
+        printer.PrintWelcome();
+        
         while (true)
         {
             var text = EditSubmission();

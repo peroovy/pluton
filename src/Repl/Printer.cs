@@ -38,6 +38,12 @@ public class Printer : IPrinter
         Console.WriteLine();
     }
 
+    public void PrintWelcome()
+    {
+        Console.WriteLine(@"Pluton REPL
+Type ""#help"" for more information");
+    }
+
     private static void PrintDiagnostic(Diagnostic diagnostic)
     {
         var sourceText = diagnostic.Location.SourceText;

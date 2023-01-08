@@ -12,4 +12,6 @@ public interface IPrinter
     void PrintResult(Obj value);
     
     void PrintBlankLine();
+    
+    void PrintWelcome();
 }
