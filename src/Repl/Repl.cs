@@ -100,11 +100,13 @@ public class Repl
                 if (IsCompleteSubmission(submissionDocument))
                 {
                     submissionDocument.OnChanged -= Render;
-                    Console.SetCursorPosition(0, cursorTop + submissionDocument.LineCount);
                     
                     if (!submissionDocument.IsEmpty)
+                    {
+                        Console.SetCursorPosition(0, cursorTop + submissionDocument.LineCount);
                         submissionHistory.Add(submissionDocument);
-                    
+                    }
+                        
                     return submissionDocument.ToString();
                 }
                     
