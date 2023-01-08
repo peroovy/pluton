@@ -45,9 +45,6 @@ public class Repl
         {
             var text = EditSubmission();
             
-            if (!string.IsNullOrEmpty(text))
-                Console.WriteLine();
-            
             if (IsCommand(text)) HandleCommand(text);
             else HandleSubmission(text);
         }
@@ -103,6 +100,7 @@ public class Repl
                 if (IsCompleteSubmission(submissionDocument))
                 {
                     submissionDocument.OnChanged -= Render;
+                    Console.SetCursorPosition(0, cursorTop + submissionDocument.LineCount);
                     
                     if (!submissionDocument.IsEmpty)
                         submissionHistory.Add(submissionDocument);

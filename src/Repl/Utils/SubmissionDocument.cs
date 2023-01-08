@@ -17,10 +17,12 @@ public class SubmissionDocument : IEnumerable<string>
     
     public int CharacterIndex { get; private set; }
 
+    public int LineCount => lines.Count;
+
     public bool IsEmpty => lines.Count == 1 && IsBlankLine(lines[0]);
     
     private string CurrentLine => lines[LineIndex];
-
+    
     public override string ToString()
     {
         return string.Join(Environment.NewLine, lines.Select(line => line.Substring(0, line.Length - 1)));
