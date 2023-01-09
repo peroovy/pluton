@@ -1,0 +1,46 @@
+
+def split(string, separator=" ")
+{
+    result = [];
+
+    element = "";
+    for (i = 0; i < len(string); i += 1)
+    {
+        if (string[i] != separator) element += string[i];
+        else
+        {
+            result += [element];
+            element = "";
+        }
+    }
+
+    if (len(element) > 0)
+        result += [element];
+
+    return result;
+}
+
+def sort(array)
+{
+    if (len(array) <= 1)
+        return array;
+
+    pivot = array[0];
+    less = greater = [];
+
+    for (i = 1; i < len(array); i += 1)
+    {
+        element = array[i];
+
+        if (element <= pivot) less += [element];
+        else greater += [element];
+    }
+
+    return sort(less) + [pivot] + sort(greater);
+}
+
+string = input("Enter elements separated by spaces: ");
+
+sorted = sort(split(string));
+
+print("Sorted: " + str(sorted));
