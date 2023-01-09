@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Repl.Commands;
+namespace Repl.MetaCommands;
 
-public class ClearCommand : ICommand
+public class ClearCommand : IMetaCommand
 {
     public string Name => "cls";
 

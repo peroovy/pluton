@@ -1,6 +1,6 @@
-﻿namespace Repl.Commands;
+﻿namespace Repl.MetaCommands;
 
-public interface ICommand
+public interface IMetaCommand
 {
     string Name { get; }
     

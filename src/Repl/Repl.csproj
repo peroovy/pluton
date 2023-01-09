@@ -70,11 +70,11 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Commands\ClearCommand.cs" />
-        <Compile Include="Commands\ExitCommand.cs" />
-        <Compile Include="Commands\FileCommand.cs" />
-        <Compile Include="Commands\HelpCommand.cs" />
-        <Compile Include="Commands\ICommand.cs" />
+        <Compile Include="MetaCommands\ClearCommand.cs" />
+        <Compile Include="MetaCommands\ExitCommand.cs" />
+        <Compile Include="MetaCommands\FileCommand.cs" />
+        <Compile Include="MetaCommands\HelpCommand.cs" />
+        <Compile Include="MetaCommands\IMetaCommand.cs" />
         <Compile Include="IPrinter.cs" />
         <Compile Include="KeyHandlers\DeletingEnteredSubmissionHandler.cs" />
         <Compile Include="KeyHandlers\RemovingCharacterLeftHandler.cs" />

@@ -1,13 +1,13 @@
 ﻿using System;
 using Repl.Utils;
 
-namespace Repl.Commands;
+namespace Repl.MetaCommands;
 
-public class HelpCommand : ICommand
+public class HelpCommand : IMetaCommand
 {
-    private readonly Lazy<ICommand[]> commands;
+    private readonly Lazy<IMetaCommand[]> commands;
 
-    public HelpCommand(Lazy<ICommand[]> commands)
+    public HelpCommand(Lazy<IMetaCommand[]> commands)
     {
         this.commands = commands;
     }

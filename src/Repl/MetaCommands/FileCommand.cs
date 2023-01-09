@@ -2,9 +2,9 @@
 using System.IO;
 using Core;
 
-namespace Repl.Commands;
+namespace Repl.MetaCommands;
 
-public class FileCommand : ICommand
+public class FileCommand : IMetaCommand
 {
     private readonly IPrinter printer;
 

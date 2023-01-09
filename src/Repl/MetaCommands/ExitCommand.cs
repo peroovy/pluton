@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Repl.Commands;
+namespace Repl.MetaCommands;
 
-public class ExitCommand : ICommand
+public class ExitCommand : IMetaCommand
 {
     public string Name => "exit";
 

@@ -3,7 +3,7 @@ using System.Linq;
 using Core;
 using Ninject;
 using Ninject.Extensions.Conventions;
-using Repl.Commands;
+using Repl.MetaCommands;
 using Repl.KeyHandlers;
 using Repl.Utils;
 
@@ -13,7 +13,7 @@ public class Repl
 {
     private readonly Interpreter interpreter = Interpreter.Create();
     
-    private readonly ICommand[] commands;
+    private readonly IMetaCommand[] commands;
     private readonly IKeyHandler[] keyHandlers;
     private readonly IPrinter printer;
     private readonly SubmissionHistory submissionHistory;
@@ -29,7 +29,7 @@ public class Repl
 
     private const int BlankLineCountInEndSubmission = 3;
 
-    public Repl(ICommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer, SubmissionHistory submissionHistory)
+    public Repl(IMetaCommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer, SubmissionHistory submissionHistory)
     {
         this.commands = commands;
         this.keyHandlers = keyHandlers;
@@ -222,7 +222,7 @@ public class Repl
         container.Bind(conf => conf
             .FromThisAssembly()
             .SelectAllClasses()
-            .InheritedFrom<ICommand>()
+            .InheritedFrom<IMetaCommand>()
             .BindAllInterfaces());
         
         container.Bind(conf => conf
