@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class ArrayExpression : Expression
     {
-        public ArrayExpression(SourceText sourceText, 
-            SyntaxToken openBracket, ImmutableArray<Expression> items, SyntaxToken closeBracket) : base(sourceText)
+        public ArrayExpression(SyntaxToken openBracket, ImmutableArray<Expression> items, SyntaxToken closeBracket)
         {
             OpenBracket = openBracket;
             Items = items;

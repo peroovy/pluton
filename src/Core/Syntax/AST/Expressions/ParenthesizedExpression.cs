@@ -1,16 +1,12 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class ParenthesizedExpression : Expression
     {
-        public ParenthesizedExpression(
-            SourceText sourceText, SyntaxToken openParenthesis, Expression innerExpression, SyntaxToken closeParenthesis)
-            : base(sourceText)
+        public ParenthesizedExpression(SyntaxToken openParenthesis, Expression innerExpression, SyntaxToken closeParenthesis)
         {
             OpenParenthesis = openParenthesis;
             InnerExpression = innerExpression;

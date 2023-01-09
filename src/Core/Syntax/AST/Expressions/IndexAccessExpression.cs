@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class IndexAccessExpression : Expression
     {
-        public IndexAccessExpression(SourceText sourceText, Expression indexedExpression, Index index)
-            : base(sourceText)
+        public IndexAccessExpression(Expression indexedExpression, Index index)
         {
             IndexedExpression = indexedExpression;
             Index = index;

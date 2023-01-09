@@ -7,7 +7,7 @@ namespace Core.Syntax.AST.Expressions
 {
     public class NullExpression : LiteralExpression
     {
-        public NullExpression(SourceText sourceText, SyntaxToken token) : base(sourceText, token)
+        public NullExpression(SyntaxToken token) : base(token)
         {
         }
         

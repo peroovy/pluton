@@ -1,23 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST
 {
     public class FunctionDeclarationStatement : Statement
     {
         public FunctionDeclarationStatement(
-            SourceText sourceText,
             SyntaxToken keyword, 
             SyntaxToken identifier, 
             SyntaxToken openParenthesis, 
             ImmutableArray<SyntaxToken> positionParameters,
             ImmutableArray<DefaultParameter> defaultParameters,
             SyntaxToken closeParenthesis, 
-            BlockStatement block) : base(sourceText)
+            BlockStatement block)
         {
             Keyword = keyword;
             Identifier = identifier;

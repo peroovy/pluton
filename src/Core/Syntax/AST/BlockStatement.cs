@@ -1,17 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST
 {
     public class BlockStatement : Statement
     {
-        public BlockStatement(
-            SourceText sourceText, SyntaxToken openBrace, ImmutableArray<Statement> statements, SyntaxToken closeBrace)
-            : base(sourceText)
+        public BlockStatement(SyntaxToken openBrace, ImmutableArray<Statement> statements, SyntaxToken closeBrace)
         {
             OpenBrace = openBrace;
             Statements = statements;

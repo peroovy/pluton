@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
@@ -9,11 +8,6 @@ namespace Core.Syntax.AST
 {
     public abstract class SyntaxNode
     {
-        protected SyntaxNode(SourceText sourceText)
-        {
-            SourceText = sourceText;
-        }
-        
         public TextSpan Span
         {
             get
@@ -25,16 +19,21 @@ namespace Core.Syntax.AST
             }
         }
 
-        public Location Location => new(SourceText, Span);
+        public Location Location
+        {
+            get
+            {
+                if (FirstChild.Location.SourceText != LastChild.Location.SourceText)
+                    throw new InvalidOperationException("Children are from different source codes");
+                
+                return new Location(FirstChild.Location.SourceText, Span);
+            }
+        }
 
-        public SourceText SourceText { get; }
-        
         public abstract SyntaxToken FirstChild { get; }
         
         public abstract SyntaxToken LastChild { get; }
 
         public abstract Obj Accept(IExecutor executor);
-
-        public override string ToString() => SourceText.Value.Substring(Span.Start, Span.Length);
     }
 }

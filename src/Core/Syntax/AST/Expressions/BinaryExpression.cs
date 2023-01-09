@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST.Expressions
 {
     public class BinaryExpression : Expression
     {
-        public BinaryExpression(SourceText sourceText, Expression left, SyntaxToken operatorToken, Expression right)
-            : base(sourceText)
+        public BinaryExpression(Expression left, SyntaxToken operatorToken, Expression right)
         {
             Left = left;
             OperatorToken = operatorToken;

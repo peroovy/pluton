@@ -3,8 +3,9 @@ using System.Linq;
 using Core;
 using Ninject;
 using Ninject.Extensions.Conventions;
-using Repl.Commands;
+using Repl.MetaCommands;
 using Repl.KeyHandlers;
+using Repl.Utils;
 
 namespace Repl;
 
@@ -12,9 +13,10 @@ public class Repl
 {
     private readonly Interpreter interpreter = Interpreter.Create();
     
-    private readonly ICommand[] commands;
+    private readonly IMetaCommand[] commands;
     private readonly IKeyHandler[] keyHandlers;
     private readonly IPrinter printer;
+    private readonly SubmissionHistory submissionHistory;
 
     private int cursorTop;
     private int lastRenderedLineCount;
@@ -23,15 +25,16 @@ public class Repl
     private const string ContinuePrompt = ".. ";
     private const int PromptLength = 3;
     
-    private const string CommandStart = "#";
+    private const string CommandFirstCharacter = "#";
 
-    private const int EndBlankLineCount = 3;
+    private const int BlankLineCountInEndSubmission = 3;
 
-    public Repl(ICommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer)
+    public Repl(IMetaCommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer, SubmissionHistory submissionHistory)
     {
         this.commands = commands;
         this.keyHandlers = keyHandlers;
         this.printer = printer;
+        this.submissionHistory = submissionHistory;
     }
 
     public void Run()
@@ -41,9 +44,6 @@ public class Repl
         while (true)
         {
             var text = EditSubmission();
-            
-            if (!string.IsNullOrEmpty(text))
-                Console.WriteLine();
             
             if (IsCommand(text)) HandleCommand(text);
             else HandleSubmission(text);
@@ -87,8 +87,8 @@ public class Repl
         
         var submissionDocument = new SubmissionDocument();
         submissionDocument.OnChanged += Render;
-
-        submissionDocument.InsertEmptyLine();
+        
+        Render(submissionDocument);
         UpdateCursor(submissionDocument);
         
         while (true)
@@ -97,38 +97,67 @@ public class Repl
 
             if (info.Key == ConsoleKey.Enter)
             {
-                var text = string.Join(Environment.NewLine, submissionDocument);
-                if (IsCommand(text) || IsCompleteSubmission(text))
-                    return text;
+                if (IsCompleteSubmission(submissionDocument))
+                    return HandleSubmissionComplete(submissionDocument);
                     
-                submissionDocument.InsertEmptyLine();
+                submissionDocument.AddNewLine();
             }
 
-            var keyHandler = keyHandlers.FirstOrDefault(handler => handler.Key == info.Key);
-            if (keyHandler is not null)
-            {
-                keyHandler.Handle(info, submissionDocument);
-            }
-            else if (info.KeyChar >= ' ')
-            {
-                submissionDocument.Insert(info.KeyChar);
-            }
-            
+            HandleTyping(info, submissionDocument);
             UpdateCursor(submissionDocument);
         }
     }
-    
-    private bool IsCompleteSubmission(string text)
+
+    private string HandleSubmissionComplete(SubmissionDocument submissionDocument)
     {
-        if (string.IsNullOrEmpty(text))
+        submissionDocument.OnChanged -= Render;
+
+        if (!submissionDocument.IsEmpty)
+        {
+            Console.SetCursorPosition(0, cursorTop + submissionDocument.LineCount);
+            submissionHistory.Add(submissionDocument);
+        }
+
+        return submissionDocument.ToString();
+    }
+
+    private void HandleTyping(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
+    {
+        var keyHandler = keyHandlers.FirstOrDefault(handler =>
+        {
+            var result = handler.Key == info.Key;
+
+            if (handler.Modifiers != default)
+                result = result && (handler.Modifiers & info.Modifiers) > 0;
+
+            return result;
+        });
+
+        if (keyHandler is not null)
+        {
+            keyHandler.Handle(info, submissionDocument);
+        }
+        else if (info.KeyChar >= ' ')
+        {
+            submissionDocument.Insert(info.KeyChar);
+        }
+    }
+
+    private bool IsCompleteSubmission(SubmissionDocument document)
+    {
+        if (document is null || document.IsEmpty)
             return true;
 
-        var lastLinesAreBlank = text
-            .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+        var text = document.ToString();
+        
+        if (IsCommand(text))
+            return true;
+
+        var lastLinesAreBlank = document
             .Reverse()
-            .TakeWhile(string.IsNullOrEmpty)
-            .Take(EndBlankLineCount)
-            .Count() == EndBlankLineCount;
+            .TakeWhile(SubmissionDocument.IsBlankLine)
+            .Take(BlankLineCountInEndSubmission)
+            .Count() == BlankLineCountInEndSubmission;
         
         if (lastLinesAreBlank)
             return true;
@@ -177,8 +206,10 @@ public class Repl
 
     private void UpdateCursor(SubmissionDocument submissionDocument)
     {
-        Console.SetCursorPosition(PromptLength + submissionDocument.CharacterLeftIndex + 1,
-            cursorTop + submissionDocument.LineIndex);
+        Console.SetCursorPosition(
+            PromptLength + submissionDocument.CharacterIndex,
+            cursorTop + submissionDocument.LineIndex
+        );
     }
 
     public static Repl Create()
@@ -186,11 +217,12 @@ public class Repl
         var container = new StandardKernel();
 
         container.Bind<IPrinter>().To<Printer>().InSingletonScope();
+        container.Bind<SubmissionHistory>().ToSelf().InSingletonScope();
             
         container.Bind(conf => conf
             .FromThisAssembly()
             .SelectAllClasses()
-            .InheritedFrom<ICommand>()
+            .InheritedFrom<IMetaCommand>()
             .BindAllInterfaces());
         
         container.Bind(conf => conf
@@ -202,5 +234,5 @@ public class Repl
         return container.Get<Repl>();
     }
     
-    private static bool IsCommand(string text) => text.StartsWith(CommandStart);
+    private static bool IsCommand(string text) => text.StartsWith(CommandFirstCharacter);
 }

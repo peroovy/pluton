@@ -1,22 +1,18 @@
-﻿using System.Collections.Generic;
-using Core.Execution;
+﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
 using Core.Syntax.AST.Expressions;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST
 {
     public class IfStatement : Statement
     {
         public IfStatement(
-            SourceText sourceText,
             SyntaxToken keyword, 
             SyntaxToken openParenthesis,
             Expression condition, 
             SyntaxToken closeParenthesis,
             Statement thenStatement, ElseClause elseClause)
-            : base(sourceText)
         {
             Keyword = keyword;
             OpenParenthesis = openParenthesis;

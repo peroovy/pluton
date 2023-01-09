@@ -7,7 +7,7 @@ namespace Core.Syntax.AST.Expressions
 {
     public class StringExpression : LiteralExpression
     {
-        public StringExpression(SourceText sourceText, SyntaxToken token) : base(sourceText, token)
+        public StringExpression(SyntaxToken token) : base(token)
         {
         }
 

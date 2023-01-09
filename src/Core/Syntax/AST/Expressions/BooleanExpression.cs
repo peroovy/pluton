@@ -7,7 +7,7 @@ namespace Core.Syntax.AST.Expressions
 {
     public class BooleanExpression : LiteralExpression
     {
-        public BooleanExpression(SourceText sourceText, SyntaxToken token) : base(sourceText, token)
+        public BooleanExpression(SyntaxToken token) : base(token)
         {
         }
         

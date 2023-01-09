@@ -40,8 +40,10 @@ public class Printer : IPrinter
 
     public void PrintWelcome()
     {
-        Console.WriteLine(@"Pluton REPL
-Type ""#help"" for more information");
+        Console.WriteLine();
+        Console.WriteLine("Welcome to Pluton REPL");
+        Console.WriteLine("Type \"#help\" for more information");
+        Console.WriteLine();
     }
 
     private static void PrintDiagnostic(Diagnostic diagnostic)

@@ -7,7 +7,7 @@ namespace Core.Syntax.AST.Expressions
 {
     public class NumberExpression : LiteralExpression
     {
-        public NumberExpression(SourceText sourceText, SyntaxToken token) : base(sourceText, token)
+        public NumberExpression(SyntaxToken token) : base(token)
         {
         }
 

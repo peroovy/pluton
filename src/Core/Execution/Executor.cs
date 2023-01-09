@@ -109,7 +109,7 @@ namespace Core.Execution
 
         public Obj Execute(BreakStatement statement)
         {
-            TryThrowLoopInterrupt(
+            ThrowLoopInterrupt(
                 new BreakInterrupt(),
                 statement.Keyword, 
                 "The break statement is only valid inside loop"
@@ -120,7 +120,7 @@ namespace Core.Execution
         
         public Obj Execute(ContinueStatement statement)
         {
-            TryThrowLoopInterrupt(
+            ThrowLoopInterrupt(
                 new ContinueInterrupt(),
                 statement.Keyword,
                 "The continue statement is only valid inside loop"
@@ -473,7 +473,7 @@ namespace Core.Execution
             return false;
         }
         
-        private void TryThrowLoopInterrupt(LoopInterrupt interrupt, SyntaxToken keyword, string errorMessage)
+        private void ThrowLoopInterrupt(LoopInterrupt interrupt, SyntaxToken keyword, string errorMessage)
         {
             if (loopStack.Count > 0) 
                 throw interrupt;

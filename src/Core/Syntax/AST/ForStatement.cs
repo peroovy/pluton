@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
 using Core.Syntax.AST.Expressions;
-using Core.Utils.Text;
 
 namespace Core.Syntax.AST
 {
     public class ForStatement : Statement
     {
         public ForStatement(
-            SourceText sourceText,
             SyntaxToken keyword, 
             SyntaxToken openParenthesis, 
             ImmutableArray<Expression> initializers,
@@ -20,7 +17,7 @@ namespace Core.Syntax.AST
             SyntaxToken secondSemicolon,
             ImmutableArray<Expression> iterators,
             SyntaxToken closeParenthesis,
-            Statement body) : base(sourceText)
+            Statement body)
         {
             Keyword = keyword;
             OpenParenthesis = openParenthesis;
