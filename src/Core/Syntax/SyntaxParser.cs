@@ -22,6 +22,9 @@ namespace Core.Syntax
         private DiagnosticBag diagnosticBag;
         private int position;
 
+        private int functionsDepth;
+        private int loopsDepth;
+
         public SyntaxParser(BinaryOperation[] binaryOperations, UnaryOperation[] unaryOperations)
         {
             binaryOperatorPrecedences = binaryOperations
@@ -44,7 +47,7 @@ namespace Core.Syntax
         
         public TranslationState<SyntaxTree> Parse(SourceText text, IEnumerable<SyntaxToken> syntaxTokens)
         {
-            position = 0;
+            position = functionsDepth = loopsDepth = 0;
             diagnosticBag = new DiagnosticBag();
             tokens = syntaxTokens
                 .Where(token => token.Type != TokenType.Space && token.Type != TokenType.LineBreak)
@@ -118,6 +121,8 @@ namespace Core.Syntax
 
         private FunctionDeclarationStatement ParseFunctionDeclarationStatement()
         {
+            functionsDepth++;
+            
             var keyword = MatchToken(TokenType.DefKeyword);
             var identifier = MatchToken(TokenType.Identifier);
             var openParenthesis = MatchToken(TokenType.OpenParenthesis);
@@ -125,6 +130,8 @@ namespace Core.Syntax
             var defaultParameters = ParseDefaultParameters();
             var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
             var block = ParseBlockStatement();
+
+            functionsDepth--;
 
             return new FunctionDeclarationStatement(
                 keyword, 
@@ -186,6 +193,14 @@ namespace Core.Syntax
                 : ParseExpression();
             var semicolon = MatchToken(TokenType.Semicolon);
 
+            if (functionsDepth == 0)
+            {
+                throw new InvalidSyntaxException(
+                    keyword.Location,
+                    "The return statement can be only into function block"
+                );
+            }
+                
             return new ReturnStatement(keyword, expression, semicolon);
         }
 
@@ -194,6 +209,9 @@ namespace Core.Syntax
             var keyword = MatchToken(TokenType.BreakKeyword);
             var semicolon = MatchToken(TokenType.Semicolon);
 
+            if (loopsDepth == 0)
+                throw new InvalidSyntaxException(keyword.Location, "The 'break' statement is only valid inside loop");
+
             return new BreakStatement(keyword, semicolon);
         }
         
@@ -201,12 +219,17 @@ namespace Core.Syntax
         {
             var keyword = MatchToken(TokenType.ContinueKeyword);
             var semicolon = MatchToken(TokenType.Semicolon);
+            
+            if (loopsDepth == 0)
+                throw new InvalidSyntaxException(keyword.Location, "The 'continue' statement is only valid inside loop");
 
             return new ContinueStatement(keyword, semicolon);
         }
 
         private ForStatement ParseForStatement()
         {
+            loopsDepth++;
+            
             var keyword = MatchToken(TokenType.ForKeyword);
             var openParenthesis = MatchToken(TokenType.OpenParenthesis);
             var initializers = ParseSeparatedExpressions(TokenType.Semicolon);
@@ -216,6 +239,8 @@ namespace Core.Syntax
             var iterators = ParseSeparatedExpressions(TokenType.CloseParenthesis);
             var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
             var body = ParseStatement();
+
+            loopsDepth--;
 
             return new ForStatement(
                 keyword, 
@@ -232,11 +257,15 @@ namespace Core.Syntax
 
         private WhileStatement ParseWhileStatement()
         {
+            loopsDepth++;
+            
             var keyword = MatchToken(TokenType.WhileKeyword);
             var openParenthesis = MatchToken(TokenType.OpenParenthesis);
             var condition = ParseExpression();
             var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
             var body = ParseStatement();
+
+            loopsDepth--;
 
             return new WhileStatement(keyword, openParenthesis, condition, closeParenthesis, body);
         }
