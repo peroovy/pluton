@@ -62,6 +62,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="ExecutorTests\ExecutorShould.cs" />
         <Compile Include="LexingTests\LexerShould.cs" />
         <Compile Include="LexingTests\TokenParsersTests\ParsersShould.cs" />
         <Compile Include="LoggingTests\LoggerShould.cs" />

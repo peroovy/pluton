@@ -5,4 +5,43 @@
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d61dcec6_002D794e_002D400e_002D86d5_002D95b46a6d2f19/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;And&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;NUnit3x::9A9408A2-7AB6-4801-B446-04495607E18D::.NETFramework,Version=v4.8::Interpreter.Tests.ExecutorTests.ExecutorShould.AssignArrayToVariable&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;Project Location="C:\Users\Nikita\Desktop\C#\pluton\src\Interpreter.Tests" Presentation="&amp;lt;Interpreter.Tests&amp;gt;" /&gt;&#xD;
+    &lt;Namespace&gt;Interpreter.Tests.ExecutorTests&lt;/Namespace&gt;&#xD;
+  &lt;/And&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	</wpf:ResourceDictionary>
