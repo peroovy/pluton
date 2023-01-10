@@ -81,11 +81,19 @@ namespace Core.Execution
                 defaults,
                 context =>
                 {
-                    var enumerator = statement.Block.Statements.GetEnumerator();
-                    while (ReferenceEquals(context.Callable, callStack.Peek()) && enumerator.MoveNext())
-                        enumerator.Current.Accept(this);
-                },
-                isBuiltin: false
+                    try
+                    {
+                        var enumerator = statement.Block.Statements.GetEnumerator();
+                        while (ReferenceEquals(context.Callable, callStack.Peek()) && enumerator.MoveNext())
+                            enumerator.Current.Accept(this);
+                    }
+                    catch (ReturnInterrupt interrupt)
+                    {
+                        return interrupt.Value;
+                    }
+
+                    return new Null();
+                }
             );
 
             scope.Assign(function.Name, function);
@@ -369,16 +377,9 @@ namespace Core.Execution
             foreach (var param in arguments)
                 scope.Assign(param.Key, param.Value);
 
-            Obj returnedValue = new Null();
-            try
-            {
-                callable.Invoke(new CallContext(callable, scope));
-            }
-            catch (ReturnInterrupt interrupt)
-            {
-                returnedValue = interrupt.Value;
-            }
-            
+            var context = new CallContext(callable, scope);
+            var returnedValue = callable.Invoke(context);
+
             scope = previousScope;
             callStack.Pop();
 

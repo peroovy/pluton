@@ -20,7 +20,7 @@ namespace Core.Execution.Objects.BuiltinFunctions
                     Console.Write(message);
                     var value = Console.ReadLine();
                     
-                    throw new ReturnInterrupt(new String(value));
+                    return new String(value);
                 })
         {
         }

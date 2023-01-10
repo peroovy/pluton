@@ -16,7 +16,7 @@ namespace Core.Execution.Objects.BuiltinFunctions
                 {
                     var value = context.Scope.Lookup(ParameterName).ToString();
                     
-                    throw new ReturnInterrupt(new String(value));
+                    return new String(value);
                 })
         {
         }

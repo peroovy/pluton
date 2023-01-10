@@ -19,6 +19,8 @@ namespace Core.Execution.Objects.BuiltinFunctions
                     var end = context.Scope.Lookup(EndParameter).ToString();
 
                     Console.Write(value + end);
+
+                    return new Null();
                 })
         {
         }
