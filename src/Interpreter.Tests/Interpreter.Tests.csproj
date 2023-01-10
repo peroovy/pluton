@@ -74,8 +74,6 @@
         <Compile Include="SyntaxTests\IfElseShould.cs" />
         <Compile Include="SyntaxTests\ParenthesisShould.cs" />
         <Compile Include="SyntaxTests\EmptyLineTests.cs" />
-        <Compile Include="SyntaxTests\ReturnShould.cs" />
-        <Compile Include="SyntaxTests\SingleKeywordsShould.cs" />
         <Compile Include="SyntaxTests\WhileShould.cs" />
         <Compile Include="TextTests\ParserShould.cs" />
     </ItemGroup>

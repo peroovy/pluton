@@ -71,29 +71,14 @@ namespace Interpreter.Tests.SyntaxTests
         }
 
         [Test]
-        public void SingleStatement()
-        {
-            var tokens = new[]
-            {
-                Tuple.Create(TokenType.OpenBrace, "{"),
-                Tuple.Create(TokenType.BreakKeyword, "break"),
-                Tuple.Create(TokenType.Semicolon, ";"),
-                Tuple.Create(TokenType.CloseBrace, "}"),
-                Tuple.Create(TokenType.Eof, "\0"),
-            }.ToList();
-            var block = BlockSetUp(GetTokens(tokens));
-            Assert.AreEqual(1, block.Statements.Length);
-        }
-
-        [Test]
         public void MultipleStatement()
         {
             var tokens = new[]
             {
                 Tuple.Create(TokenType.OpenBrace, "{"),
-                Tuple.Create(TokenType.ContinueKeyword, "continue"),
+                Tuple.Create(TokenType.Number, "5"),
                 Tuple.Create(TokenType.Semicolon, ";"),
-                Tuple.Create(TokenType.BreakKeyword, "break"),
+                Tuple.Create(TokenType.Identifier, "b"),
                 Tuple.Create(TokenType.Semicolon, ";"),
                 Tuple.Create(TokenType.Identifier, "abc"),
                 Tuple.Create(TokenType.Semicolon, ";"),
@@ -166,23 +151,6 @@ namespace Interpreter.Tests.SyntaxTests
             Assert.IsTrue(block.Statements[0] is BlockStatement);
             var nested = (BlockStatement)block.Statements[0];
             Assert.AreEqual(4, nested.Statements.Length);
-        }
-
-        [TestCase(TokenType.BreakKeyword, typeof(BreakStatement))]
-        [TestCase(TokenType.ContinueKeyword, typeof(ContinueStatement))]
-        public void SingleKeyword(TokenType tokenType, Type expected)
-        {
-            var tokens = new[]
-            {
-                Tuple.Create(TokenType.OpenBrace, "{"),
-                Tuple.Create(tokenType, "test"),
-                Tuple.Create(TokenType.Semicolon, ";"),
-                Tuple.Create(TokenType.CloseBrace, "}"),
-                Tuple.Create(TokenType.Eof, "\0"),
-            }.ToList();
-            var block = BlockSetUp(GetTokens(tokens));
-            Assert.AreEqual(1, block.Statements.Length);
-            Assert.AreEqual(expected, block.Statements[0].GetType());
         }
 
         [Test]
@@ -312,25 +280,6 @@ namespace Interpreter.Tests.SyntaxTests
             var block = BlockSetUp(GetTokens(tokens));
             Assert.AreEqual(1, block.Statements.Length);
             Assert.IsTrue(block.Statements[0] is FunctionDeclarationStatement);
-        }
-
-        [Test]
-        public void SimpleReturn()
-        {
-            var tokens = new[]
-            {
-                Tuple.Create(TokenType.OpenBrace, "{"),
-                
-                Tuple.Create(TokenType.ReturnKeyword, "return"),
-                Tuple.Create(TokenType.Identifier, "a"),
-                Tuple.Create(TokenType.Semicolon, ";"),
-                
-                Tuple.Create(TokenType.CloseBrace, "}"),
-                Tuple.Create(TokenType.Eof, "\0"),
-            }.ToList();
-            var block = BlockSetUp(GetTokens(tokens));
-            Assert.AreEqual(1, block.Statements.Length);
-            Assert.IsTrue(block.Statements[0] is ReturnStatement);
         }
 
         [Test]

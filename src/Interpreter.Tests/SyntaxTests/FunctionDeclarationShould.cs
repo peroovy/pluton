@@ -209,7 +209,7 @@ namespace Interpreter.Tests.SyntaxTests
                 Tuple.Create(TokenType.OpenParenthesis, "("),
                 Tuple.Create(TokenType.CloseParenthesis, ")"),
                 Tuple.Create(TokenType.OpenBrace, "{"),
-                Tuple.Create(TokenType.BreakKeyword, "break"),
+                Tuple.Create(TokenType.Identifier, "a"),
                 Tuple.Create(TokenType.Semicolon, ";"),
                 Tuple.Create(TokenType.CloseBrace, "}"),
                 Tuple.Create(TokenType.Eof, "\0"),

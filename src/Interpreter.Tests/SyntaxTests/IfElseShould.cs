@@ -164,61 +164,6 @@ namespace Interpreter.Tests.SyntaxTests
             Assert.AreEqual(firstNum, double.Parse(((NumberExpression)binExp.Right).Token.Text));
         }
 
-        [TestCase(TokenType.BreakKeyword, typeof(BreakStatement))]
-        [TestCase(TokenType.ContinueKeyword, typeof(ContinueStatement))]
-        public void IfElseWithSingleKeywordStatement(TokenType keywordType, Type statementType)
-        {
-            var tokens = new[]
-            {
-                Tuple.Create(TokenType.IfKeyword, "if"),
-                Tuple.Create(TokenType.OpenParenthesis, "("),
-                Tuple.Create(TokenType.TrueKeyword, "true"),
-                Tuple.Create(TokenType.CloseParenthesis, ")"),
-                
-                Tuple.Create(keywordType, "test"),
-                Tuple.Create(TokenType.Semicolon, ";"),
-                
-                Tuple.Create(TokenType.ElseKeyword, "else"),
-                
-                Tuple.Create(keywordType, "test"),
-                Tuple.Create(TokenType.Semicolon, ";"),
-                
-                Tuple.Create(TokenType.Eof, "\0"),
-            }.ToList();
-            var ifStmnt = SingleIfSetup(GetTokens(tokens));
-            Assert.AreEqual(ifStmnt.ThenStatement.GetType() , statementType);
-            Assert.IsNotNull(ifStmnt.ElseClause);
-            Assert.AreEqual(ifStmnt.ElseClause.Statement.GetType(), statementType);
-        }
-
-        [Test]
-        public void IfElseWithReturn()
-        {
-            var tokens = new[]
-            {
-                Tuple.Create(TokenType.IfKeyword, "if"),
-                Tuple.Create(TokenType.OpenParenthesis, "("),
-                Tuple.Create(TokenType.TrueKeyword, "true"),
-                Tuple.Create(TokenType.CloseParenthesis, ")"),
-                
-                Tuple.Create(TokenType.ReturnKeyword, "return"),
-                Tuple.Create(TokenType.Number, "5"),
-                Tuple.Create(TokenType.Semicolon, ";"),
-                
-                Tuple.Create(TokenType.ElseKeyword, "else"),
-                
-                Tuple.Create(TokenType.ReturnKeyword, "return"),
-                Tuple.Create(TokenType.Number, "5"),
-                Tuple.Create(TokenType.Semicolon, ";"),
-                
-                Tuple.Create(TokenType.Eof, "\0"),
-            }.ToList();
-            var ifStmnt = SingleIfSetup(GetTokens(tokens));
-            Assert.IsTrue(ifStmnt.ThenStatement is ReturnStatement);
-            Assert.IsNotNull(ifStmnt.ElseClause);
-            Assert.IsTrue(ifStmnt.ElseClause.Statement is ReturnStatement);
-        }
-
         [Test]
         public void IfElseWithFor()
         {
