@@ -1,7 +1,7 @@
 ﻿using Core.Lexing;
 using NUnit.Framework;
 
-namespace Interpreter.Tests.LoggingTests
+namespace Tests.LoggingTests
 {
     [TestFixture]
     public class LoggerShould

@@ -2,7 +2,7 @@
 using System.Collections.Immutable;
 using Core.Utils.Text;
 
-namespace Interpreter.Tests.TextTests
+namespace Tests.TextTests
 {
     [TestFixture]
     public class ParserShould

@@ -12,7 +12,7 @@ using Core.Utils.Text;
 using Ninject;
 using NUnit.Framework;
 
-namespace Interpreter.Tests.SyntaxTests
+namespace Tests.SyntaxTests
 {
     [TestFixture]
     public class ExpressionStatementShould

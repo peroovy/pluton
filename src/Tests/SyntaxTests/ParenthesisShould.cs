@@ -11,7 +11,7 @@ using Core.Syntax.AST.Expressions;
 using Core.Utils.Text;
 using Ninject;
 
-namespace Interpreter.Tests.SyntaxTests
+namespace Tests.SyntaxTests
 {
     [TestFixture]
     public class ParenthesisShould

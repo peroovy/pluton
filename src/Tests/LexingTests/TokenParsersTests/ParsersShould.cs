@@ -6,7 +6,7 @@ using Core.Utils.Diagnostic;
 using Core.Utils.Text;
 using Ninject;
 
-namespace Interpreter.Tests.LexingTests.TokenParsersTests
+namespace Tests.LexingTests.TokenParsersTests
 {
     [TestFixture]
     public class ParsersShould

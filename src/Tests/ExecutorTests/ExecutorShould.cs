@@ -15,7 +15,7 @@ using Array = Core.Execution.Objects.Array;
 using Boolean = Core.Execution.Objects.Boolean;
 using String = Core.Execution.Objects.String;
 
-namespace Interpreter.Tests.ExecutorTests
+namespace Tests.ExecutorTests
 {
     [TestFixture]
     public class ExecutorShould

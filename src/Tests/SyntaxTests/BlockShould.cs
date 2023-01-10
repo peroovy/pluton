@@ -16,7 +16,7 @@ using Ninject;
 using NUnit.Framework;
 using BinaryExpression = Core.Syntax.AST.Expressions.BinaryExpression;
 
-namespace Interpreter.Tests.SyntaxTests
+namespace Tests.SyntaxTests
 {
     [TestFixture]
     public class BlockShould

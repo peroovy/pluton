@@ -8,7 +8,7 @@ using System.Linq;
 using Core.Utils.Text;
 using Ninject;
 
-namespace Interpreter.Tests.LexingTests
+namespace Tests.LexingTests
 {
     [TestFixture]
     public class LexerShould
