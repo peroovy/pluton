@@ -95,38 +95,19 @@ namespace Core.Execution
 
         public Obj Execute(ReturnStatement statement)
         {
-            if (callStack.Count == 0)
-            {
-                throw new RuntimeException(
-                    statement.Keyword.Location,
-                    "The return statement can be only into function block"
-                );
-            }
-                
             var value = statement.Expression?.Accept(this) ?? new Null();
+            
             throw new ReturnInterrupt(value);
         }
 
         public Obj Execute(BreakStatement statement)
         {
-            ThrowLoopInterrupt(
-                new BreakInterrupt(),
-                statement.Keyword, 
-                "The break statement is only valid inside loop"
-            );
-
-            return null;
+            throw new BreakInterrupt();
         }
         
         public Obj Execute(ContinueStatement statement)
         {
-            ThrowLoopInterrupt(
-                new ContinueInterrupt(),
-                statement.Keyword,
-                "The continue statement is only valid inside loop"
-            );
-
-            return null;
+            throw new ContinueInterrupt();
         }
 
         public Obj Execute(ForStatement statement)
@@ -443,15 +424,7 @@ namespace Core.Execution
 
             return false;
         }
-        
-        private void ThrowLoopInterrupt(LoopInterrupt interrupt, SyntaxToken keyword, string errorMessage)
-        {
-            if (loopStack.Count > 0) 
-                throw interrupt;
-            
-            throw new RuntimeException(keyword.Location, errorMessage);
-        }
-        
+
         private void ExecuteLoopWithPreCondition<T>(
             T statement, 
             Action<T> initialize = null, 
