@@ -5,7 +5,7 @@ using Core.Syntax.AST.Expressions;
 
 namespace Core.Syntax.AST
 {
-    public class WhileStatement : Statement
+    public class WhileStatement : LoopStatement
     {
         public WhileStatement(
             SyntaxToken keyword,
@@ -25,11 +25,11 @@ namespace Core.Syntax.AST
         
         public SyntaxToken OpenParenthesis { get; }
 
-        public Expression Condition { get; }
+        public override Expression Condition { get; }
         
         public SyntaxToken CloseParenthesis { get; }
 
-        public Statement Body { get; }
+        public override Statement Body { get; }
 
         public override SyntaxToken FirstChild => Keyword;
 

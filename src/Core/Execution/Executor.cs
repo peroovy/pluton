@@ -23,7 +23,7 @@ namespace Core.Execution
         private readonly UnaryOperation[] unaryOperations;
 
         private readonly Stack<ICallable> callStack = new();
-        private readonly Stack<Statement> loopStack = new();
+        private readonly Stack<LoopStatement> loopStack = new();
         private readonly Scope globalScope = new(null);
         private Scope scope;
 
@@ -131,54 +131,25 @@ namespace Core.Execution
 
         public Obj Execute(ForStatement statement)
         {
-            loopStack.Push(statement);
-            
-            foreach (var initializer in statement.Initializers)
-                initializer.Accept(this);
+            ExecuteLoopWithPreCondition(
+                statement,
+                loopStatement =>
+                {
+                    foreach (var initializer in loopStatement.Initializers)
+                        initializer.Accept(this);
+                },
+                loopStatement =>
+                {
+                    foreach (var iterator in loopStatement.Iterators)
+                        iterator.Accept(this);
+                });
 
-            while (statement.Condition.Accept(this).ToBoolean().Value)
-            {
-                try
-                {
-                    statement.Body.Accept(this);
-                }
-                catch (BreakInterrupt)
-                {
-                    break;
-                }
-                catch (ContinueInterrupt)
-                {
-                }
-                
-                foreach (var iterator in statement.Iterators)
-                    iterator.Accept(this);
-            }
-
-            loopStack.Pop();
-            
             return null;
         }
 
         public Obj Execute(WhileStatement statement)
         {
-            loopStack.Push(statement);
-
-            while (statement.Condition.Accept(this).ToBoolean().Value)
-            {
-                try
-                {
-                    statement.Body.Accept(this);
-                }
-                catch (BreakInterrupt)
-                {
-                    break;
-                }
-                catch (ContinueInterrupt)
-                {
-                }
-            }
-
-            loopStack.Pop();
+            ExecuteLoopWithPreCondition(statement);
             
             return null;
         }
@@ -479,6 +450,40 @@ namespace Core.Execution
                 throw interrupt;
             
             throw new RuntimeException(keyword.Location, errorMessage);
+        }
+        
+        private void ExecuteLoopWithPreCondition<T>(
+            T statement, 
+            Action<T> initialize = null, 
+            Action<T> updateAfterIteration = null) where T : LoopStatement
+        {
+            loopStack.Push(statement);
+
+            try
+            {
+                initialize?.Invoke(statement);
+
+                while (statement.Condition.Accept(this).ToBoolean().Value)
+                {
+                    try
+                    {
+                        statement.Body.Accept(this);
+                    }
+                    catch (BreakInterrupt)
+                    {
+                        break;
+                    }
+                    catch (ContinueInterrupt)
+                    {
+                    }
+
+                    updateAfterIteration?.Invoke(statement);
+                }
+            }
+            finally
+            {
+                loopStack.Pop();
+            }
         }
 
         private static Location GetLocationBetweenBrackets(SyntaxToken open, SyntaxToken close)
