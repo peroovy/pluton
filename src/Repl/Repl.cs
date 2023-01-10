@@ -162,9 +162,8 @@ public class Repl
         if (lastLinesAreBlank)
             return true;
 
-        var compilation = interpreter.CompileBiteCode(text);
-
-        return !compilation.HasErrors;
+        var parsing = interpreter.Parse(text);
+        return !parsing.HasErrors;
     }
 
     private void Render(SubmissionDocument submissionDocument)
