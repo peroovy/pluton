@@ -9,6 +9,6 @@ namespace Core.Execution.Objects.DataModel
         
         ImmutableArray<(string Name, Obj Value)> DefaultParameters { get; }
         
-        Action<CallContext> Invoke { get; }
+        Func<CallContext, Obj> Invoke { get; }
     }
 }

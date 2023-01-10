@@ -6,7 +6,7 @@ using Core.Syntax.AST.Expressions;
 
 namespace Core.Syntax.AST
 {
-    public class ForStatement : Statement
+    public class ForStatement : LoopStatement
     {
         public ForStatement(
             SyntaxToken keyword, 
@@ -38,7 +38,7 @@ namespace Core.Syntax.AST
         
         public SyntaxToken FirstSemicolon { get; }
         
-        public Expression Condition { get; }
+        public override Expression Condition { get; }
         
         public SyntaxToken SecondSemicolon { get; }
         
@@ -46,7 +46,7 @@ namespace Core.Syntax.AST
         
         public SyntaxToken CloseParenthesis { get; }
 
-        public Statement Body { get; }
+        public override Statement Body { get; }
 
         public override SyntaxToken FirstChild => Keyword;
 

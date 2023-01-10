@@ -17,7 +17,7 @@ namespace Core.Execution.Objects.BuiltinFunctions
                     var str = context.Scope.Lookup(ParameterName).ToString();
                     var parsed = double.TryParse(str, out var value);
                     
-                    throw new ReturnInterrupt(parsed ? new Number(value) : new Null());
+                    return parsed ? new Number(value) : new Null();
                 })
         {
         }

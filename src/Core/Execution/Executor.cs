@@ -23,7 +23,7 @@ namespace Core.Execution
         private readonly UnaryOperation[] unaryOperations;
 
         private readonly Stack<ICallable> callStack = new();
-        private readonly Stack<Statement> loopStack = new();
+        private readonly Stack<LoopStatement> loopStack = new();
         private readonly Scope globalScope = new(null);
         private Scope scope;
 
@@ -81,11 +81,19 @@ namespace Core.Execution
                 defaults,
                 context =>
                 {
-                    var enumerator = statement.Block.Statements.GetEnumerator();
-                    while (ReferenceEquals(context.Callable, callStack.Peek()) && enumerator.MoveNext())
-                        enumerator.Current.Accept(this);
-                },
-                isBuiltin: false
+                    try
+                    {
+                        var enumerator = statement.Block.Statements.GetEnumerator();
+                        while (ReferenceEquals(context.Callable, callStack.Peek()) && enumerator.MoveNext())
+                            enumerator.Current.Accept(this);
+                    }
+                    catch (ReturnInterrupt interrupt)
+                    {
+                        return interrupt.Value;
+                    }
+
+                    return new Null();
+                }
             );
 
             scope.Assign(function.Name, function);
@@ -95,90 +103,42 @@ namespace Core.Execution
 
         public Obj Execute(ReturnStatement statement)
         {
-            if (callStack.Count == 0)
-            {
-                throw new RuntimeException(
-                    statement.Keyword.Location,
-                    "The return statement can be only into function block"
-                );
-            }
-                
             var value = statement.Expression?.Accept(this) ?? new Null();
+            
             throw new ReturnInterrupt(value);
         }
 
         public Obj Execute(BreakStatement statement)
         {
-            ThrowLoopInterrupt(
-                new BreakInterrupt(),
-                statement.Keyword, 
-                "The break statement is only valid inside loop"
-            );
-
-            return null;
+            throw new BreakInterrupt();
         }
         
         public Obj Execute(ContinueStatement statement)
         {
-            ThrowLoopInterrupt(
-                new ContinueInterrupt(),
-                statement.Keyword,
-                "The continue statement is only valid inside loop"
-            );
-
-            return null;
+            throw new ContinueInterrupt();
         }
 
         public Obj Execute(ForStatement statement)
         {
-            loopStack.Push(statement);
-            
-            foreach (var initializer in statement.Initializers)
-                initializer.Accept(this);
+            ExecuteLoopWithPreCondition(
+                statement,
+                loopStatement =>
+                {
+                    foreach (var initializer in loopStatement.Initializers)
+                        initializer.Accept(this);
+                },
+                loopStatement =>
+                {
+                    foreach (var iterator in loopStatement.Iterators)
+                        iterator.Accept(this);
+                });
 
-            while (statement.Condition.Accept(this).ToBoolean().Value)
-            {
-                try
-                {
-                    statement.Body.Accept(this);
-                }
-                catch (BreakInterrupt)
-                {
-                    break;
-                }
-                catch (ContinueInterrupt)
-                {
-                }
-                
-                foreach (var iterator in statement.Iterators)
-                    iterator.Accept(this);
-            }
-
-            loopStack.Pop();
-            
             return null;
         }
 
         public Obj Execute(WhileStatement statement)
         {
-            loopStack.Push(statement);
-
-            while (statement.Condition.Accept(this).ToBoolean().Value)
-            {
-                try
-                {
-                    statement.Body.Accept(this);
-                }
-                catch (BreakInterrupt)
-                {
-                    break;
-                }
-                catch (ContinueInterrupt)
-                {
-                }
-            }
-
-            loopStack.Pop();
+            ExecuteLoopWithPreCondition(statement);
             
             return null;
         }
@@ -417,16 +377,9 @@ namespace Core.Execution
             foreach (var param in arguments)
                 scope.Assign(param.Key, param.Value);
 
-            Obj returnedValue = new Null();
-            try
-            {
-                callable.Invoke(new CallContext(callable, scope));
-            }
-            catch (ReturnInterrupt interrupt)
-            {
-                returnedValue = interrupt.Value;
-            }
-            
+            var context = new CallContext(callable, scope);
+            var returnedValue = callable.Invoke(context);
+
             scope = previousScope;
             callStack.Pop();
 
@@ -472,13 +425,39 @@ namespace Core.Execution
 
             return false;
         }
-        
-        private void ThrowLoopInterrupt(LoopInterrupt interrupt, SyntaxToken keyword, string errorMessage)
+
+        private void ExecuteLoopWithPreCondition<T>(
+            T statement, 
+            Action<T> initialize = null, 
+            Action<T> updateAfterIteration = null) where T : LoopStatement
         {
-            if (loopStack.Count > 0) 
-                throw interrupt;
-            
-            throw new RuntimeException(keyword.Location, errorMessage);
+            loopStack.Push(statement);
+
+            try
+            {
+                initialize?.Invoke(statement);
+
+                while (statement.Condition.Accept(this).ToBoolean().Value)
+                {
+                    try
+                    {
+                        statement.Body.Accept(this);
+                    }
+                    catch (BreakInterrupt)
+                    {
+                        break;
+                    }
+                    catch (ContinueInterrupt)
+                    {
+                    }
+
+                    updateAfterIteration?.Invoke(statement);
+                }
+            }
+            finally
+            {
+                loopStack.Pop();
+            }
         }
 
         private static Location GetLocationBetweenBrackets(SyntaxToken open, SyntaxToken close)

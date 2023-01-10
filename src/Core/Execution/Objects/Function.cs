@@ -10,8 +10,8 @@ namespace Core.Execution.Objects
             string name, 
             ImmutableArray<string> positionParameters, 
             ImmutableArray<(string name, Obj value)> defaultParameters,
-            Action<CallContext> invoke, 
-            bool isBuiltin)
+            Func<CallContext, Obj> invoke, 
+            bool isBuiltin = false)
         {
             Name = name;
             PositionParameters = positionParameters;
@@ -26,7 +26,7 @@ namespace Core.Execution.Objects
         
         public ImmutableArray<(string Name, Obj Value)> DefaultParameters { get; }
 
-        public Action<CallContext> Invoke { get; }
+        public Func<CallContext, Obj> Invoke { get; }
         
         public bool IsBuiltin { get; }
 

@@ -26,7 +26,7 @@ namespace Core
             this.executor = executor;
         }
 
-        public TranslationState<SyntaxTree> CompileBiteCode(string text)
+        public TranslationState<SyntaxTree> Parse(string text)
         {
             var sourceText = new SourceText(text);
             var lexing = lexer.Tokenize(sourceText);
@@ -39,12 +39,12 @@ namespace Core
 
         public TranslationState<Obj> Execute(string text)
         {
-            var compilation = CompileBiteCode(text);
-            if (compilation.HasErrors)
-                return new TranslationState<Obj>(null, compilation.DiagnosticBag);
+            var parsing = Parse(text);
+            if (parsing.HasErrors)
+                return new TranslationState<Obj>(null, parsing.DiagnosticBag);
             
-            var interpretation = executor.Execute(compilation.Result);
-            var diagnostics = compilation.DiagnosticBag.Concat(interpretation.DiagnosticBag);
+            var interpretation = executor.Execute(parsing.Result);
+            var diagnostics = parsing.DiagnosticBag.Concat(interpretation.DiagnosticBag);
 
             return new TranslationState<Obj>(interpretation.Result, diagnostics);
         }
