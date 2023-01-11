@@ -97,7 +97,7 @@ public class Repl
 
             if (info.Key == ConsoleKey.Enter)
             {
-                if (IsCompleteSubmission(submissionDocument))
+                if (info.Modifiers == ConsoleModifiers.Shift || IsCompleteSubmission(submissionDocument))
                     return HandleSubmissionComplete(submissionDocument);
                     
                 submissionDocument.AddNewLine();
