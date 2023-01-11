@@ -30,7 +30,10 @@ public class SubmissionDocument : IEnumerable<string>
 
     public void AddNewLine()
     {
-        lines.Insert(++LineIndex, "\0");
+        var remainder = CurrentLine.Substring(CharacterIndex);
+
+        lines[LineIndex] = lines[LineIndex].Substring(0, CharacterIndex) + '\0';
+        lines.Insert(++LineIndex, remainder);
         CharacterIndex = 0;
         
         OnChanged?.Invoke(this);
@@ -135,16 +138,15 @@ public class SubmissionDocument : IEnumerable<string>
                 return;
 
             var line = CurrentLine.Substring(0, CurrentLine.Length - 1);
-            lines.RemoveAt(LineIndex);
+            lines.RemoveAt(LineIndex--);
 
-            LineIndex--;
             CharacterIndex = CurrentLine.Length - 1;
-            Insert(line);
-            
-            return;
+            lines[LineIndex] = CurrentLine.Insert(CharacterIndex, line);
         }
-        
-        lines[LineIndex] = lines[LineIndex].Remove(--CharacterIndex, 1);
+        else
+        {
+            lines[LineIndex] = lines[LineIndex].Remove(--CharacterIndex, 1);
+        }
         
         OnChanged?.Invoke(this);
     }
@@ -156,10 +158,11 @@ public class SubmissionDocument : IEnumerable<string>
             if (LineIndex == lines.Count - 1)
                 return;
 
-            var movedLine = lines[LineIndex + 1];
-            lines.RemoveAt(LineIndex + 1);
+            var nextIndex = LineIndex + 1;
+            var nextLine = lines[nextIndex].Substring(0, lines[nextIndex].Length - 1);
+            lines.RemoveAt(nextIndex);
 
-            lines[LineIndex] = CurrentLine.Substring(0, CurrentLine.Length - 1) + movedLine;
+            lines[LineIndex] = CurrentLine.Insert(CharacterIndex, nextLine);
         }
         else
         {
