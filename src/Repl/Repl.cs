@@ -148,6 +148,9 @@ public class Repl
         if (document is null || document.IsEmpty)
             return true;
 
+        if (!document.IsEnd)
+            return false;
+
         var text = document.ToString();
         
         if (IsCommand(text))

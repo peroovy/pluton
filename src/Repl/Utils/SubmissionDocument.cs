@@ -20,6 +20,8 @@ public class SubmissionDocument : IEnumerable<string>
     public int LineCount => lines.Count;
 
     public bool IsEmpty => lines.Count == 1 && IsBlankLine(lines[0]);
+
+    public bool IsEnd => LineIndex == LineCount - 1 && CharacterIndex == CurrentLine.Length - 1;
     
     private string CurrentLine => lines[LineIndex];
     
