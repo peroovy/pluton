@@ -30,11 +30,11 @@ public class SubmissionDocument : IEnumerable<string>
         return string.Join(Environment.NewLine, lines.Select(line => line.Substring(0, line.Length - 1)));
     }
 
-    public void AddNewLine(bool withRemainder)
+    public void AddNewLine(bool withHyphenation)
     {
         var remainder = BlankLine;
 
-        if (withRemainder)
+        if (withHyphenation)
         {
             remainder = CurrentLine.Substring(CharacterIndex);
             lines[LineIndex] = lines[LineIndex].Substring(0, CharacterIndex) + '\0';

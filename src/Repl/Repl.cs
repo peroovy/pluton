@@ -100,7 +100,7 @@ public class Repl
                 if (info.Modifiers == ConsoleModifiers.Shift || IsCompleteSubmission(submissionDocument))
                     return HandleSubmissionComplete(submissionDocument);
                     
-                submissionDocument.AddNewLine(withRemainder: info.Modifiers != ConsoleModifiers.Control);
+                submissionDocument.AddNewLine(withHyphenation: info.Modifiers != ConsoleModifiers.Control);
             }
 
             HandleTyping(info, submissionDocument);
