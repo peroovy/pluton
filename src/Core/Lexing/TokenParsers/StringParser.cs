@@ -8,27 +8,27 @@ namespace Core.Lexing.TokenParsers
 {
     public class StringParser : ITokenParser
     {
-        private const char Quote = '"';
+        private const char QuotationMark = '"';
+        private const char Slash = '\\';
 
         public Priority Priority => Priority.Low;
         
         public SyntaxToken TryParse(SourceText text, int position, DiagnosticBag diagnostic)
         {
-            if (text[position] != Quote)
+            if (text[position] != QuotationMark)
                 return null;
             
             var stringValue = new StringBuilder();
-            for (var i = position + 1; i < text.Length && text[i] != Quote; i++)
+            for (var i = position + 1; i < text.Length && (text[i] != QuotationMark || text[i - 1] == Slash); i++)
                 stringValue.Append(text[i]);
             
             var endLimiterPosition = position + stringValue.Length + 1;
-            if (endLimiterPosition < text.Length && text[endLimiterPosition] == Quote)
+            if (endLimiterPosition < text.Length && text[endLimiterPosition] == QuotationMark)
             {
                 var lengthWithLimiters = stringValue.Length + 2;
-                var tokenValue = ConvertEscapedCharacters(stringValue.ToString());
                 var location = new Location(text, position, lengthWithLimiters);
                 
-                if (tokenValue is not null)
+                if (TryConvertToUnescaped(stringValue.ToString(), out var tokenValue))
                     return new SyntaxToken(TokenType.String, tokenValue, location);
                 
                 diagnostic.AddError(location, "Unrecognized escape sequence");
@@ -40,15 +40,17 @@ namespace Core.Lexing.TokenParsers
             return null;
         }
 
-        private static string ConvertEscapedCharacters(string input)
+        private static bool TryConvertToUnescaped(string input, out string result)
         {
             try
             {
-                return Regex.Unescape(input);
+                result = Regex.Unescape(input);
+                return true;
             }
             catch (ArgumentException)
             {
-                return null;
+                result = null;
+                return false;
             }
         }
     }
