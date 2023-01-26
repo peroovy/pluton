@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Core.Execution.Interrupts;
 using Core.Execution.Objects.DataModel;
 
 namespace Core.Execution.Objects.BuiltinFunctions

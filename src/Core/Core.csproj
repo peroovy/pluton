@@ -70,10 +70,10 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Execution\Interrupts\BreakInterrupt.cs" />
-        <Compile Include="Execution\Interrupts\ContinueInterrupt.cs" />
-        <Compile Include="Execution\Interrupts\LoopInterrupt.cs" />
-        <Compile Include="Execution\Interrupts\ReturnInterrupt.cs" />
+        <Compile Include="Execution\Signals\BreakSignal.cs" />
+        <Compile Include="Execution\Signals\ContinueSignal.cs" />
+        <Compile Include="Execution\Signals\LoopSignal.cs" />
+        <Compile Include="Execution\Signals\ReturnSignal.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\BuiltinFunction.cs" />
         <Compile Include="Execution\Objects\Array.cs" />
         <Compile Include="Execution\Objects\BuiltinFunctions\InputFunction.cs" />

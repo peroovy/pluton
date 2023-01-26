@@ -1,11 +1,11 @@
 ﻿using System;
 using Core.Execution.Objects;
 
-namespace Core.Execution.Interrupts
+namespace Core.Execution.Signals
 {
-    public class ReturnInterrupt : Exception
+    public class ReturnSignal : Exception
     {
-        public ReturnInterrupt(Obj value)
+        public ReturnSignal(Obj value)
         {
             Value = value;
         }

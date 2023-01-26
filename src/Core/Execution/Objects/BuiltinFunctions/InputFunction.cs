@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using Core.Execution.Interrupts;
 
 namespace Core.Execution.Objects.BuiltinFunctions
 {

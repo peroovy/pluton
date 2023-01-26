@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using Core.Execution.Interrupts;
 using Core.Execution.Objects;
 using Core.Execution.Objects.BuiltinFunctions;
 using Core.Execution.Objects.DataModel;
 using Core.Execution.Operations.Binary;
 using Core.Execution.Operations.Unary;
+using Core.Execution.Signals;
 using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
@@ -87,9 +87,9 @@ namespace Core.Execution
                         while (ReferenceEquals(context.Callable, callStack.Peek()) && enumerator.MoveNext())
                             enumerator.Current.Accept(this);
                     }
-                    catch (ReturnInterrupt interrupt)
+                    catch (ReturnSignal signal)
                     {
-                        return interrupt.Value;
+                        return signal.Value;
                     }
 
                     return new Null();
@@ -105,17 +105,17 @@ namespace Core.Execution
         {
             var value = statement.Expression?.Accept(this) ?? new Null();
             
-            throw new ReturnInterrupt(value);
+            throw new ReturnSignal(value);
         }
 
         public Obj Execute(BreakStatement statement)
         {
-            throw new BreakInterrupt();
+            throw new BreakSignal();
         }
         
         public Obj Execute(ContinueStatement statement)
         {
-            throw new ContinueInterrupt();
+            throw new ContinueSignal();
         }
 
         public Obj Execute(ForStatement statement)
@@ -443,11 +443,11 @@ namespace Core.Execution
                     {
                         statement.Body.Accept(this);
                     }
-                    catch (BreakInterrupt)
+                    catch (BreakSignal)
                     {
                         break;
                     }
-                    catch (ContinueInterrupt)
+                    catch (ContinueSignal)
                     {
                     }
 
