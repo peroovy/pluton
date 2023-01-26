@@ -1,16 +1,15 @@
 ﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
-namespace Core.Syntax.AST.Expressions
+namespace Core.Syntax.AST.Expressions.Literals
 {
-    public class NullExpression : LiteralExpression
+    public class NumberExpression : LiteralExpression
     {
-        public NullExpression(SyntaxToken token) : base(token)
+        public NumberExpression(SyntaxToken token) : base(token)
         {
         }
-        
+
         public override Obj Accept(IExecutor executor) => executor.Execute(this);
     }
 }

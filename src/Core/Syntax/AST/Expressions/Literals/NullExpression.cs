@@ -1,13 +1,12 @@
 ﻿using Core.Execution;
 using Core.Execution.Objects;
 using Core.Lexing;
-using Core.Utils.Text;
 
-namespace Core.Syntax.AST.Expressions
+namespace Core.Syntax.AST.Expressions.Literals
 {
-    public class BooleanExpression : LiteralExpression
+    public class NullExpression : LiteralExpression
     {
-        public BooleanExpression(SyntaxToken token) : base(token)
+        public NullExpression(SyntaxToken token) : base(token)
         {
         }
         

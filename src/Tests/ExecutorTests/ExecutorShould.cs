@@ -8,6 +8,8 @@ using Core.Execution.Objects;
 using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
+using Core.Syntax.AST.Expressions.Indexer;
+using Core.Syntax.AST.Expressions.Literals;
 using Core.Utils.Text;
 using Ninject;
 using NUnit.Framework;

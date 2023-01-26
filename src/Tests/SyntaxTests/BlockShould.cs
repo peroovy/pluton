@@ -12,6 +12,7 @@ using Core.Lexing;
 using Core.Syntax;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
+using Core.Syntax.AST.Expressions.Literals;
 using Ninject;
 using NUnit.Framework;
 using BinaryExpression = Core.Syntax.AST.Expressions.BinaryExpression;

@@ -2,7 +2,7 @@
 using Core.Execution.Objects;
 using Core.Lexing;
 
-namespace Core.Syntax.AST.Expressions
+namespace Core.Syntax.AST.Expressions.Indexer
 {
     public class IndexAssignmentExpression : Expression
     {

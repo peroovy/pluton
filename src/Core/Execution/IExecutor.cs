@@ -1,6 +1,8 @@
 ﻿using Core.Execution.Objects;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
+using Core.Syntax.AST.Expressions.Indexer;
+using Core.Syntax.AST.Expressions.Literals;
 
 namespace Core.Execution
 {

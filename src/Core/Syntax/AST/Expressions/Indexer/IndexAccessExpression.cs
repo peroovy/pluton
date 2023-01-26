@@ -2,11 +2,11 @@
 using Core.Execution.Objects;
 using Core.Lexing;
 
-namespace Core.Syntax.AST.Expressions
+namespace Core.Syntax.AST.Expressions.Indexer
 {
     public class IndexAccessExpression : Expression
     {
-        public IndexAccessExpression(Expression indexedExpression, Index index)
+        public IndexAccessExpression(Expression indexedExpression, Indexer.Index index)
         {
             IndexedExpression = indexedExpression;
             Index = index;
@@ -14,7 +14,7 @@ namespace Core.Syntax.AST.Expressions
         
         public Expression IndexedExpression { get; }
         
-        public Index Index { get; }
+        public Indexer.Index Index { get; }
 
         public override SyntaxToken FirstChild => IndexedExpression.FirstChild;
 

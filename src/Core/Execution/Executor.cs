@@ -12,6 +12,8 @@ using Core.Execution.Signals;
 using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
+using Core.Syntax.AST.Expressions.Indexer;
+using Core.Syntax.AST.Expressions.Literals;
 using Core.Utils.Diagnostic;
 using Core.Utils.Text;
 

@@ -1,6 +1,6 @@
 ﻿using Core.Lexing;
 
-namespace Core.Syntax.AST.Expressions
+namespace Core.Syntax.AST.Expressions.Literals
 {
     public abstract class LiteralExpression : Expression
     {
