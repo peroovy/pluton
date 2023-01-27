@@ -353,8 +353,8 @@ namespace Core.Execution
                 || argumentsCount > positionParametersCount + defaultParametersCount)
             {
                 throw new RuntimeException(
-                    GetLocationBetweenBrackets(expression.OpenParenthesis, expression.CloseParenthesis),
-                    $"Callable '{callableExpression}' requires {positionParametersCount} position arguments but was given {argumentsCount}"
+                    callableExpression.Location,
+                    $"Callable takes {positionParametersCount} position arguments but {argumentsCount} were given"
                 );
             }
             
