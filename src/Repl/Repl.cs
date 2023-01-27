@@ -18,13 +18,6 @@ public class Repl
     private readonly IPrinter printer;
     private readonly SubmissionHistory submissionHistory;
 
-    private int cursorTop;
-    private int lastRenderedLineCount;
-
-    private const string StartPrompt = ">> ";
-    private const string ContinuePrompt = ".. ";
-    private const int PromptLength = 3;
-    
     private const string CommandFirstCharacter = "#";
 
     private const int BlankLineCountInEndSubmission = 3;
@@ -83,13 +76,13 @@ public class Repl
 
     private string EditSubmission()
     {
-        cursorTop = Console.CursorTop;
-        
+        printer.FreezeDocumentStartLine();
+                
         var submissionDocument = new SubmissionDocument();
-        submissionDocument.OnChanged += Render;
+        submissionDocument.OnChanged += printer.PrintSubmission;
         
-        Render(submissionDocument);
-        UpdateCursor(submissionDocument);
+        printer.PrintSubmission(submissionDocument);
+        printer.SetCursorToDocumentEnd(submissionDocument);
         
         while (true)
         {
@@ -104,17 +97,17 @@ public class Repl
             }
 
             HandleTyping(info, submissionDocument);
-            UpdateCursor(submissionDocument);
+            printer.SetCursorToDocumentEnd(submissionDocument);
         }
     }
 
     private string HandleSubmissionComplete(SubmissionDocument submissionDocument)
     {
-        submissionDocument.OnChanged -= Render;
+        submissionDocument.OnChanged -= printer.PrintSubmission;
 
         if (!submissionDocument.IsEmpty)
         {
-            Console.SetCursorPosition(0, cursorTop + submissionDocument.LineCount);
+            printer.SetCursorAfterDocument(submissionDocument);
             submissionHistory.Add(submissionDocument);
         }
 
@@ -169,56 +162,11 @@ public class Repl
         return !parsing.HasErrors;
     }
 
-    private void Render(SubmissionDocument submissionDocument)
-    {
-        Console.CursorVisible = false;
-        var lineCount = 0;
-
-        foreach (var line in submissionDocument)
-        {
-            Console.SetCursorPosition(0, cursorTop + lineCount);
-
-            var prompt = lineCount == 0 ? StartPrompt : ContinuePrompt;
-            var textLength = prompt.Length + line.Length;
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(prompt);
-            Console.ResetColor();
-
-            Console.Write(line);
-            Console.Write(new string(' ', Console.WindowWidth - textLength - 1));
-
-            lineCount++;
-        }
-        
-        var blankLinesCount = lastRenderedLineCount - lineCount;
-        if (blankLinesCount > 0)
-        {
-            var blankLine = new string(' ', Console.WindowWidth);
-            for (var i = 0; i < blankLinesCount; i++)
-            {
-                Console.SetCursorPosition(0, cursorTop + lineCount + i);
-                Console.WriteLine(blankLine);
-            }
-        }
-        lastRenderedLineCount = lineCount;
-        
-        Console.CursorVisible = true;
-    }
-
-    private void UpdateCursor(SubmissionDocument submissionDocument)
-    {
-        Console.SetCursorPosition(
-            PromptLength + submissionDocument.CharacterIndex,
-            cursorTop + submissionDocument.LineIndex
-        );
-    }
-
     public static Repl Create()
     {
         var container = new StandardKernel();
 
-        container.Bind<IPrinter>().To<Printer>().InSingletonScope();
+        container.Bind<IPrinter>().To<ConsolePrinter>().InSingletonScope();
         container.Bind<SubmissionHistory>().ToSelf().InSingletonScope();
             
         container.Bind(conf => conf
