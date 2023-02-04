@@ -14,7 +14,6 @@ using Core.Utils.Text;
 using Ninject;
 using NUnit.Framework;
 using Array = Core.Execution.Objects.Array;
-using Boolean = Core.Execution.Objects.Boolean;
 using String = Core.Execution.Objects.String;
 
 namespace Tests.ExecutorTests
@@ -103,8 +102,8 @@ namespace Tests.ExecutorTests
             var assignment = AssignVariable(v, stext, bExp);
             assignment.Accept(executor);
             var result = GetVariable(v);
-            Assert.IsTrue(result is Boolean);
-            Assert.AreEqual(value, ((Boolean)result).Value);
+            Assert.IsTrue(result is Bool);
+            Assert.AreEqual(value, ((Bool)result).Value);
         }
 
         [Test]

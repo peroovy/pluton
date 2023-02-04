@@ -16,7 +16,6 @@ using Core.Syntax.AST.Expressions.Indexer;
 using Core.Syntax.AST.Expressions.Literals;
 using Core.Utils.Diagnostic;
 using Core.Utils.Text;
-using Boolean = Core.Execution.Objects.Boolean;
 
 namespace Core.Execution
 {
@@ -314,7 +313,7 @@ namespace Core.Execution
                 _ => throw new ArgumentException($"Bad boolean token {boolean}")
             };
 
-            return new Objects.Boolean(value);
+            return new Objects.Bool(value);
         }
 
         public Obj Execute(StringExpression str) => new Objects.String(str.Token.Text);
@@ -470,12 +469,12 @@ namespace Core.Execution
         }
 
         // TODO: implicit casting
-        private Boolean EvaluateCondition(Expression expression)
+        private Bool EvaluateCondition(Expression expression)
         {
             var obj = expression.Accept(this);
 
-            if (obj is not Boolean boolean)
-                throw new RuntimeException(expression.Location, $"Cannot implicitly cast to '{nameof(Boolean)}'");
+            if (obj is not Bool boolean)
+                throw new RuntimeException(expression.Location, $"Cannot implicitly cast to '{nameof(Bool)}'");
 
             return boolean;
         }

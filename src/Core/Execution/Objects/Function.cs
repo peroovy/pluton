@@ -42,8 +42,8 @@ namespace Core.Execution.Objects
 
         private bool Equals(Function other) => ReferenceEquals(this, other);
 
-        public static Boolean operator ==(Function left, Function right) => new(left.Equals(right));
+        public static Bool operator ==(Function left, Function right) => new(left.Equals(right));
         
-        public static Boolean operator !=(Function left, Function right) => new(!left.Equals(right));
+        public static Bool operator !=(Function left, Function right) => new(!left.Equals(right));
     }
 }

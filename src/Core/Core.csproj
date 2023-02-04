@@ -108,7 +108,7 @@
         <Compile Include="Interpreter.cs" />
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
-        <Compile Include="Execution\Objects\Boolean.cs" />
+        <Compile Include="Execution\Objects\Bool.cs" />
         <Compile Include="Execution\Objects\Function.cs" />
         <Compile Include="Execution\Objects\Number.cs" />
         <Compile Include="Execution\Objects\Obj.cs" />

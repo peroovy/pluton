@@ -49,16 +49,16 @@ namespace Core.Execution.Objects
 
         public static Number operator %(Number left, Number right) => new(left.Value % right.Value);
 
-        public static Boolean operator <(Number left, Number right) => new(left.Value < right.Value);
+        public static Bool operator <(Number left, Number right) => new(left.Value < right.Value);
 
-        public static Boolean operator >(Number left, Number right) => new(left.Value > right.Value);
+        public static Bool operator >(Number left, Number right) => new(left.Value > right.Value);
         
-        public static Boolean operator <=(Number left, Number right) => new(left.Value <= right.Value);
+        public static Bool operator <=(Number left, Number right) => new(left.Value <= right.Value);
 
-        public static Boolean operator >=(Number left, Number right) => new(left.Value >= right.Value);
+        public static Bool operator >=(Number left, Number right) => new(left.Value >= right.Value);
         
-        public static Boolean operator ==(Number left, Number right) => new(left.Equals(right));
+        public static Bool operator ==(Number left, Number right) => new(left.Equals(right));
 
-        public static Boolean operator !=(Number left, Number right) => new(!left.Equals(right));
+        public static Bool operator !=(Number left, Number right) => new(!left.Equals(right));
     }
 }

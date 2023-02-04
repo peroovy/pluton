@@ -56,20 +56,20 @@ namespace Core.Execution.Objects
             return new String(result.ToString());
         }
 
-        public static Boolean operator ==(String left, String right) => new(left.Equals(right));
+        public static Bool operator ==(String left, String right) => new(left.Equals(right));
 
-        public static Boolean operator !=(String left, String right) => new(!left.Equals(right));
+        public static Bool operator !=(String left, String right) => new(!left.Equals(right));
 
-        public static Boolean operator <(String left, String right) =>
+        public static Bool operator <(String left, String right) =>
             new(string.CompareOrdinal(left.Value, right.Value) < 0);
 
-        public static Boolean operator >(String left, String right) =>
+        public static Bool operator >(String left, String right) =>
             new(string.CompareOrdinal(left.Value, right.Value) > 0);
         
-        public static Boolean operator <=(String left, String right) =>
+        public static Bool operator <=(String left, String right) =>
             new(string.CompareOrdinal(left.Value, right.Value) <= 0);
 
-        public static Boolean operator >=(String left, String right) =>
+        public static Bool operator >=(String left, String right) =>
             new(string.CompareOrdinal(left.Value, right.Value) >= 0);
     }
 }

@@ -98,8 +98,8 @@ namespace Core.Execution.Objects
             return new Array(items.ToArray());
         }
 
-        public static Boolean operator ==(Array left, Array right) => new(left.Equals(right));
+        public static Bool operator ==(Array left, Array right) => new(left.Equals(right));
 
-        public static Boolean operator !=(Array left, Array right) => new(!left.Equals(right));
+        public static Bool operator !=(Array left, Array right) => new(!left.Equals(right));
     }
 }
