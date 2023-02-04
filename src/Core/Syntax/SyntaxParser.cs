@@ -156,8 +156,8 @@ namespace Core.Syntax
             var expression = ParseExpression();
             var semicolon = MatchToken(TokenType.Semicolon);
 
-            var returnStatement = new ReturnStatement(op, expression, semicolon);
-            return new BlockStatement(op, ImmutableArray.Create<Statement>(returnStatement), semicolon);
+            var returnStatement = new ReturnStatement(null, expression, null);
+            return new BlockStatement(null, ImmutableArray.Create<Statement>(returnStatement), null);
         }
 
         private ImmutableArray<SyntaxToken> ParsePositionParameters(ISet<string> uniqueParametersNames)
