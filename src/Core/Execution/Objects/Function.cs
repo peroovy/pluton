@@ -36,8 +36,6 @@ namespace Core.Execution.Objects
 
         public override string ToString() => (IsBuiltin ? "built-in " : string.Empty) + $"function <{Name}>";
 
-        public override Boolean ToBoolean() => new(true);
-
         public override bool Equals(object obj) => obj is Function function && Equals(function);
 
         public override int GetHashCode() => Invoke.GetHashCode();

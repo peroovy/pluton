@@ -8,8 +8,6 @@ namespace Core.Execution.Operations.Unary
 {
     public abstract class UnaryOperation
     {
-        private static Type objType = typeof(Obj);
-        
         public abstract TokenType Operator { get; }
 
         public virtual OperationPrecedence Precedence => OperationPrecedence.Unary;
@@ -20,7 +18,7 @@ namespace Core.Execution.Operations.Unary
         
         public Func<Obj> FindMethod(Obj operand)
         {
-            var method = FindMethod(operand.GetType()) ?? FindMethod(objType);
+            var method = FindMethod(operand.GetType());
 
             if (method is null)
                 return null;

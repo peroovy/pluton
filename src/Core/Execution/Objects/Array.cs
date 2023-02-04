@@ -64,8 +64,6 @@ namespace Core.Execution.Objects
             return result.ToString();
         }
 
-        public override Boolean ToBoolean() => new(Items.Length > 0);
-
         public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is Array array && Equals(array);
 
         public override int GetHashCode() => Items.GetHashCode();

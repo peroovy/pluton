@@ -16,6 +16,7 @@ using Core.Syntax.AST.Expressions.Indexer;
 using Core.Syntax.AST.Expressions.Literals;
 using Core.Utils.Diagnostic;
 using Core.Utils.Text;
+using Boolean = Core.Execution.Objects.Boolean;
 
 namespace Core.Execution
 {
@@ -147,7 +148,9 @@ namespace Core.Execution
 
         public Obj Execute(IfStatement statement)
         {
-            if (statement.Condition.Accept(this).ToBoolean().Value)
+            var condition = EvaluateCondition(statement.Condition);
+            
+            if (condition.Value)
             {
                 statement.ThenStatement.Accept(this);
             }
@@ -364,7 +367,9 @@ namespace Core.Execution
 
         public Obj Execute(TernaryExpression expression)
         {
-            return expression.Condition.Accept(this).ToBoolean().Value
+            var condition = EvaluateCondition(expression.Condition);
+            
+            return condition.Value
                 ? expression.ThenExpression.Accept(this)
                 : expression.ElseExpression.Accept(this);
         }
@@ -441,7 +446,7 @@ namespace Core.Execution
             {
                 initialize?.Invoke(statement);
 
-                while (statement.Condition.Accept(this).ToBoolean().Value)
+                while (EvaluateCondition(statement.Condition).Value)
                 {
                     try
                     {
@@ -462,6 +467,17 @@ namespace Core.Execution
             {
                 loopStack.Pop();
             }
+        }
+
+        // TODO: implicit casting
+        private Boolean EvaluateCondition(Expression expression)
+        {
+            var obj = expression.Accept(this);
+
+            if (obj is not Boolean boolean)
+                throw new RuntimeException(expression.Location, $"Cannot implicitly cast to '{nameof(Boolean)}'");
+
+            return boolean;
         }
 
         private static Location GetLocationBetweenBrackets(SyntaxToken open, SyntaxToken close)

@@ -109,7 +109,6 @@
         <Compile Include="Execution\Executor.cs" />
         <Compile Include="Execution\IExecutor.cs" />
         <Compile Include="Execution\Objects\Boolean.cs" />
-        <Compile Include="Execution\Objects\BuiltinFunctions\BoolFunction.cs" />
         <Compile Include="Execution\Objects\Function.cs" />
         <Compile Include="Execution\Objects\Number.cs" />
         <Compile Include="Execution\Objects\Obj.cs" />

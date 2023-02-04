@@ -14,8 +14,6 @@ namespace Core.Execution.Objects
 
         public override string ToString() => Value.ToString().ToLower();
         
-        public override Boolean ToBoolean() => new(Value);
-
         public override bool Equals(object obj) => obj is Boolean boolean && Equals(boolean);
 
         public override int GetHashCode() => Value.GetHashCode();

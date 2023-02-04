@@ -20,8 +20,6 @@ namespace Core.Execution.Objects
 
         public override string ToString() => double.IsNaN(Value) ? "NaN" : Value.ToString(CultureInfo.InvariantCulture);
 
-        public override Boolean ToBoolean() => new(Convert.ToBoolean(Value));
-
         public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is Number number && Equals(number);
 
         public override int GetHashCode() => Value.GetHashCode();

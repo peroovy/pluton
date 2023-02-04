@@ -33,8 +33,6 @@ namespace Core.Execution.Objects
 
         public override string ToString() => Value;
 
-        public override Boolean ToBoolean() => new(Value.Length > 0);
-        
         public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is String str && Equals(str);
 
         public override int GetHashCode() => Value.GetHashCode();
