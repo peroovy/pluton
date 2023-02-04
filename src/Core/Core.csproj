@@ -92,6 +92,8 @@
         <Compile Include="Execution\RuntimeException.cs" />
         <Compile Include="Lexing\TokenParsers\Priority.cs" />
         <Compile Include="Lexing\TokenParsers\WordTerminalParser.cs" />
+        <Compile Include="Syntax\AST\ClassFieldStatement.cs" />
+        <Compile Include="Syntax\AST\ClassStatement.cs" />
         <Compile Include="Syntax\AST\Expressions\Indexer\Index.cs" />
         <Compile Include="Syntax\AST\Expressions\Indexer\IndexAccessExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Indexer\IndexAssignmentExpression.cs" />

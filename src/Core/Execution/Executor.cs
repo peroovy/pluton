@@ -65,6 +65,25 @@ namespace Core.Execution
             }
         }
 
+        public Obj Execute(ClassStatement statement)
+        {
+            var classScope = new Scope(scope);
+            scope = classScope;
+
+            foreach (var member in statement.Members)
+                member.Accept(this);
+
+            scope = scope.Parent;
+
+            var obj = new ClassObj(statement.Identifier.Text);
+            foreach (var attr in classScope.CurrentLevel)
+                obj.SetAttribute(attr.Key, attr.Value);
+            
+            scope.Assign(obj.Name, obj);
+
+            return null;
+        }
+
         public Obj Execute(FunctionDeclarationStatement statement)
         {
             var positions = statement
@@ -170,13 +189,12 @@ namespace Core.Execution
 
         public Obj Execute(BlockStatement block)
         {
-            var parentScope = scope;
-            scope = new Scope(parentScope);
+            scope = new Scope(scope);
             
             foreach (var statement in block.Statements)
                 statement.Accept(this);
 
-            scope = parentScope;
+            scope = scope.Parent;
 
             return null;
         }
@@ -313,7 +331,7 @@ namespace Core.Execution
                 _ => throw new ArgumentException($"Bad boolean token {boolean}")
             };
 
-            return new Objects.Bool(value);
+            return new Bool(value);
         }
 
         public Obj Execute(StringExpression str) => new Objects.String(str.Token.Text);

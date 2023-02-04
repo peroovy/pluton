@@ -22,6 +22,7 @@
         BreakKeyword,
         ContinueKeyword,
         NotKeyword,
+        ClassKeyword,
 
         LineBreak,
         Space,

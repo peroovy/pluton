@@ -24,7 +24,8 @@ namespace Core.Lexing.TokenParsers
             ["not"] = TokenType.NotKeyword,
             ["null"] = TokenType.NullKeyword,
             ["break"] = TokenType.BreakKeyword,
-            ["continue"] = TokenType.ContinueKeyword
+            ["continue"] = TokenType.ContinueKeyword,
+            ["class"] = TokenType.ClassKeyword
         };
 
         public Priority Priority => Priority.Low;

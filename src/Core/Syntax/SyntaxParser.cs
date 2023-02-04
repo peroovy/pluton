@@ -104,12 +104,13 @@ namespace Core.Syntax
 
             throw new InvalidSyntaxException(Current.Location, expected);
         }
-
+        
         private Statement ParseStatement()
         {
             return Current.Type switch
             {
                 TokenType.OpenBrace => ParseBlockStatement(),
+                TokenType.ClassKeyword => ParseClassStatement(),
                 TokenType.IfKeyword => ParseIfStatement(),
                 TokenType.WhileKeyword => ParseWhileStatement(),
                 TokenType.ForKeyword => ParseForStatement(),
@@ -119,6 +120,43 @@ namespace Core.Syntax
                 TokenType.ContinueKeyword => ParseContinueStatement(),
                 _ => ParseExpressionStatement()
             };
+        }
+
+        private ClassStatement ParseClassStatement()
+        {
+            var keyword = MatchToken(TokenType.ClassKeyword);
+            var identifier = MatchToken(TokenType.Identifier);
+            var openBrace = MatchToken(TokenType.OpenBrace);
+            var members = ParseClassMembers();
+            var closeBrace = MatchToken(TokenType.CloseBrace);
+
+            return new ClassStatement(keyword, identifier, openBrace, members, closeBrace);
+        }
+
+        private ImmutableArray<SyntaxNode> ParseClassMembers()
+        {
+            var members = ImmutableArray.CreateBuilder<SyntaxNode>();
+            
+            while (Current.Type != TokenType.Eof && Current.Type != TokenType.CloseBrace)
+            {
+                SyntaxNode member = Current.Type == TokenType.DefKeyword
+                    ? ParseFunctionDeclarationStatement()
+                    : ParseClassFieldStatement();
+                
+                members.Add(member);
+            }
+
+            return members.ToImmutable();
+        }
+
+        private ClassFieldStatement ParseClassFieldStatement()
+        {
+            var identifier = MatchToken(TokenType.Identifier);
+            var equalsOperator = MatchToken(TokenType.Equals);
+            var expression = ParseExpression();
+            var semicolon = MatchToken(TokenType.Semicolon);
+
+            return new ClassFieldStatement(identifier, equalsOperator, expression, semicolon);
         }
 
         private FunctionDeclarationStatement ParseFunctionDeclarationStatement()

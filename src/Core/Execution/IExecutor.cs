@@ -10,6 +10,8 @@ namespace Core.Execution
     {
         TranslationState<Obj> Execute(SyntaxTree tree);
         
+        Obj Execute(ClassStatement statement);
+
         Obj Execute(FunctionDeclarationStatement statement);
         
         Obj Execute(ReturnStatement statement);
