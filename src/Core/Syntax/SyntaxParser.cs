@@ -219,12 +219,9 @@ namespace Core.Syntax
                    && Current.Type != TokenType.CloseParenthesis && Current.Type != TokenType.Eof)
             {
                 var parameter = MatchToken(TokenType.Identifier);
-                var parameterName = parameter.Text;
-                if (uniqueParametersNames.Contains(parameterName))
-                    throw new InvalidSyntaxException(parameter.Location,$"Duplicate parameter '{parameterName}'");
+                SaveUniqueParameterName(parameter, uniqueParametersNames);
 
                 parameters.Add(parameter);
-                uniqueParametersNames.Add(parameterName);
                 
                 if (Current.Type != TokenType.Comma)
                     break;
@@ -245,8 +242,7 @@ namespace Core.Syntax
                 var equals = NextToken();
                 var expression = ParseBinaryExpression();
                 
-                if (uniqueParametersNames.Contains(identifier.Text))
-                    throw new InvalidSyntaxException(identifier.Location,$"Duplicate parameter '{identifier.Text}'");
+                SaveUniqueParameterName(identifier, uniqueParametersNames);
                 
                 var parameter = new DefaultParameter(identifier, equals, expression);
                 parameters.Add(parameter);
@@ -672,10 +668,20 @@ namespace Core.Syntax
         
         private static void SaveUniqueClassMemberName(SyntaxToken identifier, ISet<string> uniqueNames)
         {
+            SaveUniqueName(identifier, uniqueNames, "class definition");
+        }
+        
+        private static void SaveUniqueParameterName(SyntaxToken identifier, ISet<string> uniqueParametersNames)
+        {
+            SaveUniqueName(identifier, uniqueParametersNames, "function definition");
+        }
+
+        private static void SaveUniqueName(SyntaxToken identifier, ISet<string> uniqueNames, string where)
+        {
             var name = identifier.Text;
             
             if (uniqueNames.Contains(name))
-                throw new InvalidSyntaxException(identifier.Location, $"Duplicate class member '{name}'");
+                throw new InvalidSyntaxException(identifier.Location, $"Duplicate name '{name}' in {where}");
 
             uniqueNames.Add(name);
         }
