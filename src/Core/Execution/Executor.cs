@@ -74,7 +74,7 @@ namespace Core.Execution
 
             var defaults = statement
                 .DefaultParameters
-                .Select(parameter => (parameter.Name.Text, parameter.Expression.Accept(this)))
+                .Select(parameter => new CallArgument(parameter.Name.Text, parameter.Expression.Accept(this)))
                 .ToImmutableArray();
 
             var function = new Function(
@@ -369,18 +369,17 @@ namespace Core.Execution
                 : expression.ElseExpression.Accept(this);
         }
 
-        private Obj InvokeCallableObject(ICallable callable, ImmutableDictionary<string, Obj> arguments)
+        private Obj InvokeCallableObject(ICallable callable, ImmutableArray<CallArgument> arguments)
         {
             callStack.Push(callable);
 
             var previousScope = scope;
             scope = new Scope(globalScope);
             
-            foreach (var param in arguments)
-                scope.Assign(param.Key, param.Value);
+            foreach (var argument in arguments)
+                scope.Assign(argument.Name, argument.Value);
 
-            var context = new CallContext(callable, scope);
-            var returnedValue = callable.Invoke(context);
+            var returnedValue = callable.Invoke(new CallContext(callable, scope));
 
             scope = previousScope;
             callStack.Pop();
@@ -388,24 +387,27 @@ namespace Core.Execution
             return returnedValue;
         }
 
-        private ImmutableDictionary<string, Obj> EvaluateArguments(CallExpression expression, ICallable callable)
+        private ImmutableArray<CallArgument> EvaluateArguments(CallExpression expression, ICallable callable)
         {
-            var result = ImmutableDictionary.CreateBuilder<string, Obj>();
-            
+            var result = ImmutableArray.CreateBuilder<CallArgument>();
+
             var arguments = expression.Arguments;
-            var positionParameters = callable.PositionParameters;
-            var defaultParameters = callable.DefaultParameters;
+            var positions = callable.PositionParameters;
+            var defaults = callable.DefaultParameters;
             
-            for (var i = 0; i < positionParameters.Length; i++)
-                result[positionParameters[i]] = arguments[i].Accept(this);
+            for (var i = 0; i < positions.Length; i++)
+                result.Add(new CallArgument(positions[i], arguments[i].Accept(this)));
 
-            for (var i = 0; i < arguments.Length - positionParameters.Length; i++)
-                result[defaultParameters[i].Name] = arguments[i + positionParameters.Length].Accept(this);
-
-            for (var i = 0; i < positionParameters.Length + defaultParameters.Length - arguments.Length; i++)
+            for (var i = 0; i < arguments.Length - positions.Length; i++)
             {
-                var offset = i + arguments.Length - positionParameters.Length;
-                result[defaultParameters[offset].Name] = defaultParameters[offset].Value;
+                var value = arguments[i + positions.Length].Accept(this);
+                result.Add(new CallArgument(defaults[i].Name, value));
+            }
+
+            for (var i = 0; i < positions.Length + defaults.Length - arguments.Length; i++)
+            {
+                var offset = i + arguments.Length - positions.Length;
+                result.Add(defaults[offset]);
             }
 
             return result.ToImmutable();

@@ -11,7 +11,7 @@ namespace Core.Execution.Objects.BuiltinFunctions
             : base(
                 "len", 
                 ImmutableArray.Create(ParameterName), 
-                ImmutableArray<(string name, Obj value)>.Empty, 
+                ImmutableArray<CallArgument>.Empty, 
                 context =>
                 {
                     var obj = context.Scope.Lookup(ParameterName);

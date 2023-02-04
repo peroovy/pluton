@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Core.Execution.Objects.DataModel;
 
 namespace Core.Execution.Objects.BuiltinFunctions
 {
@@ -10,7 +11,7 @@ namespace Core.Execution.Objects.BuiltinFunctions
             : base(
                 "num",
                 ImmutableArray.Create(ParameterName), 
-                ImmutableArray<(string name, Obj value)>.Empty, 
+                ImmutableArray<CallArgument>.Empty, 
                 context =>
                 {
                     var str = context.Scope.Lookup(ParameterName).ToString();

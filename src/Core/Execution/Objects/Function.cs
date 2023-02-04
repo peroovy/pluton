@@ -9,7 +9,7 @@ namespace Core.Execution.Objects
         public Function(
             string name, 
             ImmutableArray<string> positionParameters, 
-            ImmutableArray<(string name, Obj value)> defaultParameters,
+            ImmutableArray<CallArgument> defaultParameters,
             Func<CallContext, Obj> invoke, 
             bool isBuiltin = false)
         {
@@ -24,7 +24,7 @@ namespace Core.Execution.Objects
         
         public ImmutableArray<string> PositionParameters { get; }
         
-        public ImmutableArray<(string Name, Obj Value)> DefaultParameters { get; }
+        public ImmutableArray<CallArgument> DefaultParameters { get; }
 
         public Func<CallContext, Obj> Invoke { get; }
         

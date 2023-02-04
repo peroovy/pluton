@@ -7,7 +7,7 @@ namespace Core.Execution.Objects.DataModel
     {
         ImmutableArray<string> PositionParameters { get; }
         
-        ImmutableArray<(string Name, Obj Value)> DefaultParameters { get; }
+        ImmutableArray<CallArgument> DefaultParameters { get; }
         
         Func<CallContext, Obj> Invoke { get; }
     }
