@@ -76,45 +76,39 @@ public class Repl
 
     private string EditSubmission()
     {
-        printer.FreezeDocumentStartLine();
-                
-        var submissionDocument = new SubmissionDocument();
-        submissionDocument.OnChanged += printer.PrintSubmission;
-        
-        printer.PrintSubmission(submissionDocument);
-        printer.SetCursorToDocumentEnd(submissionDocument);
-        
+        var document = new SubmissionDocument();
+        var renderer = new SubmissionRenderer(document);
+
         while (true)
         {
+            renderer.Render();
+            
             var info = Console.ReadKey(true);
 
             if (info.Key == ConsoleKey.Enter)
             {
-                if (info.Modifiers == ConsoleModifiers.Shift || IsCompleteSubmission(submissionDocument))
-                    return HandleSubmissionComplete(submissionDocument);
+                if (info.Modifiers == ConsoleModifiers.Shift || IsCompleteSubmission(document))
+                    return HandleSubmissionComplete(document, renderer);
                     
-                submissionDocument.AddNewLine(withHyphenation: info.Modifiers != ConsoleModifiers.Control);
+                document.AddNewLine(withHyphenation: info.Modifiers != ConsoleModifiers.Control);
             }
 
-            HandleTyping(info, submissionDocument);
-            printer.SetCursorToDocumentEnd(submissionDocument);
+            HandleTyping(info, document);
         }
     }
 
-    private string HandleSubmissionComplete(SubmissionDocument submissionDocument)
+    private string HandleSubmissionComplete(SubmissionDocument document, SubmissionRenderer renderer)
     {
-        submissionDocument.OnChanged -= printer.PrintSubmission;
-
-        if (!submissionDocument.IsEmpty)
+        if (!document.IsEmpty)
         {
-            printer.SetCursorAfterDocument(submissionDocument);
-            submissionHistory.Add(submissionDocument);
+            renderer.Complete();
+            submissionHistory.Add(document);
         }
 
-        return submissionDocument.ToString();
+        return document.ToString();
     }
 
-    private void HandleTyping(ConsoleKeyInfo info, SubmissionDocument submissionDocument)
+    private void HandleTyping(ConsoleKeyInfo info, SubmissionDocument document)
     {
         var keyHandler = keyHandlers.FirstOrDefault(handler =>
         {
@@ -128,11 +122,11 @@ public class Repl
 
         if (keyHandler is not null)
         {
-            keyHandler.Handle(info, submissionDocument);
+            keyHandler.Handle(info, document);
         }
         else if (info.KeyChar >= ' ')
         {
-            submissionDocument.Insert(info.KeyChar);
+            document.Insert(info.KeyChar);
         }
     }
 

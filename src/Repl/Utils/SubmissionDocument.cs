@@ -11,8 +11,6 @@ public class SubmissionDocument : IEnumerable<string>
 
     private const string BlankLine = "\0";
 
-    public event Action<SubmissionDocument> OnChanged;
-    
     public int LineIndex { get; private set; }
     
     public int CharacterIndex { get; private set; }
@@ -42,8 +40,6 @@ public class SubmissionDocument : IEnumerable<string>
         
         lines.Insert(++LineIndex, remainder);
         CharacterIndex = 0;
-        
-        OnChanged?.Invoke(this);
     }
 
     public bool MoveNext()
@@ -109,16 +105,12 @@ public class SubmissionDocument : IEnumerable<string>
     public void Insert(char character)
     {
         lines[LineIndex] = lines[LineIndex].Insert(CharacterIndex++, character.ToString());
-        
-        OnChanged?.Invoke(this);
     }
 
     public void Insert(string str)
     {
         lines[LineIndex] = lines[LineIndex].Insert(CharacterIndex, str);
         CharacterIndex += str.Length;
-        
-        OnChanged?.Invoke(this);
     }
     
     public void Insert(SubmissionDocument document)
@@ -133,8 +125,6 @@ public class SubmissionDocument : IEnumerable<string>
 
         LineIndex += document.lines.Count - 1;
         CharacterIndex = document.lines.Last().Length - 1;
-        
-        OnChanged?.Invoke(this);
     }
 
     public void RemoveLeft()
@@ -154,8 +144,6 @@ public class SubmissionDocument : IEnumerable<string>
         {
             lines[LineIndex] = lines[LineIndex].Remove(--CharacterIndex, 1);
         }
-        
-        OnChanged?.Invoke(this);
     }
 
     public void RemoveRight()
@@ -175,8 +163,6 @@ public class SubmissionDocument : IEnumerable<string>
         {
             lines[LineIndex] = lines[LineIndex].Remove(CharacterIndex, 1);
         }
-        
-        OnChanged?.Invoke(this);
     }
 
     public void Clear()
@@ -184,8 +170,6 @@ public class SubmissionDocument : IEnumerable<string>
         lines = new List<string> { BlankLine };
         LineIndex = 0;
         CharacterIndex = 0;
-        
-        OnChanged?.Invoke(this);
     }
 
     public IEnumerator<string> GetEnumerator() => ((IEnumerable<string>)lines).GetEnumerator();
