@@ -14,4 +14,6 @@ public interface IPrinter
     void PrintBlankLine();
     
     void PrintWelcome();
+
+    void PrintHelp();
 }

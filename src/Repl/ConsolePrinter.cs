@@ -1,14 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using Core.Execution.Objects;
 using Core.Utils.Diagnostic;
+using Repl.MetaCommands;
+using Repl.Utils;
 
 namespace Repl;
 
 public class ConsolePrinter : IPrinter
 {
+    private readonly Lazy<IEnumerable<IMetaCommand>> metaCommands;
+    
     private static readonly string CodeIndent = new(' ', 6);
 
     private const ConsoleColor ErrorFontColor = ConsoleColor.DarkRed;
+
+    public ConsolePrinter(Lazy<IEnumerable<IMetaCommand>> metaCommands)
+    {
+        this.metaCommands = metaCommands;
+    }
 
     public void PrintError(string message)
     {
@@ -43,6 +53,30 @@ public class ConsolePrinter : IPrinter
         Console.WriteLine();
         Console.WriteLine("Welcome to Pluton REPL");
         Console.WriteLine("Type \"#help\" for more information");
+        Console.WriteLine();
+    }
+
+    public void PrintHelp()
+    {
+        Console.WriteLine(@"You can use:
+
+Enter to execute a submission or go to the next line with hyphenation.
+Shift+Enter to force start execution.
+Ctrl+Enter to go to the next line.
+Arrows (↑ and ↓) to navigate within a multi-line submission.
+PageUp and PageDown to navigate through submission history.
+Backspace to remove the character on the left.
+Delete to remove the character on the right.
+Ctrl+Backspace to delete the entered submission.");
+        
+        Console.WriteLine();
+        Console.WriteLine();
+        
+        Console.WriteLine("Meta-commands available:");
+        Console.WriteLine();
+        foreach (var metaCommand in metaCommands.Value)
+            Console.WriteLine($"#{metaCommand.Name} - {metaCommand.Description.Capitalize()}");
+        
         Console.WriteLine();
     }
 
