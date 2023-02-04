@@ -391,6 +391,33 @@ namespace Core.Execution
                 : expression.ElseExpression.Accept(this);
         }
 
+        public Obj Execute(AttributeAccessExpression expression)
+        {
+            var obj = expression.ObjExpression.Accept(this);
+            var attributeName = expression.Attribute.Text;
+
+            if (!obj.TryGetAttribute(attributeName, out var value))
+            {
+                throw new RuntimeException(
+                    expression.ObjExpression.Location,
+                    $"'{obj.TypeName}' object has not attribute '{attributeName}'");
+            }
+
+            return value;
+        }
+
+        public Obj Execute(AttributeAssignmentExpression assignment)
+        {
+            var accessExpression = assignment.AccessExpression;
+            
+            var obj = accessExpression.ObjExpression.Accept(this);
+            var value = assignment.Value.Accept(this);
+            
+            obj.SetAttribute(accessExpression.Attribute.Text, value);
+
+            return value;
+        }
+
         private Obj InvokeCallableObject(ICallable callable, ImmutableArray<CallArgument> arguments)
         {
             callStack.Push(callable);

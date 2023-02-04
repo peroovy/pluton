@@ -61,5 +61,9 @@ namespace Core.Execution
         Obj Execute(CallExpression call);
         
         Obj Execute(TernaryExpression expression);
+        
+        Obj Execute(AttributeAccessExpression expression);
+        
+        Obj Execute(AttributeAssignmentExpression assignment);
     }
 }

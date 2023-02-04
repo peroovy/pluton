@@ -414,6 +414,7 @@ namespace Core.Syntax
             {
                 VariableExpression toVariable => ContinueWithVariableAssignmentExpression(toVariable),
                 IndexAccessExpression toIndex => ContinueWithIndexAssignmentExpression(toIndex),
+                AttributeAccessExpression toAttribute => ContinueWithAttributeAssignmentExpression(toAttribute),
                 _ => throw new InvalidSyntaxException(to.Location, "Cannot assign to the expression")
             };
         }
@@ -426,6 +427,14 @@ namespace Core.Syntax
             var elseExpression = ParseExpression();
 
             return new TernaryExpression(condition, questionMark, thenExpression, colon, elseExpression);
+        }
+        
+        private AttributeAssignmentExpression ContinueWithAttributeAssignmentExpression(AttributeAccessExpression attribute)
+        {
+            var equals = MatchToken(TokenType.Equals);
+            var value = ParseExpression();
+
+            return new AttributeAssignmentExpression(attribute, equals, value);
         }
 
         private IndexAssignmentExpression ContinueWithIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
@@ -529,6 +538,7 @@ namespace Core.Syntax
                 {
                     TokenType.OpenBracket => ContinueWithIndexAccessExpression(primaryExpression),
                     TokenType.OpenParenthesis => ContinueWithCallExpression(primaryExpression),
+                    TokenType.Dot => ContinueWithAttributeAccessExpression(primaryExpression),
                     _ => null
                 };
 
@@ -539,6 +549,14 @@ namespace Core.Syntax
             }
 
             return primaryExpression;
+        }
+
+        private AttributeAccessExpression ContinueWithAttributeAccessExpression(Expression expression)
+        {
+            var dot = MatchToken(TokenType.Dot);
+            var attribute = MatchToken(TokenType.Identifier);
+
+            return new AttributeAccessExpression(expression, dot, attribute);
         }
 
         private Expression ContinueWithIndexAccessExpression(Expression parent)

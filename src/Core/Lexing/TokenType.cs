@@ -31,6 +31,7 @@
         QuestionMark,
         Colon,
         EqualsRightArrow,
+        Dot,
 
         Plus,
         Minus,

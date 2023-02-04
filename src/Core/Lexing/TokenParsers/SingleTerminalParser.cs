@@ -26,6 +26,7 @@ namespace Core.Lexing.TokenParsers
             ['%'] = TokenType.Percent,
             ['?'] = TokenType.QuestionMark,
             [':'] = TokenType.Colon,
+            ['.'] = TokenType.Dot,
             ['\0'] = TokenType.Eof
         };
 

@@ -70,6 +70,7 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Execution\Objects\ClassObj.cs" />
         <Compile Include="Execution\Objects\DataModel\CallArgument.cs" />
         <Compile Include="Execution\Signals\BreakSignal.cs" />
         <Compile Include="Execution\Signals\ContinueSignal.cs" />
@@ -94,6 +95,8 @@
         <Compile Include="Lexing\TokenParsers\WordTerminalParser.cs" />
         <Compile Include="Syntax\AST\ClassFieldStatement.cs" />
         <Compile Include="Syntax\AST\ClassStatement.cs" />
+        <Compile Include="Syntax\AST\Expressions\AttributeAccessExpression.cs" />
+        <Compile Include="Syntax\AST\Expressions\AttributeAssignmentExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Indexer\Index.cs" />
         <Compile Include="Syntax\AST\Expressions\Indexer\IndexAccessExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Indexer\IndexAssignmentExpression.cs" />
