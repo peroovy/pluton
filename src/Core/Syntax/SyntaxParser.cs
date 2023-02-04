@@ -123,13 +123,15 @@ namespace Core.Syntax
 
         private FunctionDeclarationStatement ParseFunctionDeclarationStatement()
         {
+            var uniqueParametersNames = new HashSet<string>();
+            
             functionsDepth++;
             
             var keyword = MatchToken(TokenType.DefKeyword);
             var identifier = MatchToken(TokenType.Identifier);
             var openParenthesis = MatchToken(TokenType.OpenParenthesis);
-            var positionParameters = ParsePositionParameters();
-            var defaultParameters = ParseDefaultParameters();
+            var positionParameters = ParsePositionParameters(uniqueParametersNames);
+            var defaultParameters = ParseDefaultParameters(uniqueParametersNames);
             var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
             var block = ParseBlockStatement();
 
@@ -146,7 +148,7 @@ namespace Core.Syntax
             );
         }
 
-        private ImmutableArray<SyntaxToken> ParsePositionParameters()
+        private ImmutableArray<SyntaxToken> ParsePositionParameters(ISet<string> uniqueParametersNames)
         {
             var parameters = ImmutableArray.CreateBuilder<SyntaxToken>();
             
@@ -154,7 +156,12 @@ namespace Core.Syntax
                    && Current.Type != TokenType.CloseParenthesis && Current.Type != TokenType.Eof)
             {
                 var parameter = MatchToken(TokenType.Identifier);
+                var parameterName = parameter.Text;
+                if (uniqueParametersNames.Contains(parameterName))
+                    throw new InvalidSyntaxException(parameter.Location,$"Duplicate parameter '{parameterName}'");
+
                 parameters.Add(parameter);
+                uniqueParametersNames.Add(parameterName);
                 
                 if (Current.Type != TokenType.Comma)
                     break;
@@ -165,17 +172,20 @@ namespace Core.Syntax
             return parameters.ToImmutable();
         }
 
-        private ImmutableArray<DefaultParameter> ParseDefaultParameters()
+        private ImmutableArray<DefaultParameter> ParseDefaultParameters(ISet<string> uniqueParametersNames)
         {
             var parameters = ImmutableArray.CreateBuilder<DefaultParameter>();
             
             while (IsCurrentIdentifierWithEquals)
             {
-                var name = NextToken();
+                var identifier = NextToken();
                 var equals = NextToken();
                 var expression = ParseBinaryExpression();
-
-                var parameter = new DefaultParameter(name, equals, expression);
+                
+                if (uniqueParametersNames.Contains(identifier.Text))
+                    throw new InvalidSyntaxException(identifier.Location,$"Duplicate parameter '{identifier.Text}'");
+                
+                var parameter = new DefaultParameter(identifier, equals, expression);
                 parameters.Add(parameter);
                 
                 if (Current.Type != TokenType.Comma)
