@@ -29,6 +29,7 @@
         Comma,
         QuestionMark,
         Colon,
+        EqualsRightArrow,
 
         Plus,
         Minus,

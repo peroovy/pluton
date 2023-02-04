@@ -133,7 +133,9 @@ namespace Core.Syntax
             var positionParameters = ParsePositionParameters(uniqueParametersNames);
             var defaultParameters = ParseDefaultParameters(uniqueParametersNames);
             var closeParenthesis = MatchToken(TokenType.CloseParenthesis);
-            var block = ParseBlockStatement();
+            var block = Current.Type == TokenType.EqualsRightArrow
+                ? ParseOneLineBlockStatement()
+                : ParseBlockStatement();
 
             functionsDepth--;
 
@@ -146,6 +148,16 @@ namespace Core.Syntax
                 closeParenthesis, 
                 block
             );
+        }
+
+        private BlockStatement ParseOneLineBlockStatement()
+        {
+            var op = MatchToken(TokenType.EqualsRightArrow);
+            var expression = ParseExpression();
+            var semicolon = MatchToken(TokenType.Semicolon);
+
+            var returnStatement = new ReturnStatement(op, expression, semicolon);
+            return new BlockStatement(op, ImmutableArray.Create<Statement>(returnStatement), semicolon);
         }
 
         private ImmutableArray<SyntaxToken> ParsePositionParameters(ISet<string> uniqueParametersNames)

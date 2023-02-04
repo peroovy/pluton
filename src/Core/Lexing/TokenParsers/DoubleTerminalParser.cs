@@ -17,7 +17,8 @@ namespace Core.Lexing.TokenParsers
             ["-="] = TokenType.MinusEquals,
             ["*="] = TokenType.StarEquals,
             ["/="] = TokenType.SlashEquals,
-            ["%="] = TokenType.PercentEquals
+            ["%="] = TokenType.PercentEquals,
+            ["=>"] = TokenType.EqualsRightArrow
         };
 
         public Priority Priority => Priority.High;
