@@ -135,13 +135,14 @@ namespace Core.Syntax
 
         private ImmutableArray<SyntaxNode> ParseClassMembers()
         {
+            var uniqueNames = new HashSet<string>();
             var members = ImmutableArray.CreateBuilder<SyntaxNode>();
             
             while (Current.Type != TokenType.Eof && Current.Type != TokenType.CloseBrace)
             {
                 SyntaxNode member = Current.Type == TokenType.DefKeyword
-                    ? ParseFunctionDeclarationStatement()
-                    : ParseClassFieldStatement();
+                    ? ParseMethod(uniqueNames)
+                    : ParseClassFieldStatement(uniqueNames);
                 
                 members.Add(member);
             }
@@ -149,12 +150,24 @@ namespace Core.Syntax
             return members.ToImmutable();
         }
 
-        private ClassFieldStatement ParseClassFieldStatement()
+        private FunctionDeclarationStatement ParseMethod(ISet<string> uniqueNames)
+        {
+            var function = ParseFunctionDeclarationStatement();
+            var identifier = function.Identifier;
+
+            SaveUniqueClassMemberName(identifier, uniqueNames);
+
+            return function;
+        }
+
+        private ClassFieldStatement ParseClassFieldStatement(ISet<string> uniqueNames)
         {
             var identifier = MatchToken(TokenType.Identifier);
             var equalsOperator = MatchToken(TokenType.Equals);
             var expression = ParseExpression();
             var semicolon = MatchToken(TokenType.Semicolon);
+
+            SaveUniqueClassMemberName(identifier, uniqueNames);
 
             return new ClassFieldStatement(identifier, equalsOperator, expression, semicolon);
         }
@@ -655,6 +668,16 @@ namespace Core.Syntax
             var closeBracket = MatchToken(TokenType.CloseBracket);
 
             return new Index(openBracket, index, closeBracket);
+        }
+        
+        private static void SaveUniqueClassMemberName(SyntaxToken identifier, ISet<string> uniqueNames)
+        {
+            var name = identifier.Text;
+            
+            if (uniqueNames.Contains(name))
+                throw new InvalidSyntaxException(identifier.Location, $"Duplicate class member '{name}'");
+
+            uniqueNames.Add(name);
         }
     }
 }
