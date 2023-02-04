@@ -19,8 +19,9 @@ public class Repl
     private readonly SubmissionHistory submissionHistory;
 
     private const string CommandFirstCharacter = "#";
-
     private const int BlankLineCountInEndSubmission = 3;
+
+    private const ConsoleModifiers ForceEnterModifier = ConsoleModifiers.Shift;
 
     public Repl(IMetaCommand[] commands, IKeyHandler[] keyHandlers, IPrinter printer, SubmissionHistory submissionHistory)
     {
@@ -87,7 +88,7 @@ public class Repl
 
             if (info.Key == ConsoleKey.Enter)
             {
-                if (info.Modifiers == ConsoleModifiers.Shift || IsCompleteSubmission(document))
+                if (info.Modifiers == ForceEnterModifier || IsCompleteSubmission(document))
                     return HandleSubmissionComplete(document, renderer);
                     
                 document.AddNewLine(withHyphenation: info.Modifiers != ConsoleModifiers.Control);
@@ -110,15 +111,9 @@ public class Repl
 
     private void HandleTyping(ConsoleKeyInfo info, SubmissionDocument document)
     {
-        var keyHandler = keyHandlers.FirstOrDefault(handler =>
-        {
-            var result = handler.Key == info.Key;
-
-            if (handler.Modifiers != default)
-                result = result && (handler.Modifiers & info.Modifiers) > 0;
-
-            return result;
-        });
+        var keyHandler = keyHandlers.FirstOrDefault(
+            handler => handler.Key == info.Key && handler.Modifiers == info.Modifiers
+        );
 
         if (keyHandler is not null)
         {

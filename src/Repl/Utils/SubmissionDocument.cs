@@ -30,15 +30,15 @@ public class SubmissionDocument : IEnumerable<string>
 
     public void AddNewLine(bool withHyphenation)
     {
-        var remainder = BlankLine;
+        var hyphenation = BlankLine;
 
         if (withHyphenation)
         {
-            remainder = CurrentLine.Substring(CharacterIndex);
+            hyphenation = CurrentLine.Substring(CharacterIndex);
             lines[LineIndex] = lines[LineIndex].Substring(0, CharacterIndex) + '\0';
         }
         
-        lines.Insert(++LineIndex, remainder);
+        lines.Insert(++LineIndex, hyphenation);
         CharacterIndex = 0;
     }
 
