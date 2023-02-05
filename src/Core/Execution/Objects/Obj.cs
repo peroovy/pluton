@@ -26,6 +26,21 @@ namespace Core.Execution.Objects
 
         public void SetAttribute(string name, Obj value) => attributes[name] = value;
 
-        public bool TryGetAttribute(string name, out Obj value) => attributes.TryGetValue(name, out value);
+        public bool TryGetAttribute(string name, out Obj value)
+        {
+            return attributes.TryGetValue(name, out value) 
+                   || baseClass.TryGetAttribute(name, this, out value);
+        }
+
+        private bool TryGetAttribute(string name, Obj instance, out Obj value)
+        {
+            if (!attributes.TryGetValue(name, out value))
+                return false;
+
+            if (value is Function function)
+                value = new Method(instance, function);
+
+            return true;
+        }
     }
 }

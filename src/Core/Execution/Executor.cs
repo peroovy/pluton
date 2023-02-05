@@ -366,19 +366,34 @@ namespace Core.Execution
                 throw new RuntimeException(callableExpression.Location, $"'{obj.TypeName}' object is not callable");
             
             var argumentsCount = expression.Arguments.Length;
-            var positionParametersCount = callable.PositionParameters.Length;
-            var defaultParametersCount = callable.DefaultParameters.Length;
+            var positionsCount = callable.PositionParameters.Length;
+            var defaultsCount = callable.DefaultParameters.Length;
+
+            var offset = 0;
+            if (callable is Method method)
+            {
+                if (positionsCount == 0)
+                {
+                    throw new RuntimeException(
+                        callableExpression.Location,
+                        $"Definition of the method '{method.Name}' must contain more than 1 parameter"
+                    );
+                }
+
+                offset = 1;
+                argumentsCount++;
+            }
             
-            if (argumentsCount < positionParametersCount 
-                || argumentsCount > positionParametersCount + defaultParametersCount)
+            if (argumentsCount < positionsCount || argumentsCount > positionsCount + defaultsCount)
             {
                 throw new RuntimeException(
                     callableExpression.Location,
-                    $"Callable takes {positionParametersCount} position arguments but {argumentsCount} were given"
+                    $"Callable takes {positionsCount - offset} position arguments but {argumentsCount - offset} were given"
                 );
             }
             
-            var arguments = EvaluateArguments(expression, callable);
+            var arguments = EvaluateArguments(callable, expression.Arguments, offset);
+            
             return InvokeCallableObject(callable, arguments);
         }
 
@@ -436,12 +451,15 @@ namespace Core.Execution
             return returnedValue;
         }
 
-        private ImmutableArray<CallArgument> EvaluateArguments(CallExpression expression, ICallable callable)
+        private ImmutableArray<CallArgument> EvaluateArguments(
+            ICallable callable, ImmutableArray<Expression> arguments, int positionsOffset)
         {
             var result = ImmutableArray.CreateBuilder<CallArgument>();
 
-            var arguments = expression.Arguments;
-            var positions = callable.PositionParameters;
+            var positions = callable
+                .PositionParameters
+                .Skip(positionsOffset)
+                .ToImmutableArray();
             var defaults = callable.DefaultParameters;
             
             for (var i = 0; i < positions.Length; i++)
