@@ -2,9 +2,16 @@
 
 namespace Core.Execution.Objects
 {
-    public abstract class Obj
+    public class Obj
     {
-        private Dictionary<string, Obj> attributes = new();
+        private readonly ClassObj baseClass;
+        private readonly Dictionary<string, Obj> attributes = new();
+
+        public Obj(ClassObj baseClass)
+        {
+            this.baseClass = baseClass;
+            TypeName = baseClass.Name;
+        }
         
         protected Obj()
         {
@@ -13,9 +20,9 @@ namespace Core.Execution.Objects
         
         public virtual string TypeName { get; }
 
-        public abstract string AsDebugString { get; }
+        public virtual string AsDebugString => ToString();
 
-        public abstract override string ToString();
+        public override string ToString() => $"object <{TypeName}>";
 
         public void SetAttribute(string name, Obj value) => attributes[name] = value;
 
