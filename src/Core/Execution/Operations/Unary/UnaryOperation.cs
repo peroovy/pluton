@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Reflection;
 using Core.Execution.Objects;
 using Array = System.Array;
@@ -8,6 +9,8 @@ namespace Core.Execution.Operations.Unary
     public abstract class UnaryOperation : Operation
     {
         private static readonly ImmutableArray<string> DefaultPositionParameters = ImmutableArray.Create("self");
+
+        private static readonly Type Obj = typeof(Obj);
         
         public override OperationPrecedence Precedence => OperationPrecedence.Unary;
 
@@ -15,19 +18,12 @@ namespace Core.Execution.Operations.Unary
 
         public Function FindMethod(Obj operand)
         {
-            return FindBuiltinMethod(operand) ?? FindOperationInAttributes(operand);
+            return FindBuiltinOperation(operand) ?? FindOperationInAttributes(operand);
         }
 
-        private BuiltinOperationWrapper FindBuiltinMethod(Obj operand)
+        private BuiltinOperationWrapper FindBuiltinOperation(Obj operand)
         {
-            var operandType = operand.GetType();
-            
-            var method = operandType.GetMethod(MethodName,
-                BindingFlags.Public | BindingFlags.Static,
-                null,
-                new[] { operandType },
-                Array.Empty<ParameterModifier>()
-            );
+            var method = FindBuiltinMethod(operand.GetType()) ?? FindBuiltinMethod(Obj);
 
             return method is null
                 ? null
@@ -36,6 +32,17 @@ namespace Core.Execution.Operations.Unary
                     DefaultPositionParameters,
                     () => (Obj)method.Invoke(null, new object[] { operand })
                 );
+        }
+
+        private MethodInfo FindBuiltinMethod(Type operand)
+        {
+            return operand.GetMethod(
+                MethodName,
+                BindingFlags.Public | BindingFlags.Static,
+                null,
+                new[] { operand },
+                Array.Empty<ParameterModifier>()
+            );
         }
     }
 }

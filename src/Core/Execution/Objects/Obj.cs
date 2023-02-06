@@ -2,7 +2,6 @@
 
 namespace Core.Execution.Objects
 {
-    // TODO: default __eq__ and __neq__
     public class Obj
     {
         private readonly Dictionary<string, Obj> attributes = new();
@@ -45,5 +44,9 @@ namespace Core.Execution.Objects
 
             return true;
         }
+
+        public static Bool __eq__(Obj left, Obj right) => new(ReferenceEquals(left, right));
+        
+        public static Bool __neq__(Obj left, Obj right) => new(!ReferenceEquals(left, right));
     }
 }

@@ -33,11 +33,5 @@ namespace Core.Execution.Objects
         public override string AsDebugString => ToString();
 
         public override string ToString() => $"function <{Name}>";
-
-        public static Bool __eq__(Function left, Function right) => new(Equals(left, right));
-        
-        public static Bool __neq__(Function left, Function right) => new(!Equals(left, right));
-        
-        private static bool Equals(Function left, Function right) => ReferenceEquals(left, right);
     }
 }

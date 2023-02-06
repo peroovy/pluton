@@ -1,7 +1,7 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Reflection;
 using Core.Execution.Objects;
-using Core.Execution.Operations.Unary;
 using Core.Lexing;
 using Array = System.Array;
 
@@ -11,6 +11,8 @@ namespace Core.Execution.Operations.Binary
     {
         private static readonly ImmutableArray<string> DefaultPositionParameters =
             ImmutableArray.Create("self", "other");
+
+        private static readonly Type Obj = typeof(Obj);
         
         protected override int PositionParametersCount => 2;
         
@@ -23,15 +25,7 @@ namespace Core.Execution.Operations.Binary
         
         private BuiltinOperationWrapper FindBuiltinOperation(Obj left, Obj right)
         {
-            var leftType = left.GetType();
-            
-            var method = leftType.GetMethod(
-                MethodName,
-                BindingFlags.Public | BindingFlags.Static,
-                null,
-                new[] { leftType, right.GetType() },
-                Array.Empty<ParameterModifier>()
-            );
+            var method = FindBuiltinMethod(left.GetType(), right.GetType()) ?? FindBuiltinMethod(Obj, Obj);
 
             return method is null
                 ? null
@@ -40,6 +34,17 @@ namespace Core.Execution.Operations.Binary
                     DefaultPositionParameters,
                     () => (Obj)method.Invoke(null, new object[] { left, right })
                 );
+        }
+
+        private MethodInfo FindBuiltinMethod(Type left, Type right)
+        {
+            return left.GetMethod(
+                MethodName,
+                BindingFlags.Public | BindingFlags.Static,
+                null,
+                new[] { left, right },
+                Array.Empty<ParameterModifier>()
+            );
         }
     }
 }
