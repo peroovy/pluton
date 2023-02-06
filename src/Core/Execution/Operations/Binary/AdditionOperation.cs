@@ -1,4 +1,5 @@
-﻿using Core.Lexing;
+﻿using Core.Execution.Objects.DataModel;
+using Core.Lexing;
 
 namespace Core.Execution.Operations.Binary
 {
@@ -10,6 +11,6 @@ namespace Core.Execution.Operations.Binary
 
         public override OperationPrecedence Precedence => OperationPrecedence.Additive;
         
-        protected override string MethodName => "op_Addition";
+        protected override string MethodName => MagicFunctions.Add;
     }
 }

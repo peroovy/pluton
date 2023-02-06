@@ -3,7 +3,9 @@ namespace Core.Execution.Objects
 {
     public class Bool : Obj
     {
-        public Bool(bool value)
+        private static readonly ClassObj BaseClassObj = new(nameof(Bool));
+
+        public Bool(bool value) : base(BaseClassObj)
         {
             Value = value;
         }
@@ -14,20 +16,14 @@ namespace Core.Execution.Objects
 
         public override string ToString() => Value.ToString().ToLower();
         
-        public override bool Equals(object obj) => obj is Bool boolean && Equals(boolean);
+        public static Bool __not__(Bool operand) => new(!operand.Value);
 
-        public override int GetHashCode() => Value.GetHashCode();
-
-        private bool Equals(Bool other) => Value == other.Value;
-
-        public static Bool operator !(Bool operand) => new(!operand.Value);
-
-        public static Bool operator &(Bool left, Bool right) => new(left.Value && right.Value);
+        public static Bool __and__(Bool left, Bool right) => new(left.Value && right.Value);
         
-        public static Bool operator |(Bool left, Bool right) => new(left.Value || right.Value);
+        public static Bool __or__(Bool left, Bool right) => new(left.Value || right.Value);
 
-        public static Bool operator ==(Bool left, Bool right) => new(left.Value == right.Value);
+        public static Bool __eq__(Bool left, Bool right) => new(left.Value == right.Value);
         
-        public static Bool operator !=(Bool left, Bool right) => new(left.Value != right.Value);
+        public static Bool __neq__(Bool left, Bool right) => new(left.Value != right.Value);
     }
 }

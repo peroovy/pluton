@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Core.Execution.Objects
 {
+    // TODO: fix ClassObj + ClassObj -> error
+    // TODO: default __eq__ and __neq__
     public class Obj
     {
-        private readonly ClassObj baseClass;
         private readonly Dictionary<string, Obj> attributes = new();
 
         public Obj(ClassObj baseClass)
         {
-            this.baseClass = baseClass;
-            TypeName = baseClass.Name;
+            BaseClass = baseClass;
+            TypeName = baseClass?.Name ?? GetType().Name;
         }
-        
-        protected Obj()
-        {
-            TypeName = GetType().Name;
-        }
+
+        public ClassObj BaseClass { get; }
         
         public virtual string TypeName { get; }
 
@@ -29,8 +26,10 @@ namespace Core.Execution.Objects
 
         public bool TryGetAttribute(string name, out Obj value)
         {
-            return attributes.TryGetValue(name, out value) 
-                   || baseClass.TryGetAttribute(name, this, out value);
+            if (attributes.TryGetValue(name, out value))
+                return true;
+            
+            return BaseClass?.TryGetAttribute(name, this, out value) ?? false;
         }
 
         private bool TryGetAttribute(string name, Obj instance, out Obj value)

@@ -70,10 +70,12 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Execution\Objects\BuiltinOperationWrapper.cs" />
         <Compile Include="Execution\Objects\ClassObj.cs" />
         <Compile Include="Execution\Objects\DataModel\CallArgument.cs" />
         <Compile Include="Execution\Objects\DataModel\MagicFunctions.cs" />
         <Compile Include="Execution\Objects\Method.cs" />
+        <Compile Include="Execution\Operations\Operation.cs" />
         <Compile Include="Execution\Signals\BreakSignal.cs" />
         <Compile Include="Execution\Signals\ContinueSignal.cs" />
         <Compile Include="Execution\Signals\LoopSignal.cs" />

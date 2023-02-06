@@ -1,39 +1,41 @@
-﻿using System;
+﻿using System.Collections.Immutable;
 using System.Reflection;
 using Core.Execution.Objects;
-using Core.Lexing;
 using Array = System.Array;
 
 namespace Core.Execution.Operations.Unary
 {
-    public abstract class UnaryOperation
+    public abstract class UnaryOperation : Operation
     {
-        public abstract TokenType Operator { get; }
-
-        public virtual OperationPrecedence Precedence => OperationPrecedence.Unary;
-
-        protected abstract string MethodName { get; }
+        private static readonly ImmutableArray<string> DefaultPositionParameters = ImmutableArray.Create("self");
         
-        public bool IsOperator(TokenType tokenType) => tokenType == Operator;
-        
-        public Func<Obj> FindMethod(Obj operand)
+        public override OperationPrecedence Precedence => OperationPrecedence.Unary;
+
+        protected override int PositionParametersCount => 1;
+
+        public Function FindMethod(Obj operand)
         {
-            var method = FindMethod(operand.GetType());
-
-            if (method is null)
-                return null;
-            
-            return () => (Obj)method.Invoke(null, new object[] { operand });
+            return FindBuiltinMethod(operand) ?? FindOperationInAttributes(operand);
         }
 
-        private MethodInfo FindMethod(Type operandType)
+        private BuiltinOperationWrapper FindBuiltinMethod(Obj operand)
         {
-            return operandType.GetMethod(MethodName,
+            var operandType = operand.GetType();
+            
+            var method = operandType.GetMethod(MethodName,
                 BindingFlags.Public | BindingFlags.Static,
                 null,
                 new[] { operandType },
                 Array.Empty<ParameterModifier>()
             );
+
+            return method is null
+                ? null
+                : new BuiltinOperationWrapper(
+                    MethodName,
+                    DefaultPositionParameters,
+                    () => (Obj)method.Invoke(null, new object[] { operand })
+                );
         }
     }
 }

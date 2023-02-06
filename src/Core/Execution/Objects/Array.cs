@@ -8,12 +8,14 @@ namespace Core.Execution.Objects
 {
     public class Array : Obj, IIndexReadable, IIndexSettable, ICollection
     {
-        public Array(ImmutableArray<Obj> items)
+        private static readonly ClassObj BaseClassObj = new(nameof(Array));
+
+        public Array(ImmutableArray<Obj> items) : base(BaseClassObj)
         {
             Items = items.ToArray();
         }
 
-        private Array(Obj[] items)
+        private Array(Obj[] items) : base(BaseClassObj)
         {
             Items = items;
         }
@@ -63,31 +65,19 @@ namespace Core.Execution.Objects
             result.Append(']');
             return result.ToString();
         }
-
-        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is Array array && Equals(array);
-
-        public override int GetHashCode() => Items.GetHashCode();
-
-        private bool Equals(Array other)
-        {
-            if (Items.Length != other.Items.Length)
-                return false;
-
-            return !Items.Where((item, idx) => !item.Equals(other.Items[idx])).Any();
-        }
         
         private bool IsInBound(int index) => index >= 0 && index < Items.Length;
 
         private int NormalizeIndex(int index) => index >= 0 ? index : Items.Length + index;
 
-        public static Array operator +(Array left, Array right)
+        public static Array __add__(Array left, Array right)
         {
             var items = left.Items.Concat(right.Items);
 
             return new Array(items.ToArray());
         }
 
-        public static Array operator *(Array left, Number right)
+        public static Array __mult__(Array left, Number right)
         {
             var amount = (int)Math.Round(right.Value);
 
@@ -98,8 +88,19 @@ namespace Core.Execution.Objects
             return new Array(items.ToArray());
         }
 
-        public static Bool operator ==(Array left, Array right) => new(left.Equals(right));
+        public static Bool __eq__(Array left, Array right) => new(Equals(left, right));
 
-        public static Bool operator !=(Array left, Array right) => new(!left.Equals(right));
+        public static Bool __neq__(Array left, Array right) => new(!Equals(left, right));
+        
+        private static bool Equals(Array left, Array right)
+        {
+            if (ReferenceEquals(left, right))
+                return true;
+            
+            if (left.Items.Length != right.Items.Length)
+                return false;
+
+            return !left.Items.Where((item, idx) => !item.Equals(right.Items[idx])).Any();
+        }
     }
 }

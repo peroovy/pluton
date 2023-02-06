@@ -6,15 +6,15 @@ namespace Core.Execution.Objects
     public class ClassObj : Obj
     {
         private static readonly Function DefaultInitializer = new(
-            MagicFunctions.Initializer,
+            MagicFunctions.Init,
             ImmutableArray.Create("self"),
             ImmutableArray<CallArgument>.Empty,
             _ => new Null());
-        
-        public ClassObj(string name)
+
+        public ClassObj(string name) : base(null)
         {
             Name = name;
-            SetAttribute(MagicFunctions.Initializer, DefaultInitializer);
+            SetAttribute(MagicFunctions.Init, DefaultInitializer);
         }
 
         public override string AsDebugString => ToString();
@@ -25,7 +25,7 @@ namespace Core.Execution.Objects
         {
             get
             {
-                var initializer = TryGetAttribute(MagicFunctions.Initializer, out var attr) & attr is Function
+                var initializer = TryGetAttribute(MagicFunctions.Init, out var attr) & attr is Function
                     ? (Function)attr
                     : DefaultInitializer;
             

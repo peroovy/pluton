@@ -285,34 +285,46 @@ namespace Core.Execution
             
             var left = binary.Left.Accept(this);
             var right = binary.Right.Accept(this);
-            var method = binaryOperations
+            var function = binaryOperations
                 .Single(op => op.IsOperator(opToken.Type))
-                .FindMethod(left, right);
+                .FindOperation(left, right);
+            
+            if (function is null || function.PositionParameters.Length != 2)
+            {
+                throw new RuntimeException(
+                    opToken.Location,
+                    $"The binary operator '{opToken.Text}' is not defined for '{left.TypeName}' and '{right.TypeName}' types"
+                );
+            }
 
-            if (method is not null) 
-                return method.Invoke();
-
-            throw new RuntimeException(
-                opToken.Location,
-                $"The binary operator '{opToken.Text}' is not defined for '{left.TypeName}' and '{right.TypeName}' types"
+            var positions = function.PositionParameters;
+            var arguments = ImmutableArray.Create(
+                new CallArgument(positions[0], left),
+                new CallArgument(positions[1], right)
             );
+
+            return InvokeCallableObject(function, arguments);
         }
 
         public Obj Execute(UnaryExpression unary)
         {
             var opToken = unary.OperatorToken;
             var operand = unary.Operand.Accept(this);
-            var method = unaryOperations
+            var function = unaryOperations
                 .Single(op => op.IsOperator(opToken.Type))
                 .FindMethod(operand);
 
-            if (method is not null) 
-                return method.Invoke();
+            if (function is null || function.PositionParameters.Length != 1)
+            {
+                throw new RuntimeException(
+                    opToken.Location,
+                    $"The unary operator '{opToken.Text}' is not defined for '{operand.TypeName}' type"
+                );
+            }
 
-            throw new RuntimeException(
-                opToken.Location,
-                $"The unary operator '{opToken.Text}' is not defined for '{operand.TypeName}' type"
-            );
+            var arguments = ImmutableArray.Create(new CallArgument(function.PositionParameters[0], operand));
+
+            return InvokeCallableObject(function, arguments);
         }
 
         public Obj Execute(NumberExpression number)

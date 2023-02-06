@@ -1,41 +1,45 @@
-﻿using System;
+﻿using System.Collections.Immutable;
 using System.Reflection;
 using Core.Execution.Objects;
+using Core.Execution.Operations.Unary;
 using Core.Lexing;
 using Array = System.Array;
 
 namespace Core.Execution.Operations.Binary
 {
-    public abstract class BinaryOperation
+    public abstract class BinaryOperation : Operation
     {
-        public abstract TokenType Operator { get; }
+        private static readonly ImmutableArray<string> DefaultPositionParameters =
+            ImmutableArray.Create("self", "other");
+        
+        protected override int PositionParametersCount => 2;
         
         public abstract TokenType? CompoundAssignmentOperator { get; }
         
-        public abstract OperationPrecedence Precedence { get; }
-        
-        protected abstract string MethodName { get; }
-
-        public bool IsOperator(TokenType tokenType) => tokenType == Operator;
-        
-        public Func<Obj> FindMethod(Obj left, Obj right)
+        public Function FindOperation(Obj left, Obj right)
         {
-            var method = FindMethod(left.GetType(), right.GetType());
-
-            if (method is null)
-                return null;
-
-            return () => (Obj)method.Invoke(null, new object[] { left, right });
+            return FindBuiltinOperation(left, right) ?? FindOperationInAttributes(left);
         }
-
-        private MethodInfo FindMethod(Type leftType, Type rightType)
+        
+        private BuiltinOperationWrapper FindBuiltinOperation(Obj left, Obj right)
         {
-            return leftType.GetMethod(MethodName,
+            var leftType = left.GetType();
+            
+            var method = leftType.GetMethod(
+                MethodName,
                 BindingFlags.Public | BindingFlags.Static,
                 null,
-                new[] { leftType, rightType },
+                new[] { leftType, right.GetType() },
                 Array.Empty<ParameterModifier>()
             );
+
+            return method is null
+                ? null
+                : new BuiltinOperationWrapper(
+                    MethodName,
+                    DefaultPositionParameters,
+                    () => (Obj)method.Invoke(null, new object[] { left, right })
+                );
         }
     }
 }
