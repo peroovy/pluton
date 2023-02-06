@@ -7,17 +7,15 @@ namespace Core.Execution.Objects
     public class Function : Obj, ICallable
     {
         public Function(
-            string name, 
-            ImmutableArray<string> positionParameters, 
+            string name,
+            ImmutableArray<string> positionParameters,
             ImmutableArray<CallArgument> defaultParameters,
-            Func<CallContext, Obj> invoke, 
-            bool isBuiltin = false)
+            Func<CallContext, Obj> invoke)
         {
             Name = name;
             PositionParameters = positionParameters;
             DefaultParameters = defaultParameters;
             Invoke = invoke;
-            IsBuiltin = isBuiltin;
         }
 
         public string Name { get; }
@@ -28,13 +26,11 @@ namespace Core.Execution.Objects
 
         public Func<CallContext, Obj> Invoke { get; }
         
-        public bool IsBuiltin { get; }
-
         public override string TypeName => "Function";
 
         public override string AsDebugString => ToString();
 
-        public override string ToString() => (IsBuiltin ? "built-in " : string.Empty) + $"function <{Name}>";
+        public override string ToString() => $"function <{Name}>";
 
         public override bool Equals(object obj) => obj is Function function && Equals(function);
 

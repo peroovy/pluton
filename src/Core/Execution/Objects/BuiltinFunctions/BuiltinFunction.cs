@@ -10,8 +10,10 @@ namespace Core.Execution.Objects.BuiltinFunctions
             string name, 
             ImmutableArray<string> positionParameters, 
             ImmutableArray<CallArgument> defaultParameters, 
-            Func<CallContext, Obj> invoke) : base(name, positionParameters, defaultParameters, invoke, isBuiltin: true)
+            Func<CallContext, Obj> invoke) : base(name, positionParameters, defaultParameters, invoke)
         {
         }
+
+        public override string ToString() => $"built-in function <{Name}>";
     }
 }
