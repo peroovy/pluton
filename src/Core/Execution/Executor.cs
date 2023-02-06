@@ -24,7 +24,7 @@ namespace Core.Execution
         private readonly BinaryOperation[] binaryOperations;
         private readonly UnaryOperation[] unaryOperations;
 
-        private readonly Stack<ICallable> callStack = new();
+        private readonly Stack<Function> callStack = new();
         private readonly Stack<LoopStatement> loopStack = new();
         private readonly Scope globalScope = new(null);
         private Scope scope;
@@ -362,7 +362,10 @@ namespace Core.Execution
             var callableExpression = expression.CallableExpression;
             var obj = callableExpression.Accept(this);
 
-            if (obj is not ICallable callable)
+            if (obj is ClassObj classObj)
+                obj = classObj.MagicMethodNew;
+
+            if (obj is not Function callable)
                 throw new RuntimeException(callableExpression.Location, $"'{obj.TypeName}' object is not callable");
             
             var argumentsCount = expression.Arguments.Length;
@@ -433,7 +436,7 @@ namespace Core.Execution
             return value;
         }
 
-        private Obj InvokeCallableObject(ICallable callable, ImmutableArray<CallArgument> arguments)
+        private Obj InvokeCallableObject(Function callable, ImmutableArray<CallArgument> arguments)
         {
             callStack.Push(callable);
 
@@ -452,7 +455,7 @@ namespace Core.Execution
         }
 
         private ImmutableArray<CallArgument> EvaluateArguments(
-            ICallable callable, ImmutableArray<Expression> arguments, int positionsOffset)
+            Function callable, ImmutableArray<Expression> arguments, int positionsOffset)
         {
             var result = ImmutableArray.CreateBuilder<CallArgument>();
 

@@ -2,13 +2,13 @@
 {
     public class CallContext
     {
-        public CallContext(ICallable callable, Scope scope)
+        public CallContext(Function callable, Scope scope)
         {
             Callable = callable;
             Scope = scope;
         }
         
-        public ICallable Callable { get; }
+        public Function Callable { get; }
         
         public Scope Scope { get; }
     }

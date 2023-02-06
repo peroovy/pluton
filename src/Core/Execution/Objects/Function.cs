@@ -4,7 +4,7 @@ using Core.Execution.Objects.DataModel;
 
 namespace Core.Execution.Objects
 {
-    public class Function : Obj, ICallable
+    public class Function : Obj
     {
         public Function(
             string name,
