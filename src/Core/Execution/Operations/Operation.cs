@@ -17,8 +17,7 @@ namespace Core.Execution.Operations
 
         protected Function FindOperationInAttributes(Obj obj)
         {
-            // TODO: fix BaseClass may be null
-            if (!obj.BaseClass.TryGetAttribute(MethodName, out var attr))
+            if (!obj.TryGetAttributeFromBaseClass(MethodName, out var attr))
                 return null;
 
             if (attr is not Function function || function.PositionParameters.Length != PositionParametersCount)
