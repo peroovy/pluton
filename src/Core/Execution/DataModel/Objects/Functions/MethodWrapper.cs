@@ -2,9 +2,9 @@
 
 namespace Core.Execution.DataModel.Objects.Functions
 {
-    public class Method : Function
+    public class MethodWrapper : Function
     {
-        public Method(Obj instance, Function function)
+        public MethodWrapper(Obj instance, Function function)
             : base($"{instance.TypeName}.{function.Name}",
                 function.PositionParameters,
                 function.DefaultParameters,
@@ -13,7 +13,10 @@ namespace Core.Execution.DataModel.Objects.Functions
                     if (function.PositionParameters.Length == 0)
                         throw new InvalidOperationException("The function must contain more than one parameter");
 
-                    context.Scope.Assign(function.PositionParameters[0], instance);
+                    var arguments = context
+                        .Arguments
+                        .SetItem(function.PositionParameters[0], instance);
+                    context = new CallContext(context.Callable, arguments, context.Scope);
 
                     return function.Invoke(context);
                 })
@@ -22,7 +25,7 @@ namespace Core.Execution.DataModel.Objects.Functions
 
         public override string ToString()
         {
-            return $"bound method <{Name}>";
+            return $"method <{Name}>";
         }
     }
 }

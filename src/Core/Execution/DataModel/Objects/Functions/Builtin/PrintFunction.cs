@@ -15,8 +15,8 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
                 ImmutableArray.Create(new CallArgument(EndParameter, new String("\n"))),
                 context =>
                 {
-                    var value = context.Scope.Lookup(ObjParameter).ToString();
-                    var end = context.Scope.Lookup(EndParameter).ToString();
+                    var value = context.Arguments[ObjParameter].ToString();
+                    var end = context.Arguments[EndParameter].ToString();
 
                     Console.Write(value + end);
 

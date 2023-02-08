@@ -13,7 +13,7 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
                 ImmutableArray<CallArgument>.Empty,
                 context =>
                 {
-                    var str = context.Scope.Lookup(ParameterName).ToString();
+                    var str = context.Arguments[ParameterName].ToString();
                     var parsed = double.TryParse(str, out var value);
 
                     return parsed ? new Number(value) : new Null();

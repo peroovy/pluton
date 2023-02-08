@@ -87,7 +87,7 @@
         <Compile Include="Execution\DataModel\Objects\Functions\CallContext.cs" />
         <Compile Include="Execution\DataModel\Objects\Functions\Function.cs" />
         <Compile Include="Execution\DataModel\Objects\Functions\MagicFunctions.cs" />
-        <Compile Include="Execution\DataModel\Objects\Functions\Method.cs" />
+        <Compile Include="Execution\DataModel\Objects\Functions\MethodWrapper.cs" />
         <Compile Include="Execution\DataModel\Objects\Null.cs" />
         <Compile Include="Execution\DataModel\Objects\Number.cs" />
         <Compile Include="Execution\DataModel\Objects\Obj.cs" />

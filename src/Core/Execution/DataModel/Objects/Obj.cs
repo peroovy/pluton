@@ -47,7 +47,7 @@ namespace Core.Execution.DataModel.Objects
                 return false;
 
             if (value is Function function)
-                value = new Method(instance, function);
+                value = new MethodWrapper(instance, function);
 
             return true;
         }

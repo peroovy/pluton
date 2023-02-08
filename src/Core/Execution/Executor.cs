@@ -301,12 +301,11 @@ namespace Core.Execution
             }
 
             var positions = function.PositionParameters;
-            var arguments = ImmutableArray.Create(
-                new CallArgument(positions[0], left),
-                new CallArgument(positions[1], right)
-            );
+            var arguments = ImmutableDictionary.CreateBuilder<string, Obj>();
+            arguments.Add(positions[0], left);
+            arguments.Add(positions[1], right);
 
-            return InvokeCallableObject(function, arguments);
+            return InvokeCallableObject(function, arguments.ToImmutable());
         }
 
         public Obj Execute(UnaryExpression unary)
@@ -325,9 +324,10 @@ namespace Core.Execution
                 );
             }
 
-            var arguments = ImmutableArray.Create(new CallArgument(function.PositionParameters[0], operand));
+            var arguments = ImmutableDictionary.CreateBuilder<string, Obj>();
+            arguments.Add(function.PositionParameters[0], operand);
 
-            return InvokeCallableObject(function, arguments);
+            return InvokeCallableObject(function, arguments.ToImmutable());
         }
 
         public Obj Execute(NumberExpression number)
@@ -388,7 +388,7 @@ namespace Core.Execution
             var defaultsCount = callable.DefaultParameters.Length;
 
             var offset = 0;
-            if (callable is Method method)
+            if (callable is MethodWrapper method)
             {
                 if (positionsCount == 0)
                 {
@@ -451,17 +451,15 @@ namespace Core.Execution
             return value;
         }
 
-        private Obj InvokeCallableObject(Function callable, ImmutableArray<CallArgument> arguments)
+        private Obj InvokeCallableObject(Function callable, ImmutableDictionary<string, Obj> arguments)
         {
             callStack.Push(callable);
 
             var previousScope = scope;
             scope = new Scope(globalScope);
-            
-            foreach (var argument in arguments)
-                scope.Assign(argument.Name, argument.Value);
 
-            var returnedValue = callable.Invoke(new CallContext(callable, scope));
+            var context = new CallContext(callable, arguments, scope);
+            var returnedValue = callable.Invoke(context);
 
             scope = previousScope;
             callStack.Pop();
@@ -469,10 +467,10 @@ namespace Core.Execution
             return returnedValue;
         }
 
-        private ImmutableArray<CallArgument> EvaluateArguments(
+        private ImmutableDictionary<string, Obj> EvaluateArguments(
             Function callable, ImmutableArray<Expression> arguments, int positionsOffset)
         {
-            var result = ImmutableArray.CreateBuilder<CallArgument>();
+            var result = ImmutableDictionary.CreateBuilder<string, Obj>();
 
             var positions = callable
                 .PositionParameters
@@ -481,18 +479,15 @@ namespace Core.Execution
             var defaults = callable.DefaultParameters;
             
             for (var i = 0; i < positions.Length; i++)
-                result.Add(new CallArgument(positions[i], arguments[i].Accept(this)));
+                result.Add(positions[i], arguments[i].Accept(this));
 
             for (var i = 0; i < arguments.Length - positions.Length; i++)
-            {
-                var value = arguments[i + positions.Length].Accept(this);
-                result.Add(new CallArgument(defaults[i].Name, value));
-            }
+                result.Add(defaults[i].Name, arguments[i + positions.Length].Accept(this));
 
             for (var i = 0; i < positions.Length + defaults.Length - arguments.Length; i++)
             {
                 var offset = i + arguments.Length - positions.Length;
-                result.Add(defaults[offset]);
+                result.Add(defaults[offset].Name, defaults[offset].Value);
             }
 
             return result.ToImmutable();

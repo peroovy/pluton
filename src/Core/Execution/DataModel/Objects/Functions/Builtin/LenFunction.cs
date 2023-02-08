@@ -14,7 +14,7 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
                 ImmutableArray<CallArgument>.Empty,
                 context =>
                 {
-                    var obj = context.Scope.Lookup(ParameterName);
+                    var obj = context.Arguments[ParameterName];
 
                     Obj value = obj is ICollection collection
                         ? new Number(collection.Length)

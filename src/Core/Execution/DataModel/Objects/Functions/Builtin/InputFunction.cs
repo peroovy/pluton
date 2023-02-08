@@ -14,7 +14,7 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
                 ImmutableArray.Create(new CallArgument(ParameterName, new String(string.Empty))),
                 context =>
                 {
-                    var message = context.Scope.Lookup(ParameterName).ToString();
+                    var message = context.Arguments[ParameterName].ToString();
 
                     Console.Write(message);
                     var value = Console.ReadLine();

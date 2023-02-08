@@ -21,7 +21,7 @@ namespace Core.Execution.DataModel.Objects
 
         public string Name { get; }
 
-        public Method MagicMethodNew
+        public MethodWrapper MagicMethodNew
         {
             get
             {
@@ -35,12 +35,12 @@ namespace Core.Execution.DataModel.Objects
                     {
                         var instance = new Obj(this);
 
-                        new Method(instance, initializer).Invoke(context);
+                        new MethodWrapper(instance, initializer).Invoke(context);
 
                         return instance;
                     });
 
-                return new Method(this, magicMethodNew);
+                return new MethodWrapper(this, magicMethodNew);
             }
         }
 
