@@ -12,7 +12,7 @@ namespace Core.Execution.DataModel.Operations.Unary
         private static readonly ImmutableArray<string> DefaultPositionParameters = ImmutableArray.Create("self");
 
         private static readonly Type Obj = typeof(Obj);
-        
+
         public override OperationPrecedence Precedence => OperationPrecedence.Unary;
 
         protected override int PositionParametersCount => 1;

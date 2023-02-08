@@ -20,7 +20,7 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
 
                     Console.Write(value + end);
 
-                    return new Null();
+                    return Null.Instance;
                 })
         {
         }

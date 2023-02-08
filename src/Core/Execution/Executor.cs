@@ -51,7 +51,7 @@ namespace Core.Execution
         public TranslationState<Obj> Execute(SyntaxTree tree)
         {
             var diagnosticBag = new DiagnosticBag();
-            lastExpressionValue = new Null();
+            lastExpressionValue = Null.Instance;
             
             try
             {
@@ -116,7 +116,7 @@ namespace Core.Execution
                         return signal.Value;
                     }
 
-                    return new Null();
+                    return Null.Instance;
                 }
             );
 
@@ -127,7 +127,7 @@ namespace Core.Execution
 
         public Obj Execute(ReturnStatement statement)
         {
-            var value = statement.Expression?.Accept(this) ?? new Null();
+            var value = statement.Expression?.Accept(this) ?? Null.Instance;
             
             throw new ReturnSignal(value);
         }
@@ -360,7 +360,7 @@ namespace Core.Execution
             return new Array(items);
         }
 
-        public Obj Execute(NullExpression expression) => new Null();
+        public Obj Execute(NullExpression expression) => Null.Instance;
 
         public Obj Execute(VariableExpression variable)
         {
@@ -378,7 +378,7 @@ namespace Core.Execution
             var obj = callableExpression.Accept(this);
 
             if (obj is ClassObj classObj)
-                obj = classObj.MagicMethodNew;
+                obj = GenerateObjBuilder(classObj, expression);
 
             if (obj is not Function callable)
                 throw new RuntimeException(callableExpression.Location, $"'{obj.TypeName}' object is not callable");
@@ -449,6 +449,33 @@ namespace Core.Execution
             obj.SetAttribute(accessExpression.Attribute.Text, value);
 
             return value;
+        }
+        
+        private MethodWrapper GenerateObjBuilder(ClassObj obj, CallExpression expression)
+        {
+            var callableExpression = expression.CallableExpression;
+            var initializer = obj.GetAttribute<Function>(MagicFunctions.Init);
+                
+            var functionNew = new Function(
+                MagicFunctions.New, initializer.PositionParameters, initializer.DefaultParameters,
+                context =>
+                {
+                    var instance = new Obj(obj);
+                    var initWrapper = new MethodWrapper(instance, initializer);
+                    var initReturnedValue = InvokeCallableObject(initWrapper, context.Arguments);
+
+                    if (initReturnedValue is not Null)
+                    {
+                        throw new RuntimeException(
+                            callableExpression.Location,
+                            $"'{MagicFunctions.Init}' function should return '{Null.Instance.TypeName}', not '{initReturnedValue.TypeName}'"
+                        );
+                    }
+
+                    return instance;
+                });
+
+            return new MethodWrapper(obj, functionNew);
         }
 
         private Obj InvokeCallableObject(Function callable, ImmutableDictionary<string, Obj> arguments)

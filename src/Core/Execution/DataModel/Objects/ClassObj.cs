@@ -9,7 +9,7 @@ namespace Core.Execution.DataModel.Objects
             MagicFunctions.Init,
             ImmutableArray.Create("self"),
             ImmutableArray<CallArgument>.Empty,
-            _ => new Null());
+            _ => Null.Instance);
 
         public ClassObj(string name) : base(null)
         {
@@ -20,29 +20,6 @@ namespace Core.Execution.DataModel.Objects
         public override string AsDebugString => ToString();
 
         public string Name { get; }
-
-        public MethodWrapper MagicMethodNew
-        {
-            get
-            {
-                var initializer = TryGetAttribute(MagicFunctions.Init, out var attr) & attr is Function
-                    ? (Function)attr
-                    : DefaultInitializer;
-
-                var magicMethodNew = new Function(
-                    MagicFunctions.New, initializer.PositionParameters, initializer.DefaultParameters,
-                    context =>
-                    {
-                        var instance = new Obj(this);
-
-                        new MethodWrapper(instance, initializer).Invoke(context);
-
-                        return instance;
-                    });
-
-                return new MethodWrapper(this, magicMethodNew);
-            }
-        }
 
         public override string ToString()
         {

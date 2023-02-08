@@ -14,16 +14,16 @@ namespace Core.Execution.DataModel.Operations.Binary
             ImmutableArray.Create("self", "other");
 
         private static readonly Type Obj = typeof(Obj);
-        
+
         protected override int PositionParametersCount => 2;
-        
+
         public abstract TokenType? CompoundAssignmentOperator { get; }
-        
+
         public Function FindOperation(Obj left, Obj right)
         {
             return FindBuiltinOperation(left, right) ?? FindOperationInAttributes(left);
         }
-        
+
         private BuiltinOperationWrapper FindBuiltinOperation(Obj left, Obj right)
         {
             var method = FindBuiltinMethod(left.GetType(), right.GetType()) ?? FindBuiltinMethod(Obj, Obj);

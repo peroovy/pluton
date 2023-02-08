@@ -10,7 +10,7 @@ namespace Core.Execution.DataModel.Operations.Binary
         public override TokenType? CompoundAssignmentOperator => TokenType.StarEquals;
 
         public override OperationPrecedence Precedence => OperationPrecedence.Multiplicative;
-        
+
         protected override string MethodName => MagicFunctions.Mult;
     }
 }

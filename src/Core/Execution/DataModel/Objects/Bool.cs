@@ -20,27 +20,27 @@
 
         public static Bool __not__(Bool operand)
         {
-            return new(!operand.Value);
+            return new Bool(!operand.Value);
         }
 
         public static Bool __and__(Bool left, Bool right)
         {
-            return new(left.Value && right.Value);
+            return new Bool(left.Value && right.Value);
         }
 
         public static Bool __or__(Bool left, Bool right)
         {
-            return new(left.Value || right.Value);
+            return new Bool(left.Value || right.Value);
         }
 
         public static Bool __eq__(Bool left, Bool right)
         {
-            return new(left.Value == right.Value);
+            return new Bool(left.Value == right.Value);
         }
 
         public static Bool __neq__(Bool left, Bool right)
         {
-            return new(left.Value != right.Value);
+            return new Bool(left.Value != right.Value);
         }
     }
 }

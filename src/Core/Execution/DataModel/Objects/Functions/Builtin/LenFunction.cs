@@ -18,7 +18,7 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
 
                     Obj value = obj is ICollection collection
                         ? new Number(collection.Length)
-                        : new Null();
+                        : Null.Instance;
 
                     return value;
                 })

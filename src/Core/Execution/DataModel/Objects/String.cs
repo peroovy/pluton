@@ -50,7 +50,7 @@ namespace Core.Execution.DataModel.Objects
 
         public static String __add__(String left, String right)
         {
-            return new(left.Value + right.Value);
+            return new String(left.Value + right.Value);
         }
 
         public static String __mult__(String str, Number number)
@@ -66,32 +66,32 @@ namespace Core.Execution.DataModel.Objects
 
         public static Bool __eq__(String left, String right)
         {
-            return new(left.Equals(right));
+            return new Bool(left.Equals(right));
         }
 
         public static Bool __neq__(String left, String right)
         {
-            return new(!left.Equals(right));
+            return new Bool(!left.Equals(right));
         }
 
         public static Bool __lt__(String left, String right)
         {
-            return new(string.CompareOrdinal(left.Value, right.Value) < 0);
+            return new Bool(string.CompareOrdinal(left.Value, right.Value) < 0);
         }
 
         public static Bool __lte__(String left, String right)
         {
-            return new(string.CompareOrdinal(left.Value, right.Value) <= 0);
+            return new Bool(string.CompareOrdinal(left.Value, right.Value) <= 0);
         }
 
         public static Bool __gt__(String left, String right)
         {
-            return new(string.CompareOrdinal(left.Value, right.Value) > 0);
+            return new Bool(string.CompareOrdinal(left.Value, right.Value) > 0);
         }
 
         public static Bool __gte__(String left, String right)
         {
-            return new(string.CompareOrdinal(left.Value, right.Value) >= 0);
+            return new Bool(string.CompareOrdinal(left.Value, right.Value) >= 0);
         }
     }
 }

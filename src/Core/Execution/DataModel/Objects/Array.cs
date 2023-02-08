@@ -23,13 +23,13 @@ namespace Core.Execution.DataModel.Objects
         public int Length => Items.Length;
 
         private Obj[] Items { get; }
-        
+
         public Obj this[int index]
         {
             get
             {
                 index = NormalizeIndex(index);
-                    
+
                 if (!IsInBound(index))
                     throw new IndexOutOfRangeException();
 
@@ -39,7 +39,7 @@ namespace Core.Execution.DataModel.Objects
             set
             {
                 index = NormalizeIndex(index);
-                
+
                 if (!IsInBound(index))
                     throw new IndexOutOfRangeException();
 
@@ -61,14 +61,20 @@ namespace Core.Execution.DataModel.Objects
                 if (i + 1 < Items.Length)
                     result.Append(", ");
             }
-            
+
             result.Append(']');
             return result.ToString();
         }
-        
-        private bool IsInBound(int index) => index >= 0 && index < Items.Length;
 
-        private int NormalizeIndex(int index) => index >= 0 ? index : Items.Length + index;
+        private bool IsInBound(int index)
+        {
+            return index >= 0 && index < Items.Length;
+        }
+
+        private int NormalizeIndex(int index)
+        {
+            return index >= 0 ? index : Items.Length + index;
+        }
 
         public static Array __add__(Array left, Array right)
         {
@@ -88,15 +94,21 @@ namespace Core.Execution.DataModel.Objects
             return new Array(items.ToArray());
         }
 
-        public static Bool __eq__(Array left, Array right) => new(Equals(left, right));
+        public static Bool __eq__(Array left, Array right)
+        {
+            return new(Equals(left, right));
+        }
 
-        public static Bool __neq__(Array left, Array right) => new(!Equals(left, right));
-        
+        public static Bool __neq__(Array left, Array right)
+        {
+            return new(!Equals(left, right));
+        }
+
         private static bool Equals(Array left, Array right)
         {
             if (ReferenceEquals(left, right))
                 return true;
-            
+
             if (left.Items.Length != right.Items.Length)
                 return false;
 

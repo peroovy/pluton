@@ -27,27 +27,27 @@ namespace Core.Execution.DataModel.Objects
 
         public static Number __pos__(Number operand)
         {
-            return new(operand.Value);
+            return new Number(operand.Value);
         }
 
         public static Number __neg__(Number operand)
         {
-            return new(-operand.Value);
+            return new Number(-operand.Value);
         }
 
         public static Number __add__(Number left, Number right)
         {
-            return new(left.Value + right.Value);
+            return new Number(left.Value + right.Value);
         }
 
         public static Number __sub__(Number left, Number right)
         {
-            return new(left.Value - right.Value);
+            return new Number(left.Value - right.Value);
         }
 
         public static Number __mult__(Number left, Number right)
         {
-            return new(left.Value * right.Value);
+            return new Number(left.Value * right.Value);
         }
 
         public static String __mult__(Number number, String str)
@@ -69,37 +69,37 @@ namespace Core.Execution.DataModel.Objects
 
         public static Number __mod__(Number left, Number right)
         {
-            return new(left.Value % right.Value);
+            return new Number(left.Value % right.Value);
         }
 
         public static Bool __lt__(Number left, Number right)
         {
-            return new(left.Value < right.Value);
+            return new Bool(left.Value < right.Value);
         }
 
         public static Bool __lte__(Number left, Number right)
         {
-            return new(left.Value <= right.Value);
+            return new Bool(left.Value <= right.Value);
         }
 
         public static Bool __gt__(Number left, Number right)
         {
-            return new(left.Value > right.Value);
+            return new Bool(left.Value > right.Value);
         }
 
         public static Bool __gte__(Number left, Number right)
         {
-            return new(left.Value >= right.Value);
+            return new Bool(left.Value >= right.Value);
         }
 
         public static Bool __eq__(Number left, Number right)
         {
-            return new(Equals(left, right));
+            return new Bool(Equals(left, right));
         }
 
         public static Bool __neq__(Number left, Number right)
         {
-            return new(!Equals(left, right));
+            return new Bool(!Equals(left, right));
         }
 
         private static bool Equals(Number left, Number right)

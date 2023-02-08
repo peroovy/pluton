@@ -9,13 +9,13 @@ namespace Core.Execution.DataModel.Objects.Functions
             Callable = callable;
             Arguments = arguments;
             Scope = scope;
-            
+
             foreach (var argument in arguments)
                 scope.Assign(argument.Key, argument.Value);
         }
 
         public Function Callable { get; }
-        
+
         public ImmutableDictionary<string, Obj> Arguments { get; }
 
         public Scope Scope { get; }

@@ -16,6 +16,7 @@ namespace Core.Execution.DataModel.Objects.Functions
                     var arguments = context
                         .Arguments
                         .SetItem(function.PositionParameters[0], instance);
+
                     context = new CallContext(context.Callable, arguments, context.Scope);
 
                     return function.Invoke(context);

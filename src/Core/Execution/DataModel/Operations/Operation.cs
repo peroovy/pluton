@@ -11,10 +11,13 @@ namespace Core.Execution.DataModel.Operations
         public abstract OperationPrecedence Precedence { get; }
 
         protected abstract string MethodName { get; }
-        
+
         protected abstract int PositionParametersCount { get; }
-        
-        public bool IsOperator(TokenType tokenType) => tokenType == Operator;
+
+        public bool IsOperator(TokenType tokenType)
+        {
+            return tokenType == Operator;
+        }
 
         protected Function FindOperationInAttributes(Obj obj)
         {

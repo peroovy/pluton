@@ -16,7 +16,7 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
                     var str = context.Arguments[ParameterName].ToString();
                     var parsed = double.TryParse(str, out var value);
 
-                    return parsed ? new Number(value) : new Null();
+                    return parsed ? new Number(value) : Null.Instance;
                 })
         {
         }

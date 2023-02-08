@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Core.Execution.DataModel.Objects.Functions;
 
 namespace Core.Execution.DataModel.Objects
@@ -41,6 +42,14 @@ namespace Core.Execution.DataModel.Objects
             return BaseClass?.TryGetAttribute(name, this, out value) ?? false;
         }
 
+        public T GetAttribute<T>(string name) where T : Obj
+        {
+            if (!TryGetAttribute(name, out var attr))
+                throw new ArgumentException($"Not found '{name}' attribute in '{TypeName}' class");
+
+            return (T)attr;
+        }
+
         private bool TryGetAttribute(string name, Obj instance, out Obj value)
         {
             if (!attributes.TryGetValue(name, out value))
@@ -54,12 +63,12 @@ namespace Core.Execution.DataModel.Objects
 
         public static Bool __eq__(Obj left, Obj right)
         {
-            return new(ReferenceEquals(left, right));
+            return new Bool(ReferenceEquals(left, right));
         }
 
         public static Bool __neq__(Obj left, Obj right)
         {
-            return new(!ReferenceEquals(left, right));
+            return new Bool(!ReferenceEquals(left, right));
         }
     }
 }

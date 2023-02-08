@@ -10,7 +10,7 @@ namespace Core.Execution.DataModel.Operations.Binary
         public override TokenType? CompoundAssignmentOperator => null;
 
         public override OperationPrecedence Precedence => OperationPrecedence.Relational;
-        
+
         protected override string MethodName => MagicFunctions.Lt;
     }
 }
