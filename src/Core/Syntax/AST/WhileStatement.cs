@@ -1,5 +1,5 @@
 ﻿using Core.Execution;
-using Core.Execution.Objects;
+using Core.Execution.DataModel.Objects;
 using Core.Lexing;
 using Core.Syntax.AST.Expressions;
 

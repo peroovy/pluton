@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Core.Execution.Operations;
-using Core.Execution.Operations.Binary;
-using Core.Execution.Operations.Unary;
+using Core.Execution.DataModel.Operations;
+using Core.Execution.DataModel.Operations.Binary;
+using Core.Execution.DataModel.Operations.Unary;
 using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;

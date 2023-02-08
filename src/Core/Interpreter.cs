@@ -1,8 +1,8 @@
 ﻿using Core.Execution;
-using Core.Execution.Objects;
-using Core.Execution.Objects.BuiltinFunctions;
-using Core.Execution.Operations.Binary;
-using Core.Execution.Operations.Unary;
+using Core.Execution.DataModel.Objects;
+using Core.Execution.DataModel.Objects.Functions.Builtin;
+using Core.Execution.DataModel.Operations.Binary;
+using Core.Execution.DataModel.Operations.Unary;
 using Core.Lexing;
 using Core.Lexing.TokenParsers;
 using Core.Syntax;

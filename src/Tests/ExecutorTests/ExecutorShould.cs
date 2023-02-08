@@ -4,7 +4,8 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Core.Execution;
-using Core.Execution.Objects;
+using Core.Execution.DataModel.Objects;
+using Core.Execution.DataModel.Objects.Functions;
 using Core.Lexing;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
@@ -13,8 +14,8 @@ using Core.Syntax.AST.Expressions.Literals;
 using Core.Utils.Text;
 using Ninject;
 using NUnit.Framework;
-using Array = Core.Execution.Objects.Array;
-using String = Core.Execution.Objects.String;
+using Array = Core.Execution.DataModel.Objects.Array;
+using String = Core.Execution.DataModel.Objects.String;
 
 namespace Tests.ExecutorTests
 {

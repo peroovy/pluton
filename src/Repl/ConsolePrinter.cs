@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.Execution.Objects;
+using Core.Execution.DataModel.Objects;
 using Core.Utils.Diagnostic;
 using Repl.MetaCommands;
 using Repl.Utils;

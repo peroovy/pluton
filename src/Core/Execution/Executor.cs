@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using Core.Execution.Objects;
-using Core.Execution.Objects.BuiltinFunctions;
-using Core.Execution.Objects.DataModel;
-using Core.Execution.Operations.Binary;
-using Core.Execution.Operations.Unary;
+using Core.Execution.DataModel.Magic;
+using Core.Execution.DataModel.Objects;
+using Core.Execution.DataModel.Objects.Functions;
+using Core.Execution.DataModel.Objects.Functions.Builtin;
+using Core.Execution.DataModel.Operations.Binary;
+using Core.Execution.DataModel.Operations.Unary;
 using Core.Execution.Signals;
 using Core.Lexing;
 using Core.Syntax.AST;
@@ -16,6 +17,8 @@ using Core.Syntax.AST.Expressions.Indexer;
 using Core.Syntax.AST.Expressions.Literals;
 using Core.Utils.Diagnostic;
 using Core.Utils.Text;
+using Array = Core.Execution.DataModel.Objects.Array;
+using String = Core.Execution.DataModel.Objects.String;
 
 namespace Core.Execution
 {
@@ -346,7 +349,7 @@ namespace Core.Execution
             return new Bool(value);
         }
 
-        public Obj Execute(StringExpression str) => new Objects.String(str.Token.Text);
+        public Obj Execute(StringExpression str) => new String(str.Token.Text);
         
         public Obj Execute(ArrayExpression array)
         {
@@ -354,7 +357,7 @@ namespace Core.Execution
                 .Select(expression => expression.Accept(this))
                 .ToImmutableArray();
 
-            return new Objects.Array(items);
+            return new Array(items);
         }
 
         public Obj Execute(NullExpression expression) => new Null();
