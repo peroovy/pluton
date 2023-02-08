@@ -42,14 +42,6 @@ namespace Core.Execution.DataModel.Objects
             return BaseClass?.TryGetAttribute(name, this, out value) ?? false;
         }
 
-        public T GetAttribute<T>(string name) where T : Obj
-        {
-            if (!TryGetAttribute(name, out var attr))
-                throw new ArgumentException($"Not found '{name}' attribute in '{TypeName}' class");
-
-            return (T)attr;
-        }
-
         private bool TryGetAttribute(string name, Obj instance, out Obj value)
         {
             if (!attributes.TryGetValue(name, out value))

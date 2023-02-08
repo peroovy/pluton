@@ -451,31 +451,38 @@ namespace Core.Execution
             return value;
         }
         
-        private MethodWrapper GenerateObjBuilder(ClassObj obj, CallExpression expression)
+        private MethodWrapper GenerateObjBuilder(ClassObj classObj, CallExpression expression)
         {
             var callableExpression = expression.CallableExpression;
-            var initializer = obj.GetAttribute<Function>(MagicFunctions.Init);
-                
-            var functionNew = new Function(
-                MagicFunctions.New, initializer.PositionParameters, initializer.DefaultParameters,
-                context =>
-                {
-                    var instance = new Obj(obj);
-                    var initWrapper = new MethodWrapper(instance, initializer);
-                    var initReturnedValue = InvokeCallableObject(initWrapper, context.Arguments);
 
-                    if (initReturnedValue is not Null)
+            if (classObj.TryGetAttribute(MagicFunctions.Init, out var attr) && attr is Function initializer)
+            {
+                return new MethodWrapper(classObj, new Function(
+                    MagicFunctions.New, initializer.PositionParameters, initializer.DefaultParameters,
+                    context =>
                     {
-                        throw new RuntimeException(
-                            callableExpression.Location,
-                            $"'{MagicFunctions.Init}' function should return '{Null.Instance.TypeName}', not '{initReturnedValue.TypeName}'"
-                        );
+                        var instance = new Obj(classObj);
+                        var initWrapper = new MethodWrapper(instance, initializer);
+                        var initReturnedValue = InvokeCallableObject(initWrapper, context.Arguments);
+
+                        if (initReturnedValue is not Null)
+                        {
+                            throw new RuntimeException(
+                                callableExpression.Location,
+                                $"'{MagicFunctions.Init}' function should return '{Null.Instance.TypeName}', not '{initReturnedValue.TypeName}'"
+                            );
+                        }
+
+                        return instance;
                     }
-
-                    return instance;
-                });
-
-            return new MethodWrapper(obj, functionNew);
+                ));
+            }
+            
+            return new MethodWrapper(classObj, new Function(
+                MagicFunctions.New,
+                ImmutableArray.Create(string.Empty),
+                ImmutableArray<CallArgument>.Empty, 
+                _ => new Obj(classObj)));
         }
 
         private Obj InvokeCallableObject(Function callable, ImmutableDictionary<string, Obj> arguments)
