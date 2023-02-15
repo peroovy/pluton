@@ -29,8 +29,6 @@ namespace Core.Execution.DataModel.Objects.Functions
 
         public override string TypeName => "Function";
 
-        public override string AsDebugString => ToString();
-
         public override string ToString()
         {
             return $"function <{Name}>";

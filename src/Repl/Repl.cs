@@ -70,7 +70,7 @@ public class Repl
         printer.PrintDiagnostic(interpretation.DiagnosticBag);
         
         if (!interpretation.HasErrors)
-            printer.PrintResult(interpretation.Result);
+            printer.PrintResult(interpretation.Result, interpreter);
         
         printer.PrintBlankLine();
     }

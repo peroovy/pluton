@@ -1,4 +1,5 @@
-﻿using Core.Execution.DataModel.Objects;
+﻿using Core;
+using Core.Execution.DataModel.Objects;
 using Core.Utils.Diagnostic;
 
 namespace Repl;
@@ -9,7 +10,7 @@ public interface IPrinter
 
     void PrintDiagnostic(DiagnosticBag diagnosticBag);
 
-    void PrintResult(Obj value);
+    void PrintResult(Obj value, Interpreter interpreter);
     
     void PrintBlankLine();
     

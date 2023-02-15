@@ -47,23 +47,21 @@ namespace Core.Execution.DataModel.Objects
             }
         }
 
-        public override string AsDebugString => ToString();
-
-        public override string ToString()
+        public override String ToStringObj(IExecutor executor)
         {
             var result = new StringBuilder();
             result.Append('[');
 
             for (var i = 0; i < Items.Length; i++)
             {
-                result.Append(Items[i].AsDebugString);
+                result.Append(Items[i].ToReprObj(executor).Value);
 
                 if (i + 1 < Items.Length)
                     result.Append(", ");
             }
 
             result.Append(']');
-            return result.ToString();
+            return new String(result.ToString());
         }
 
         private bool IsInBound(int index)

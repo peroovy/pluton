@@ -11,11 +11,11 @@
 
         public bool Value { get; }
 
-        public override string AsDebugString => ToString();
-
         public override string ToString()
         {
-            return Value.ToString().ToLower();
+            return Value
+                .ToString()
+                .ToLower();
         }
 
         public static Bool __not__(Bool operand)

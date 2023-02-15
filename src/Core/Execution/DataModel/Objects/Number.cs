@@ -18,8 +18,6 @@ namespace Core.Execution.DataModel.Objects
 
         public bool IsInteger => Math.Abs(Math.Round(Value) - Value) < double.Epsilon;
 
-        public override string AsDebugString => ToString();
-
         public override string ToString()
         {
             return double.IsNaN(Value) ? "NaN" : Value.ToString(CultureInfo.InvariantCulture);

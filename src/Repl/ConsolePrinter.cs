@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core;
 using Core.Execution.DataModel.Objects;
 using Core.Utils.Diagnostic;
 using Repl.MetaCommands;
@@ -33,13 +34,13 @@ public class ConsolePrinter : IPrinter
             PrintDiagnostic(diagnostic);
     }
 
-    public void PrintResult(Obj value)
+    public void PrintResult(Obj value, Interpreter interpreter)
     {
         if (value is Null)
             return;
         
         Console.ForegroundColor = ConsoleColor.Magenta;
-        Console.WriteLine(value.AsDebugString);
+        Console.WriteLine(value.ToReprObj(interpreter.Executor).Value);
         Console.ResetColor();
     }
 

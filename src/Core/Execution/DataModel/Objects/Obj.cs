@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Core.Execution.DataModel.Objects.Functions;
 
 namespace Core.Execution.DataModel.Objects
@@ -17,12 +18,36 @@ namespace Core.Execution.DataModel.Objects
         public ClassObj BaseClass { get; }
 
         public virtual string TypeName { get; }
-
-        public virtual string AsDebugString => ToString();
-
+        
         public override string ToString()
         {
             return $"object <{TypeName}>";
+        }
+
+        public virtual String ToReprObj(IExecutor executor)
+        {
+            if (!TryGetAttributeFromBaseClass(MagicFunctions.Repr, out var attr)
+                || attr is not MethodWrapper method
+                || method.PositionParameters.Length != 1)
+            {
+                return ToStringObj(executor);
+            }
+            
+            var obj = executor.InvokeCallableObject(method, ImmutableDictionary<string, Obj>.Empty);
+            return new String(obj.ToString());
+        }
+
+        public virtual String ToStringObj(IExecutor executor)
+        {
+            if (!TryGetAttributeFromBaseClass(MagicFunctions.Str, out var attr)
+                || attr is not MethodWrapper method
+                || method.PositionParameters.Length != 1)
+            {
+                return new String(ToString());
+            }
+            
+            var obj = executor.InvokeCallableObject(method, ImmutableDictionary<string, Obj>.Empty);
+            return new String(obj.ToString());
         }
 
         public void SetAttribute(string name, Obj value)
@@ -52,7 +77,7 @@ namespace Core.Execution.DataModel.Objects
 
             return true;
         }
-
+        
         public static Bool __eq__(Obj left, Obj right)
         {
             return new Bool(ReferenceEquals(left, right));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -451,6 +452,22 @@ namespace Core.Execution
             return value;
         }
         
+        public Obj InvokeCallableObject(Function callable, IDictionary<string, Obj> arguments)
+        {
+            callStack.Push(callable);
+
+            var previousScope = scope;
+            scope = new Scope(globalScope);
+
+            var context = new CallContext(callable, arguments.ToImmutableDictionary(), scope);
+            var returnedValue = callable.Invoke(context);
+
+            scope = previousScope;
+            callStack.Pop();
+
+            return returnedValue;
+        }
+        
         private MethodWrapper GenerateObjBuilder(ClassObj classObj, CallExpression expression)
         {
             var callableExpression = expression.CallableExpression;
@@ -483,22 +500,6 @@ namespace Core.Execution
                 ImmutableArray.Create(string.Empty),
                 ImmutableArray<CallArgument>.Empty, 
                 _ => new Obj(classObj)));
-        }
-
-        private Obj InvokeCallableObject(Function callable, ImmutableDictionary<string, Obj> arguments)
-        {
-            callStack.Push(callable);
-
-            var previousScope = scope;
-            scope = new Scope(globalScope);
-
-            var context = new CallContext(callable, arguments, scope);
-            var returnedValue = callable.Invoke(context);
-
-            scope = previousScope;
-            callStack.Pop();
-
-            return returnedValue;
         }
 
         private ImmutableDictionary<string, Obj> EvaluateArguments(

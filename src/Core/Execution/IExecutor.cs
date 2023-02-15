@@ -1,4 +1,6 @@
-﻿using Core.Execution.DataModel.Objects;
+﻿using System.Collections.Generic;
+using Core.Execution.DataModel.Objects;
+using Core.Execution.DataModel.Objects.Functions;
 using Core.Syntax.AST;
 using Core.Syntax.AST.Expressions;
 using Core.Syntax.AST.Expressions.Indexer;
@@ -65,5 +67,7 @@ namespace Core.Execution
         Obj Execute(AttributeAccessExpression expression);
         
         Obj Execute(AttributeAssignmentExpression assignment);
+
+        Obj InvokeCallableObject(Function callable, IDictionary<string, Obj> arguments);
     }
 }

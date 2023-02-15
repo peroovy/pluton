@@ -17,8 +17,6 @@ namespace Core.Execution.DataModel.Objects
             SetAttribute(MagicFunctions.Init, DefaultInitializer);
         }
 
-        public override string AsDebugString => ToString();
-
         public string Name { get; }
 
         public override string ToString()

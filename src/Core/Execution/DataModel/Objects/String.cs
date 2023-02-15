@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
-using System.Text.RegularExpressions;
 using Core.Execution.DataModel.Magic;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Core.Execution.DataModel.Objects
 {
@@ -16,7 +16,10 @@ namespace Core.Execution.DataModel.Objects
 
         public string Value { get; }
 
-        public override string AsDebugString => Regex.Escape($"\"{Value}\"");
+        public override String ToReprObj(IExecutor executor)
+        {
+            return new String($"\"{SymbolDisplay.FormatLiteral(Value, false)}\"");
+        }
 
         public int Length => Value.Length;
 

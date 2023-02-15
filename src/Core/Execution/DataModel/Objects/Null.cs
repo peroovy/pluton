@@ -11,8 +11,6 @@
 
         public static Null Instance => instance ??= new Null();
 
-        public override string AsDebugString => ToString();
-
         public override string ToString()
         {
             return "null";

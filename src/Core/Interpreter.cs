@@ -15,22 +15,24 @@ namespace Core
 {
     public class Interpreter
     {
-        private readonly ILexer lexer;
-        private readonly ISyntaxParser parser;
-        private readonly IExecutor executor;
-
         public Interpreter(ILexer lexer, ISyntaxParser parser, IExecutor executor)
         {
-            this.lexer = lexer;
-            this.parser = parser;
-            this.executor = executor;
+            Lexer = lexer;
+            Parser = parser;
+            Executor = executor;
         }
+        
+        public ILexer Lexer { get; }
+        
+        public ISyntaxParser Parser { get; }
+        
+        public IExecutor Executor { get; }
 
         public TranslationState<SyntaxTree> Parse(string text)
         {
             var sourceText = new SourceText(text);
-            var lexing = lexer.Tokenize(sourceText);
-            var parsing = parser.Parse(sourceText, lexing.Result);
+            var lexing = Lexer.Tokenize(sourceText);
+            var parsing = Parser.Parse(sourceText, lexing.Result);
 
             var diagnostics = lexing.DiagnosticBag.Concat(parsing.DiagnosticBag);
 
@@ -43,7 +45,7 @@ namespace Core
             if (parsing.HasErrors)
                 return new TranslationState<Obj>(null, parsing.DiagnosticBag);
             
-            var interpretation = executor.Execute(parsing.Result);
+            var interpretation = Executor.Execute(parsing.Result);
             var diagnostics = parsing.DiagnosticBag.Concat(interpretation.DiagnosticBag);
 
             return new TranslationState<Obj>(interpretation.Result, diagnostics);
