@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -302,11 +301,13 @@ namespace Core.Execution
             }
 
             var positions = function.PositionParameters;
-            var arguments = ImmutableDictionary.CreateBuilder<string, Obj>();
-            arguments.Add(positions[0], left);
-            arguments.Add(positions[1], right);
+            var arguments = new Dictionary<string, Obj>
+            {
+                [positions[0]] = left,
+                [positions[1]] = right
+            };
 
-            return InvokeCallableObject(function, arguments.ToImmutable());
+            return InvokeCallableObject(function, arguments);
         }
 
         public Obj Execute(UnaryExpression unary)
@@ -325,10 +326,12 @@ namespace Core.Execution
                 );
             }
 
-            var arguments = ImmutableDictionary.CreateBuilder<string, Obj>();
-            arguments.Add(function.PositionParameters[0], operand);
+            var arguments = new Dictionary<string, Obj>
+            {
+                [function.PositionParameters[0]] = operand
+            };
 
-            return InvokeCallableObject(function, arguments.ToImmutable());
+            return InvokeCallableObject(function, arguments);
         }
 
         public Obj Execute(NumberExpression number)
