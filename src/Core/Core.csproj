@@ -124,7 +124,6 @@
         <Compile Include="Execution\DataModel\Operations\Binary\ModulusOperation.cs" />
         <Compile Include="Execution\DataModel\Operations\Binary\MultiplicationOperation.cs" />
         <Compile Include="Execution\DataModel\Operations\Binary\SubtractionOperation.cs" />
-        <Compile Include="Execution\DataModel\Operations\Operation.cs" />
         <Compile Include="Execution\DataModel\Operations\OperationPrecedence.cs" />
         <Compile Include="Execution\DataModel\Operations\Unary\LogicalNotOperation.cs" />
         <Compile Include="Execution\DataModel\Operations\Unary\UnaryMinusOperation.cs" />

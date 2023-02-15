@@ -314,7 +314,7 @@ namespace Core.Execution
             var operand = unary.Operand.Accept(this);
             var function = unaryOperations
                 .Single(op => op.IsOperator(opToken.Type))
-                .FindMethod(operand);
+                .FindOperation(operand);
 
             if (function is null || function.PositionParameters.Length != 1)
             {
@@ -429,7 +429,7 @@ namespace Core.Execution
             var obj = expression.ObjExpression.Accept(this);
             var attributeName = expression.Attribute.Text;
 
-            if (!obj.TryGetAttribute(attributeName, out var value))
+            if (!obj.FindAttribute(attributeName, out var value))
             {
                 throw new RuntimeException(
                     expression.ObjExpression.Location,
@@ -471,7 +471,7 @@ namespace Core.Execution
         {
             var callableExpression = expression.CallableExpression;
 
-            if (classObj.TryGetAttribute(MagicFunctions.Init, out var attr) && attr is Function initializer)
+            if (classObj.FindAttribute(MagicFunctions.Init, out var attr) && attr is Function initializer)
             {
                 return new MethodWrapper(classObj, new Function(
                     MagicFunctions.New, initializer.PositionParameters, initializer.DefaultParameters,

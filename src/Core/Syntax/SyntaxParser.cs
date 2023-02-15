@@ -37,7 +37,7 @@ namespace Core.Syntax
                 .ToDictionary(operation => operation.CompoundAssignmentOperator.Value, operation => operation.Operator);
             
             unaryOperatorPrecedences = unaryOperations
-                .ToDictionary(operation => operation.Operator, operation => operation.Precedence);
+                .ToDictionary(operation => operation.Operator, operation => UnaryOperation.Precedence);
         }
         
         private SyntaxToken Current => Peek(0);
