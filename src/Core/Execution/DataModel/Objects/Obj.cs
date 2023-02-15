@@ -16,6 +16,8 @@ namespace Core.Execution.DataModel.Objects
         }
 
         public virtual string TypeName { get; }
+
+        protected virtual bool IsTrue => true;
         
         public override string ToString()
         {
@@ -54,11 +56,11 @@ namespace Core.Execution.DataModel.Objects
                 || attr is not MethodWrapper method
                 || method.PositionParameters.Length != 1)
             {
-                return new Bool(IsTrue());
+                return new Bool(IsTrue);
             }
             
             var obj = executor.InvokeCallableObject(method, ImmutableDictionary<string, Obj>.Empty);
-            return new Bool(obj.IsTrue());
+            return new Bool(obj.IsTrue);
         }
 
         public void SetAttribute(string name, Obj value)
@@ -76,11 +78,6 @@ namespace Core.Execution.DataModel.Objects
             value = null;
 
             return baseClass?.TryGetAttribute(name, this, out value) ?? false;
-        }
-        
-        protected virtual bool IsTrue()
-        {
-            return true;
         }
 
         private bool TryGetAttribute(string name, Obj instance, out Obj value)

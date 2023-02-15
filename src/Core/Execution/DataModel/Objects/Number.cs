@@ -18,14 +18,11 @@ namespace Core.Execution.DataModel.Objects
 
         public bool IsInteger => Math.Abs(Math.Round(Value) - Value) < double.Epsilon;
 
+        protected override bool IsTrue => Value != 0;
+
         public override string ToString()
         {
             return double.IsNaN(Value) ? "NaN" : Value.ToString(CultureInfo.InvariantCulture);
-        }
-
-        protected override bool IsTrue()
-        {
-            return Value != 0;
         }
 
         public static Number __pos__(Number operand)

@@ -104,7 +104,7 @@ namespace Tests.ExecutorTests
             assignment.Accept(executor);
             var result = GetVariable(v);
             Assert.IsTrue(result is Bool);
-            Assert.AreEqual(value, ((Bool)result).Value);
+            Assert.AreEqual(value, ((Bool)result));
         }
 
         [Test]

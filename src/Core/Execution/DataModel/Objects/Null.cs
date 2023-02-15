@@ -8,17 +8,14 @@
         private Null() : base(BaseClass)
         {
         }
+        
+        protected override bool IsTrue => false;
 
         public static Null Instance => instance ??= new Null();
 
         public override string ToString()
         {
             return "null";
-        }
-
-        protected override bool IsTrue()
-        {
-            return false;
         }
     }
 }

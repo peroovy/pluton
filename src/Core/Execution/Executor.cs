@@ -169,7 +169,7 @@ namespace Core.Execution
 
         public Obj Execute(IfStatement statement)
         {
-            if (statement.Condition.Accept(this).ToBool(this).Value)
+            if (statement.Condition.Accept(this).ToBool(this))
             {
                 statement.ThenStatement.Accept(this);
             }
@@ -419,7 +419,7 @@ namespace Core.Execution
 
         public Obj Execute(TernaryExpression expression)
         {
-            return expression.Condition.Accept(this).ToBool(this).Value
+            return expression.Condition.Accept(this).ToBool(this)
                 ? expression.ThenExpression.Accept(this)
                 : expression.ElseExpression.Accept(this);
         }
@@ -555,7 +555,7 @@ namespace Core.Execution
             {
                 initialize?.Invoke(statement);
 
-                while (statement.Condition.Accept(this).ToBool(this).Value)
+                while (statement.Condition.Accept(this).ToBool(this))
                 {
                     try
                     {

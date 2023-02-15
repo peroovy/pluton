@@ -19,8 +19,10 @@ namespace Core.Execution.DataModel.Objects
         {
             Items = items;
         }
-
+        
         public int Length => Items.Length;
+        
+        protected override bool IsTrue => Items.Length > 0;
 
         private Obj[] Items { get; }
 
@@ -62,11 +64,6 @@ namespace Core.Execution.DataModel.Objects
 
             result.Append(']');
             return new String(result.ToString());
-        }
-
-        protected override bool IsTrue()
-        {
-            return Items.Length > 0;
         }
 
         private bool IsInBound(int index)

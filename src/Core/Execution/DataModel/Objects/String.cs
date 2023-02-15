@@ -16,6 +16,8 @@ namespace Core.Execution.DataModel.Objects
 
         public string Value { get; }
 
+        protected override bool IsTrue => Value.Length > 0;
+
         public override String ToReprObj(IExecutor executor)
         {
             return new String($"\"{SymbolDisplay.FormatLiteral(Value, false)}\"");
@@ -39,11 +41,6 @@ namespace Core.Execution.DataModel.Objects
         public override string ToString()
         {
             return Value;
-        }
-
-        protected override bool IsTrue()
-        {
-            return Value.Length > 0;
         }
 
         private bool IsInBound(int index)
