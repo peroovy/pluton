@@ -48,6 +48,19 @@ namespace Core.Execution.DataModel.Objects
             return new String(obj.ToString());
         }
 
+        public Bool ToBool(IExecutor executor)
+        {
+            if (!TryGetAttributeFromBaseClass(MagicFunctions.Bool, out var attr)
+                || attr is not MethodWrapper method
+                || method.PositionParameters.Length != 1)
+            {
+                return new Bool(IsTrue());
+            }
+            
+            var obj = executor.InvokeCallableObject(method, ImmutableDictionary<string, Obj>.Empty);
+            return new Bool(obj.IsTrue());
+        }
+
         public void SetAttribute(string name, Obj value)
         {
             attributes[name] = value;
@@ -63,6 +76,11 @@ namespace Core.Execution.DataModel.Objects
             value = null;
 
             return baseClass?.TryGetAttribute(name, this, out value) ?? false;
+        }
+        
+        protected virtual bool IsTrue()
+        {
+            return true;
         }
 
         private bool TryGetAttribute(string name, Obj instance, out Obj value)

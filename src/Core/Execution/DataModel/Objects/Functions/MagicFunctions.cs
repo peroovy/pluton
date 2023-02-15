@@ -5,6 +5,7 @@
         public const string Init = "__init__";
         public const string New = "__new__";
         public const string Str = "__str__";
+        public const string Bool = "__bool__";
         public const string Repr = "__repr__";
 
         public const string Eq = "__eq__";

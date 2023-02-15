@@ -41,6 +41,11 @@ namespace Core.Execution.DataModel.Objects
             return Value;
         }
 
+        protected override bool IsTrue()
+        {
+            return Value.Length > 0;
+        }
+
         private bool IsInBound(int index)
         {
             return index >= 0 && index < Value.Length;

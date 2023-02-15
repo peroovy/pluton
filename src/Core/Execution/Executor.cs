@@ -169,9 +169,7 @@ namespace Core.Execution
 
         public Obj Execute(IfStatement statement)
         {
-            var condition = EvaluateCondition(statement.Condition);
-            
-            if (condition.Value)
+            if (statement.Condition.Accept(this).ToBool(this).Value)
             {
                 statement.ThenStatement.Accept(this);
             }
@@ -421,9 +419,7 @@ namespace Core.Execution
 
         public Obj Execute(TernaryExpression expression)
         {
-            var condition = EvaluateCondition(expression.Condition);
-            
-            return condition.Value
+            return expression.Condition.Accept(this).ToBool(this).Value
                 ? expression.ThenExpression.Accept(this)
                 : expression.ElseExpression.Accept(this);
         }
@@ -559,7 +555,7 @@ namespace Core.Execution
             {
                 initialize?.Invoke(statement);
 
-                while (EvaluateCondition(statement.Condition).Value)
+                while (statement.Condition.Accept(this).ToBool(this).Value)
                 {
                     try
                     {
@@ -580,17 +576,6 @@ namespace Core.Execution
             {
                 loopStack.Pop();
             }
-        }
-
-        // TODO: implicit casting
-        private Bool EvaluateCondition(Expression expression)
-        {
-            var obj = expression.Accept(this);
-
-            if (obj is not Bool boolean)
-                throw new RuntimeException(expression.Location, $"Cannot implicitly cast to '{nameof(Bool)}'");
-
-            return boolean;
         }
 
         private static Location GetLocationBetweenBrackets(SyntaxToken open, SyntaxToken close)

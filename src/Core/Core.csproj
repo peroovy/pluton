@@ -92,6 +92,7 @@
         <Compile Include="Execution\DataModel\Objects\Array.cs" />
         <Compile Include="Execution\DataModel\Objects\Bool.cs" />
         <Compile Include="Execution\DataModel\Objects\Class.cs" />
+        <Compile Include="Execution\DataModel\Objects\Functions\Builtin\BoolFunction.cs" />
         <Compile Include="Execution\DataModel\Objects\Functions\Builtin\BuiltinFunction.cs" />
         <Compile Include="Execution\DataModel\Objects\Functions\Builtin\InputFunction.cs" />
         <Compile Include="Execution\DataModel\Objects\Functions\Builtin\LenFunction.cs" />

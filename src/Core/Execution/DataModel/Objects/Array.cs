@@ -64,6 +64,11 @@ namespace Core.Execution.DataModel.Objects
             return new String(result.ToString());
         }
 
+        protected override bool IsTrue()
+        {
+            return Items.Length > 0;
+        }
+
         private bool IsInBound(int index)
         {
             return index >= 0 && index < Items.Length;

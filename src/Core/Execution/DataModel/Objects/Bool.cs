@@ -18,6 +18,11 @@
                 .ToLower();
         }
 
+        protected override bool IsTrue()
+        {
+            return Value;
+        }
+
         public static Bool __not__(Bool operand)
         {
             return new Bool(!operand.Value);

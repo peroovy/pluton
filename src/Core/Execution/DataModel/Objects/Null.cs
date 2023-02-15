@@ -15,5 +15,10 @@
         {
             return "null";
         }
+
+        protected override bool IsTrue()
+        {
+            return false;
+        }
     }
 }

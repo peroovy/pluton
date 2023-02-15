@@ -23,6 +23,11 @@ namespace Core.Execution.DataModel.Objects
             return double.IsNaN(Value) ? "NaN" : Value.ToString(CultureInfo.InvariantCulture);
         }
 
+        protected override bool IsTrue()
+        {
+            return Value != 0;
+        }
+
         public static Number __pos__(Number operand)
         {
             return new Number(operand.Value);
