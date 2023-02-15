@@ -3,9 +3,9 @@
     public class Null : Obj
     {
         private static Null instance;
-        private static readonly ClassObj BaseClassObj = new(nameof(Null));
+        private static readonly Class BaseClass = new(nameof(Null));
 
-        private Null() : base(BaseClassObj)
+        private Null() : base(BaseClass)
         {
         }
 

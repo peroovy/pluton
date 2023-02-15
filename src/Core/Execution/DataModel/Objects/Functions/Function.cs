@@ -5,13 +5,13 @@ namespace Core.Execution.DataModel.Objects.Functions
 {
     public class Function : Obj
     {
-        private static readonly ClassObj BaseClassObj = new(nameof(Function));
+        private static readonly Class BaseClass = new(nameof(Function));
 
         public Function(
             string name,
             ImmutableArray<string> positionParameters,
             ImmutableArray<CallArgument> defaultParameters,
-            Func<CallContext, Obj> invoke) : base(BaseClassObj)
+            Func<CallContext, Obj> invoke) : base(BaseClass)
         {
             Name = name;
             PositionParameters = positionParameters;

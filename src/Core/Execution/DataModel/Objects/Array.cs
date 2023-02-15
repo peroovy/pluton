@@ -8,14 +8,14 @@ namespace Core.Execution.DataModel.Objects
 {
     public class Array : Obj, IIndexReadable, IIndexSettable, ICollection
     {
-        private static readonly ClassObj BaseClassObj = new(nameof(Array));
+        private static readonly Class BaseClass = new(nameof(Array));
 
-        public Array(ImmutableArray<Obj> items) : base(BaseClassObj)
+        public Array(ImmutableArray<Obj> items) : base(BaseClass)
         {
             Items = items.ToArray();
         }
 
-        private Array(Obj[] items) : base(BaseClassObj)
+        private Array(Obj[] items) : base(BaseClass)
         {
             Items = items;
         }

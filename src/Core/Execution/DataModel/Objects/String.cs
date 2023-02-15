@@ -7,9 +7,9 @@ namespace Core.Execution.DataModel.Objects
 {
     public class String : Obj, IIndexReadable, ICollection
     {
-        private static readonly ClassObj BaseClassObj = new(nameof(String));
+        private static readonly Class BaseClass = new(nameof(String));
 
-        public String(string value) : base(BaseClassObj)
+        public String(string value) : base(BaseClass)
         {
             Value = value;
         }

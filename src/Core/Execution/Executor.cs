@@ -78,7 +78,7 @@ namespace Core.Execution
 
             scope = scope.Parent;
 
-            var obj = new ClassObj(statement.Identifier.Text);
+            var obj = new Class(statement.Identifier.Text);
             foreach (var attr in classScope.CurrentLevel)
                 obj.SetAttribute(attr.Key, attr.Value);
             
@@ -381,7 +381,7 @@ namespace Core.Execution
             var callableExpression = expression.CallableExpression;
             var obj = callableExpression.Accept(this);
 
-            if (obj is ClassObj classObj)
+            if (obj is Class classObj)
                 obj = GenerateObjBuilder(classObj, expression);
 
             if (obj is not Function callable)
@@ -471,7 +471,7 @@ namespace Core.Execution
             return returnedValue;
         }
         
-        private MethodWrapper GenerateObjBuilder(ClassObj classObj, CallExpression expression)
+        private MethodWrapper GenerateObjBuilder(Class classObj, CallExpression expression)
         {
             var callableExpression = expression.CallableExpression;
 

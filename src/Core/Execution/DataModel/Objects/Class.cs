@@ -3,7 +3,7 @@ using Core.Execution.DataModel.Objects.Functions;
 
 namespace Core.Execution.DataModel.Objects
 {
-    public class ClassObj : Obj
+    public class Class : Obj
     {
         private static readonly Function DefaultInitializer = new(
             MagicFunctions.Init,
@@ -11,7 +11,7 @@ namespace Core.Execution.DataModel.Objects
             ImmutableArray<CallArgument>.Empty,
             _ => Null.Instance);
 
-        public ClassObj(string name) : base(null)
+        public Class(string name) : base(null)
         {
             Name = name;
             SetAttribute(MagicFunctions.Init, DefaultInitializer);

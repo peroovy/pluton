@@ -2,9 +2,9 @@
 {
     public class Bool : Obj
     {
-        private static readonly ClassObj BaseClassObj = new(nameof(Bool));
+        private static readonly Class BaseClass = new(nameof(Bool));
 
-        public Bool(bool value) : base(BaseClassObj)
+        public Bool(bool value) : base(BaseClass)
         {
             Value = value;
         }

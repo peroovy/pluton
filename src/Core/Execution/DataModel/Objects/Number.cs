@@ -5,9 +5,9 @@ namespace Core.Execution.DataModel.Objects
 {
     public class Number : Obj
     {
-        private static readonly ClassObj BaseClassObj = new(nameof(Number));
+        private static readonly Class BaseClass = new(nameof(Number));
 
-        public Number(double value) : base(BaseClassObj)
+        public Number(double value) : base(BaseClass)
         {
             Value = value;
         }

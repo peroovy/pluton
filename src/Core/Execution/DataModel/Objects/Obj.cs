@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using Core.Execution.DataModel.Objects.Functions;
 
@@ -8,14 +7,13 @@ namespace Core.Execution.DataModel.Objects
     public class Obj
     {
         private readonly Dictionary<string, Obj> attributes = new();
+        private readonly Class baseClass;
 
-        public Obj(ClassObj baseClass)
+        public Obj(Class baseClass)
         {
-            BaseClass = baseClass;
+            this.baseClass = baseClass;
             TypeName = baseClass?.Name ?? GetType().Name;
         }
-
-        public ClassObj BaseClass { get; }
 
         public virtual string TypeName { get; }
         
@@ -64,7 +62,7 @@ namespace Core.Execution.DataModel.Objects
         {
             value = null;
 
-            return BaseClass?.TryGetAttribute(name, this, out value) ?? false;
+            return baseClass?.TryGetAttribute(name, this, out value) ?? false;
         }
 
         private bool TryGetAttribute(string name, Obj instance, out Obj value)
