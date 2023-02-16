@@ -413,8 +413,46 @@ namespace Core.Syntax
             {
                 VariableExpression toVariable => ContinueWithCompoundVariableAssignmentExpression(toVariable),
                 IndexAccessExpression toIndex => ContinueWithCompoundIndexAssignmentExpression(toIndex),
+                AttributeAccessExpression toAttribute => ContinueWithCompoundAttributeAssignmentExpression(toAttribute),
                 _ => throw new InvalidSyntaxException(to.Location, "Cannot assign to the expression")
             };
+        }
+
+        private AttributeAssignmentExpression ContinueWithCompoundAttributeAssignmentExpression(AttributeAccessExpression expression)
+        {
+            var (compoundOperator, exp) = UnwrapCompoundAssignmentExpression(expression);
+
+            return new AttributeAssignmentExpression(expression, compoundOperator, exp);
+        }
+
+        private IndexAssignmentExpression ContinueWithCompoundIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
+        {
+            var (compoundOperator, expression) = UnwrapCompoundAssignmentExpression(indexAccessExpression);
+            
+            return new IndexAssignmentExpression(
+                indexAccessExpression.IndexedExpression, 
+                indexAccessExpression.Index, 
+                compoundOperator,
+                expression
+            );
+        }
+        
+        private VariableAssignmentExpression ContinueWithCompoundVariableAssignmentExpression(VariableExpression variableExpression)
+        {
+            var (compoundOperator, expression) = UnwrapCompoundAssignmentExpression(variableExpression);
+
+            return new VariableAssignmentExpression(variableExpression.Token, compoundOperator, expression);
+        }
+
+        private (SyntaxToken compoundOperator, BinaryExpression expression) UnwrapCompoundAssignmentExpression(Expression expression)
+        {
+            var compoundOperator = NextToken();
+            var singleOperatorType = compoundAssignmentOperators[compoundOperator.Type];
+
+            var singleOperator = new SyntaxToken(singleOperatorType, compoundOperator.Text, compoundOperator.Location);
+            var rightExpression = ParseExpression();
+
+            return (compoundOperator, new BinaryExpression(expression, singleOperator, rightExpression));
         }
 
         private Expression ContinueWithAssignmentExpression(Expression to)
@@ -446,7 +484,8 @@ namespace Core.Syntax
             return new AttributeAssignmentExpression(attribute, equals, value);
         }
 
-        private IndexAssignmentExpression ContinueWithIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
+        private IndexAssignmentExpression ContinueWithIndexAssignmentExpression(
+            IndexAccessExpression indexAccessExpression)
         {
             var equals = MatchToken(TokenType.Equals);
             var value = ParseExpression();
@@ -456,36 +495,6 @@ namespace Core.Syntax
             );
         }
 
-        private IndexAssignmentExpression ContinueWithCompoundIndexAssignmentExpression(IndexAccessExpression indexAccessExpression)
-        {
-            var (compoundOperator, expression) = ContinueCompoundAssignmentExpression(indexAccessExpression);
-            
-            return new IndexAssignmentExpression(
-                indexAccessExpression.IndexedExpression, 
-                indexAccessExpression.Index, 
-                compoundOperator,
-                expression
-            );
-        }
-        
-        private VariableAssignmentExpression ContinueWithCompoundVariableAssignmentExpression(VariableExpression variableExpression)
-        {
-            var (compoundOperator, expression) = ContinueCompoundAssignmentExpression(variableExpression);
-
-            return new VariableAssignmentExpression(variableExpression.Token, compoundOperator, expression);
-        }
-
-        private (SyntaxToken compoundOperator, BinaryExpression expression) ContinueCompoundAssignmentExpression(Expression leftExpression)
-        {
-            var compoundOperator = NextToken();
-            var singleOperatorType = compoundAssignmentOperators[compoundOperator.Type];
-
-            var singleOperator = new SyntaxToken(singleOperatorType, compoundOperator.Text, compoundOperator.Location);
-            var rightExpression = ParseExpression();
-
-            return (compoundOperator, new BinaryExpression(leftExpression, singleOperator, rightExpression));
-        }
-        
         private VariableAssignmentExpression ContinueWithVariableAssignmentExpression(VariableExpression variable)
         {
             var equals = MatchToken(TokenType.Equals);
