@@ -3,12 +3,30 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Core.Execution.DataModel.Magic;
+using Core.Execution.DataModel.Objects.Functions;
 
 namespace Core.Execution.DataModel.Objects
 {
-    public class Array : Obj, IIndexReadable, IIndexSettable, ICollection
+    public class Array : Obj, IIndexReadable, IIndexSettable
     {
         private static readonly Class BaseClass = new(nameof(Array));
+
+        private const string ObjParameter = "obj";
+
+        static Array()
+        {
+            BaseClass.SetAttribute(MagicFunctions.Len, new Function(
+                MagicFunctions.Len,
+                ImmutableArray.Create(ObjParameter),
+                ImmutableArray<CallArgument>.Empty,
+                context =>
+                {
+                    var str = (Array)context.Arguments[ObjParameter];
+
+                    return new Number(str.Items.Length);
+                }
+            ));
+        }
 
         public Array(ImmutableArray<Obj> items) : base(BaseClass)
         {
@@ -19,8 +37,6 @@ namespace Core.Execution.DataModel.Objects
         {
             Items = items;
         }
-        
-        public int Length => Items.Length;
         
         protected override bool IsTrue => Items.Length > 0;
 

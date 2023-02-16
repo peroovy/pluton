@@ -86,7 +86,6 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Execution\DataModel\Magic\ICollection.cs" />
         <Compile Include="Execution\DataModel\Magic\IIndexReadable.cs" />
         <Compile Include="Execution\DataModel\Magic\IIndexSettable.cs" />
         <Compile Include="Execution\DataModel\Objects\Array.cs" />

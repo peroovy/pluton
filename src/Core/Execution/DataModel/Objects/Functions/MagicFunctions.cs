@@ -7,6 +7,7 @@
         public const string Str = "__str__";
         public const string Bool = "__bool__";
         public const string Repr = "__repr__";
+        public const string Len = "__len__";
 
         public const string Eq = "__eq__";
         public const string Neq = "__neq__";

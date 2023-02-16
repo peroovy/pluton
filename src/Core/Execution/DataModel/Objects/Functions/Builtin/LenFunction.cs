@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using Core.Execution.DataModel.Magic;
+﻿using System;
+using System.Collections.Immutable;
 
 namespace Core.Execution.DataModel.Objects.Functions.Builtin
 {
@@ -7,7 +7,7 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
     {
         private const string ParameterName = "obj";
 
-        public LenFunction()
+        public LenFunction(Lazy<IExecutor> executor)
             : base(
                 "len",
                 ImmutableArray.Create(ParameterName),
@@ -16,11 +16,9 @@ namespace Core.Execution.DataModel.Objects.Functions.Builtin
                 {
                     var obj = context.Arguments[ParameterName];
 
-                    Obj value = obj is ICollection collection
-                        ? new Number(collection.Length)
+                    return obj.FindMethod(MagicFunctions.Len, 1, out var method)
+                        ? executor.Value.InvokeCallableObject(method, ImmutableDictionary<string, Obj>.Empty)
                         : Null.Instance;
-
-                    return value;
                 })
         {
         }

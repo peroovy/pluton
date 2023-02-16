@@ -1,13 +1,32 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Text;
 using Core.Execution.DataModel.Magic;
+using Core.Execution.DataModel.Objects.Functions;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Core.Execution.DataModel.Objects
 {
-    public class String : Obj, IIndexReadable, ICollection
+    public class String : Obj, IIndexReadable
     {
         private static readonly Class BaseClass = new(nameof(String));
+
+        private const string ObjParameter = "obj";
+
+        static String()
+        {
+            BaseClass.SetAttribute(MagicFunctions.Len, new Function(
+                MagicFunctions.Len,
+                ImmutableArray.Create(ObjParameter),
+                ImmutableArray<CallArgument>.Empty,
+                context =>
+                {
+                    var str = (String)context.Arguments[ObjParameter];
+
+                    return new Number(str.Value.Length);
+                }
+            ));
+        }
 
         public String(string value) : base(BaseClass)
         {
@@ -22,8 +41,6 @@ namespace Core.Execution.DataModel.Objects
         {
             return new String($"\"{SymbolDisplay.FormatLiteral(Value, false)}\"");
         }
-
-        public int Length => Value.Length;
 
         public Obj this[int index]
         {
@@ -52,7 +69,7 @@ namespace Core.Execution.DataModel.Objects
         {
             return index >= 0 ? index : Value.Length + index;
         }
-
+        
         public static String __add__(String left, String right)
         {
             return new String(left.Value + right.Value);
