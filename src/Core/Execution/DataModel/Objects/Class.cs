@@ -11,13 +11,16 @@ namespace Core.Execution.DataModel.Objects
             ImmutableArray<CallArgument>.Empty,
             _ => Null.Instance);
 
-        public Class(string name) : base(null)
+        public Class(string name, Class subclass = null) : base(null)
         {
             Name = name;
+            Subclass = subclass;
             SetAttribute(MagicFunctions.Init, DefaultInitializer);
         }
 
         public string Name { get; }
+        
+        public Class Subclass { get; }
 
         public override string ToString()
         {

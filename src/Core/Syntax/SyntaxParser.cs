@@ -126,11 +126,22 @@ namespace Core.Syntax
         {
             var keyword = MatchToken(TokenType.ClassKeyword);
             var identifier = MatchToken(TokenType.Identifier);
+            var inheritanceSyntax = ParseInheritanceSyntax();
             var openBrace = MatchToken(TokenType.OpenBrace);
             var members = ParseClassMembers();
             var closeBrace = MatchToken(TokenType.CloseBrace);
 
-            return new ClassStatement(keyword, identifier, openBrace, members, closeBrace);
+            return new ClassStatement(keyword, identifier, inheritanceSyntax, openBrace, members, closeBrace);
+        }
+
+        private InheritanceSyntax ParseInheritanceSyntax()
+        {
+            if (Current.Type != TokenType.Colon)
+                return null;
+
+            var colon = MatchToken(TokenType.Colon);
+            var identifier = ParseVariableExpression();
+            return new InheritanceSyntax(colon, identifier);
         }
 
         private ImmutableArray<SyntaxNode> ParseClassMembers()

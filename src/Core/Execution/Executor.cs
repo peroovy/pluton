@@ -78,7 +78,24 @@ namespace Core.Execution
 
             scope = scope.Parent;
 
-            var obj = new Class(statement.Identifier.Text);
+            Class subclass = null;
+            if (statement.InheritanceSyntax is not null)
+            {
+                var variable = statement.InheritanceSyntax.Variable;
+                
+                var sub = variable.Accept(this);
+                if (sub is not Class classObj)
+                {
+                    throw new RuntimeException(
+                        variable.Location,
+                        $"Expected {nameof(Class)} object, not {sub.TypeName}"
+                    );
+                }
+
+                subclass = classObj;
+            }
+
+            var obj = new Class(statement.Identifier.Text, subclass);
             foreach (var attr in classScope.CurrentLevel)
                 obj.SetAttribute(attr.Key, attr.Value);
             

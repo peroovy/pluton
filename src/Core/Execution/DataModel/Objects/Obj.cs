@@ -7,13 +7,14 @@ namespace Core.Execution.DataModel.Objects
     public class Obj
     {
         private readonly Dictionary<string, Obj> attributes = new();
-        private readonly Class baseClass;
 
         public Obj(Class baseClass)
         {
-            this.baseClass = baseClass;
+            BaseClass = baseClass;
             TypeName = baseClass?.Name ?? GetType().Name;
         }
+        
+        public Class BaseClass { get; }
 
         public virtual string TypeName { get; }
 
@@ -61,7 +62,13 @@ namespace Core.Execution.DataModel.Objects
             if (attributes.TryGetValue(name, out value))
                 return true;
 
-            return baseClass?.FindAttribute(name, this, out value) ?? false;
+            if (BaseClass is null)
+                return false;
+            
+            if (BaseClass.FindAttribute(name, this, out value))
+                return true;
+
+            return BaseClass.Subclass?.FindAttribute(name, this, out value) ?? false;
         }
 
         public bool FindMethod(string name, int positionParametersNumber, out MethodWrapper method)

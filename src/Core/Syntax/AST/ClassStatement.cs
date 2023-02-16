@@ -10,12 +10,14 @@ namespace Core.Syntax.AST
         public ClassStatement(
             SyntaxToken keyword,
             SyntaxToken identifier,
+            InheritanceSyntax inheritanceSyntax,
             SyntaxToken openBrace,
             ImmutableArray<SyntaxNode> members,
             SyntaxToken closeBrace)
         {
             Keyword = keyword;
             Identifier = identifier;
+            InheritanceSyntax = inheritanceSyntax;
             OpenBrace = openBrace;
             Members = members;
             CloseBrace = closeBrace;
@@ -29,6 +31,8 @@ namespace Core.Syntax.AST
         
         public SyntaxToken Identifier { get; }
         
+        public InheritanceSyntax InheritanceSyntax { get; }
+
         public SyntaxToken OpenBrace { get; }
         
         public ImmutableArray<SyntaxNode> Members { get; }

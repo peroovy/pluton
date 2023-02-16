@@ -149,6 +149,7 @@
         <Compile Include="Syntax\AST\Expressions\Literals\StringExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\Literals\VariableExpression.cs" />
         <Compile Include="Syntax\AST\Expressions\TernaryExpression.cs" />
+        <Compile Include="Syntax\AST\InheritanceSyntax.cs" />
         <Compile Include="Syntax\AST\LoopStatement.cs" />
         <Compile Include="Syntax\InvalidSyntaxException.cs" />
         <Compile Include="TranslationState.cs" />
