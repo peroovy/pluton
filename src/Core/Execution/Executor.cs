@@ -116,12 +116,16 @@ namespace Core.Execution
                 .Select(parameter => new CallArgument(parameter.Name.Text, parameter.Expression.Accept(this)))
                 .ToImmutableArray();
 
+            var outerScope = scope;
             var function = new Function(
                 statement.Identifier.Text,
                 positions,
                 defaults,
                 context =>
                 {
+                    foreach (var pair in outerScope.CurrentLevel)
+                        context.Scope.Assign(pair.Key, pair.Value);
+                    
                     try
                     {
                         var enumerator = statement.Block.Statements.GetEnumerator();
@@ -473,9 +477,9 @@ namespace Core.Execution
             callStack.Push(callable);
 
             var previousScope = scope;
-            scope = new Scope(globalScope);
-
-            var context = new CallContext(callable, arguments.ToImmutableDictionary(), scope);
+            var context = new CallContext(callable, arguments.ToImmutableDictionary(), globalScope);
+            scope = context.Scope;
+            
             var returnedValue = callable.Invoke(context);
 
             scope = previousScope;

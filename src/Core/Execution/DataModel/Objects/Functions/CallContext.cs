@@ -4,14 +4,14 @@ namespace Core.Execution.DataModel.Objects.Functions
 {
     public class CallContext
     {
-        public CallContext(Function callable, ImmutableDictionary<string, Obj> arguments, Scope scope)
+        public CallContext(Function callable, ImmutableDictionary<string, Obj> arguments, Scope globalScope)
         {
             Callable = callable;
             Arguments = arguments;
-            Scope = scope;
+            Scope = new Scope(globalScope);
 
             foreach (var argument in arguments)
-                scope.Assign(argument.Key, argument.Value);
+                Scope.Assign(argument.Key, argument.Value);
         }
 
         public Function Callable { get; }
